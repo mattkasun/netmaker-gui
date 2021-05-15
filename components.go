@@ -51,7 +51,6 @@ func NavbarLink(href, name, currentPath string) g.Node {
 
 func All() g.Node {
 	return Div(
-		g.Attr("onload", "openTab('networks')"),
 		AllNets(),
 		AllNodes(),
 		KeyHolder(),
@@ -60,8 +59,28 @@ func All() g.Node {
 }
 
 func AllNodes() g.Node {
+	nodes := GetAllNodes()
+	if nodes == nil {
+		g.Text("There are no nodes")
+	}
 	return Div(ID("Nodes"), Class("w3-container tab"),
-		g.Text("All nodes"),
+		g.Group(g.Map(len(nodes), func(i int) g.Node {
+			return FieldSet(
+				Legend(g.Text(nodes[i].Name)),
+				FieldSet(
+					Legend(g.Text("Public Key")),
+					Label(g.Text(nodes[i].PublicKey)),
+				),
+				FieldSet(
+					Legend(g.Text("Listen Port")),
+					Label(g.Textf("%v", nodes[i].ListenPort)),
+				),
+				FieldSet(
+					Legend(g.Text("Last CheckIn")),
+					Label(g.Textf("%v", nodes[i].LastCheckIn)),
+				),
+			)
+		})),
 	)
 }
 
@@ -77,15 +96,14 @@ func DNSHolder() g.Node {
 }
 
 func AllNets() g.Node {
-	//	emptynet := models.Network{}
 	networks := GetAllNets()
 	//make sure a network was returned.
 	if networks == nil {
 		return g.Text("nothing to see here")
 	}
-	return g.Group(g.Map(len(networks), func(i int) g.Node {
-		return Div(ID("Network Details"), Class("w3-container tab"),
-			FieldSet(
+	return Div(ID("Network Details"), Class("w3-container tab"),
+		g.Group(g.Map(len(networks), func(i int) g.Node {
+			return FieldSet(
 				Legend(g.Text(networks[i].DisplayName)),
 				FieldSet(
 					Legend(g.Text("AddressRange")),
@@ -95,9 +113,9 @@ func AllNets() g.Node {
 					Legend(g.Text("NodesLastModifed")),
 					Label(g.Text(time.Unix(networks[i].NodesLastModified, 0).Format("Mon Jan 2 2016 15:04:05 MST"))),
 				),
-			),
-		)
-	}))
+			)
+		})),
+	)
 }
 
 func Detail(netname string) g.Node {

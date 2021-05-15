@@ -13,6 +13,16 @@ type PageLink struct {
 	Name string
 }
 
+func GetAllNodes() (nodes []models.Node) {
+	response, err := API("", http.MethodGet, "/api/nodes", "secretkey")
+	if err != nil {
+		return []models.Node{}
+	}
+	defer response.Body.Close()
+	json.NewDecoder(response.Body).Decode(&nodes)
+	return nodes
+}
+
 func GetAllNets() (networks []models.Network) {
 	response, err := API("", http.MethodGet, "/api/networks", "secretkey")
 	if err != nil {

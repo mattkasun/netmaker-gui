@@ -55,6 +55,7 @@ func Page(p props) g.Node {
 			Script(g.Attr("src", "openTab.js")),
 		},
 		Body: []g.Node{
+			g.Attr("onload", "openTab('Network Details')"),
 			Banner(),
 			ButtonGroup(buttons),
 			Navbar(p.path, GetNetworks()),
