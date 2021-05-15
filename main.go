@@ -12,6 +12,7 @@ import (
 func main() {
 	http.HandleFunc("/", mainhandler)
 	http.HandleFunc("/images/netmaker2.png", imagehandler)
+	http.HandleFunc("/openTab.js", jshandler)
 
 	//_ = http.ListenAndServe("localhost:8080", http.HandlerFunc(handler))
 	log.Fatal(http.ListenAndServe(":8080", nil))
@@ -19,6 +20,10 @@ func main() {
 }
 func imagehandler(w http.ResponseWriter, r *http.Request) {
 	http.ServeFile(w, r, "./images/netmaker2.png")
+}
+func jshandler(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/javascript")
+	http.ServeFile(w, r, "./openTab.js")
 }
 func mainhandler(w http.ResponseWriter, r *http.Request) {
 	_ = Page(props{
@@ -46,6 +51,8 @@ func Page(p props) g.Node {
 				g.Raw(".navbarbutton{text-align:right}"),
 				g.Raw(".maincontent{margin-left:25%}"),
 			),
+			//Link(Rel("javascript"), Href("./openTab.js")),
+			Script(g.Attr("src", "openTab.js")),
 		},
 		Body: []g.Node{
 			Banner(),

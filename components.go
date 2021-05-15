@@ -13,7 +13,7 @@ func Banner() g.Node {
 		Button(Class("w3-button w3-blue w3-left"),
 			g.Text("Add Network"),
 		),
-		g.Raw("<img src=images/netmaker2.png>"),
+		Img(g.Attr("src", "images/netmaker2.png")),
 		Button(Class("w3-button w3-blue w3-right"),
 			g.Text("Logout"),
 		),
@@ -22,9 +22,10 @@ func Banner() g.Node {
 func ButtonGroup(buttons []string) g.Node {
 	return Div(Class("center btn-group w3-white"),
 		g.Group(g.Map(len(buttons), func(i int) g.Node {
-			//return Button(g.Text(button[i])),
-			return Button(Class("w3-bar-item w3-button"), g.Text(buttons[i]))
-			//return myButton(button[i])
+			return Button(Class("w3-bar-item w3-button"),
+				g.Text(buttons[i]),
+				g.Attr("onClick", "openTab('"+buttons[i]+"')"),
+			)
 		})),
 	)
 }
@@ -49,6 +50,33 @@ func NavbarLink(href, name, currentPath string) g.Node {
 }
 
 func All() g.Node {
+	return Div(
+		g.Attr("onload", "openTab('networks')"),
+		AllNets(),
+		AllNodes(),
+		KeyHolder(),
+		DNSHolder(),
+	)
+}
+
+func AllNodes() g.Node {
+	return Div(ID("Nodes"), Class("w3-container tab"),
+		g.Text("All nodes"),
+	)
+}
+
+func KeyHolder() g.Node {
+	return Div(ID("Access Keys"), Class("w3-container tab"),
+		g.Text("Please select a specific network to view it's access keys"),
+	)
+}
+func DNSHolder() g.Node {
+	return Div(ID("DNS"), Class("w3-container tab"),
+		g.Text("Please select a specific network to view it's DNS"),
+	)
+}
+
+func AllNets() g.Node {
 	//	emptynet := models.Network{}
 	networks := GetAllNets()
 	//make sure a network was returned.
@@ -56,7 +84,7 @@ func All() g.Node {
 		return g.Text("nothing to see here")
 	}
 	return g.Group(g.Map(len(networks), func(i int) g.Node {
-		return Div(
+		return Div(ID("Network Details"), Class("w3-container tab"),
 			FieldSet(
 				Legend(g.Text(networks[i].DisplayName)),
 				FieldSet(

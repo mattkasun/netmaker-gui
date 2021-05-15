@@ -1,10 +1,8 @@
-module sandbox/gui
+module github.com/mattkasun/netmaker-gui
 
 go 1.16
 
 require (
-	github.com/gravitl/netmaker v0.0.0-20210511164310-591efea76854
+	github.com/gravitl/netmaker v0.0.0-20210511120946-137258af86e8
 	github.com/maragudk/gomponents v0.16.0
-	gopkg.in/go-playground/assert.v1 v1.2.1 // indirect
-	gopkg.in/go-playground/validator.v9 v9.31.0 // indirect
 )
