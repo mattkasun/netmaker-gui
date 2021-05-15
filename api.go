@@ -13,8 +13,41 @@ type PageLink struct {
 	Name string
 }
 
+func GetKeys(netname string) []models.AccessKey {
+	var keys []models.AccessKey
+	response, err := API("", http.MethodGet, "/api/networks/"+netname+"/keys", "secretkey")
+	if err != nil {
+		return []models.AccessKey{}
+	}
+	defer response.Body.Close()
+	json.NewDecoder(response.Body).Decode(&keys)
+	return keys
+}
+
+func GetDNS(netname string) []models.DNSEntry {
+	var dns []models.DNSEntry
+	response, err := API("", http.MethodGet, "/api/dns/adm/"+netname, "secretkey")
+	if err != nil {
+		return []models.DNSEntry{}
+	}
+	defer response.Body.Close()
+	json.NewDecoder(response.Body).Decode(&dns)
+	return dns
+}
+
 func GetAllNodes() (nodes []models.Node) {
 	response, err := API("", http.MethodGet, "/api/nodes", "secretkey")
+	if err != nil {
+		return []models.Node{}
+	}
+	defer response.Body.Close()
+	json.NewDecoder(response.Body).Decode(&nodes)
+	return nodes
+}
+
+func GetNodes(netname string) []models.Node {
+	var nodes []models.Node
+	response, err := API("", http.MethodGet, "/api/nodes/"+netname, "secretkey")
 	if err != nil {
 		return []models.Node{}
 	}

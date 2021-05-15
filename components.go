@@ -119,10 +119,19 @@ func AllNets() g.Node {
 }
 
 func Detail(netname string) g.Node {
+	return Div(
+		Net(netname),
+		Nodes(netname),
+		Keys(netname),
+		DNS(netname),
+	)
+}
+
+func Net(netname string) g.Node {
 	network := GetNetwork(netname)
 	buttons := []string{"Edit", "Save", "Cancel", "Delete"}
 
-	return Div(ID("networks"), Class("w3-container tab"),
+	return Div(ID("Network Details"), Class("w3-container tab"),
 		ButtonGroup(buttons),
 		Input(Class("switch slider round"), Label(g.Text("Allow Node SignUp without Keys"))),
 		FieldSet(
@@ -133,5 +142,65 @@ func Detail(netname string) g.Node {
 			Legend(g.Text("NodesLastModifed")),
 			Label(g.Text(time.Unix(network.NodesLastModified, 0).Format("Mon Jan 2 2016 15:04:05 MST"))),
 		),
+	)
+}
+
+func Nodes(netname string) g.Node {
+	nodes := GetNodes(netname)
+	if nodes == nil {
+		g.Text("There are no nodes")
+	}
+	return Div(ID("Nodes"), Class("w3-container tab"),
+		g.Group(g.Map(len(nodes), func(i int) g.Node {
+			return FieldSet(
+				Legend(g.Text(nodes[i].Name)),
+				FieldSet(
+					Legend(g.Text("Public Key")),
+					Label(g.Text(nodes[i].PublicKey)),
+				),
+				FieldSet(
+					Legend(g.Text("Listen Port")),
+					Label(g.Textf("%v", nodes[i].ListenPort)),
+				),
+				FieldSet(
+					Legend(g.Text("Last CheckIn")),
+					Label(g.Textf("%v", nodes[i].LastCheckIn)),
+				),
+			)
+		})),
+	)
+}
+
+func Keys(netname string) g.Node {
+	keys := GetKeys(netname)
+	return Div(ID("Access Keys"), Class("w3-container tab"),
+		Button(Class("w3-button w3-white w3-center"),
+			g.Text("Add New Access Key"),
+		),
+		g.Group(g.Map(len(keys), func(i int) g.Node {
+			return FieldSet(
+				Legend(g.Text(keys[i].Name)),
+				Label(g.Textf("Uses: %v", keys[i].Uses)),
+				Button(Class("w3-button w3-white w3-right"),
+					g.Text("Delete Key"),
+				),
+			)
+		})),
+	)
+}
+
+func DNS(netname string) g.Node {
+	dns := GetDNS(netname)
+	return Div(ID("DNS"), Class("w3-container tab"),
+		Button(Class("w3-button w3-white w3-center"),
+			g.Text("Add Entry"),
+		),
+		g.Group(g.Map(len(dns), func(i int) g.Node {
+			return Div(
+				Table(Tr(Th(g.Text("Name")), Th(g.Text("Address"))),
+					Tr(Td(g.Text(dns[i].Name)), Td(g.Text(dns[i].Address))),
+				),
+			)
+		})),
 	)
 }
