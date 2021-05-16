@@ -26,7 +26,8 @@ func ButtonGroup(buttons []string) g.Node {
 		g.Group(g.Map(len(buttons), func(i int) g.Node {
 			return Button(Class("w3-bar-item w3-button tabbuttons"),
 				g.Text(buttons[i]),
-				g.Attr("onClick", "openTab(event, '"+buttons[i]+"')"),
+				g.Attr("onClick", "openTab('"+buttons[i]+"'); changeColour(this);"),
+				//g.Attr("onClick", "changeColour(this)"),
 			)
 		})),
 	)
