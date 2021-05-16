@@ -3,6 +3,7 @@ package main
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"net/http"
 
 	"github.com/gravitl/netmaker/models"
@@ -11,6 +12,19 @@ import (
 type PageLink struct {
 	Path string
 	Name string
+}
+
+func SaveNet(w http.ResponseWriter, r *http.Request) error {
+	if err := r.ParseForm(); err != nil {
+		fmt.Println("ParseError", err)
+		return err
+	}
+	var net models.Network
+	net.NetID = r.FormValue("netname")
+	net.AddressRange = r.FormValue("addressrange")
+	response, err := API(net, http.MethodPost, "/api/networks", "secretkey")
+	fmt.Println(response, err)
+	return err
 }
 
 func GetKeys(netname string) []models.AccessKey {

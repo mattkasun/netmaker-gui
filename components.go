@@ -12,6 +12,8 @@ func Banner() g.Node {
 	return Div(Class("w3-container w3-blue center"),
 		Button(Class("w3-button w3-blue w3-left"),
 			g.Text("Add Network"),
+			//g.Attr("onClick", "openTab('addnetwork')"),
+			g.Attr("onClick", "document.getElementById('addnetwork').style.display='block'"),
 		),
 		Img(g.Attr("src", "images/netmaker2.png")),
 		Button(Class("w3-button w3-blue w3-right"),
@@ -22,9 +24,9 @@ func Banner() g.Node {
 func ButtonGroup(buttons []string) g.Node {
 	return Div(Class("center btn-group w3-white"),
 		g.Group(g.Map(len(buttons), func(i int) g.Node {
-			return Button(Class("w3-bar-item w3-button"),
+			return Button(Class("w3-bar-item w3-button tabbuttons"),
 				g.Text(buttons[i]),
-				g.Attr("onClick", "openTab('"+buttons[i]+"')"),
+				g.Attr("onClick", "openTab(event, '"+buttons[i]+"')"),
 			)
 		})),
 	)
@@ -55,6 +57,7 @@ func All() g.Node {
 		AllNodes(),
 		KeyHolder(),
 		DNSHolder(),
+		Forms(),
 	)
 }
 
@@ -202,5 +205,68 @@ func DNS(netname string) g.Node {
 				),
 			)
 		})),
+	)
+}
+
+func Forms() g.Node {
+	return (AddNetwork())
+}
+
+func AddNetwork() g.Node {
+	return Div(ID("addnetwork"), Class("w3-modal"),
+		Div(Class("w3-modal-content"),
+			Div(Class("w3-container"),
+				FormEl(g.Attr("action", "/"),
+					g.Attr("method", "post"),
+					H1(g.Text("New Network")),
+
+					Input(
+						g.Attr("type", "text"),
+						g.Attr("placeholder", "Network Name*"),
+						g.Attr("name", "netname"),
+						g.Attr("required"),
+					),
+					Br(),
+					Input(
+						g.Attr("type", "text"),
+						g.Attr("placeholder", "Address Range*"),
+						g.Attr("name", "addressrange"),
+						g.Attr("required"),
+					),
+					Br(),
+					Input(
+						g.Attr("type", "checkbox"),
+						g.Attr("name", "dualstack"),
+						g.Attr("value", "true"),
+					),
+					Label(
+						g.Attr("for", "dualstack"),
+						g.Text("Use Dual Stack (IPv6)?"),
+					),
+					Br(),
+					Input(
+						g.Attr("type", "checkbox"),
+						g.Attr("name", "islocal"),
+						g.Attr("value", "true"),
+					),
+					Label(
+						g.Attr("for", "islocal"),
+						g.Text("Is Local?"),
+					),
+					Br(),
+					Button(
+						Class("w3-white"),
+						g.Attr("onClick", "document.getElementById('addnetwork').style.display='none'"),
+						g.Text("Cancel"),
+					),
+					Input(
+						//Class("w3-blue"),
+						g.Attr("type", "submit"),
+						g.Attr("value", "Submit"),
+						g.Text("Create Network"),
+					),
+				),
+			),
+		),
 	)
 }

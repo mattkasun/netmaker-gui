@@ -26,10 +26,22 @@ func jshandler(w http.ResponseWriter, r *http.Request) {
 	http.ServeFile(w, r, "./openTab.js")
 }
 func mainhandler(w http.ResponseWriter, r *http.Request) {
-	_ = Page(props{
-		title: r.URL.Path,
-		path:  r.URL.Path,
-	}).Render(w)
+	switch r.Method {
+	case "GET":
+		_ = Page(props{
+			title: r.URL.Path,
+			path:  r.URL.Path,
+		}).Render(w)
+	case "POST":
+		err := SaveNet(w, r)
+		if err != nil {
+			_ = ErrorPage(props{
+				title: r.URL.Path,
+				path:  r.URL.Path,
+			}).Render(w)
+		}
+		http.Redirect(w, r, "/", http.StatusSeeOther)
+	}
 }
 
 type props struct {
@@ -50,12 +62,15 @@ func Page(p props) g.Node {
 				g.Raw(".navbar{width:15%}"),
 				g.Raw(".navbarbutton{text-align:right}"),
 				g.Raw(".maincontent{margin-left:25%}"),
+				g.Raw(".form-popup{display:none}"),
+				g.Raw(".tabbuttons:focus{background-color: #fff}"),
 			),
 			//Link(Rel("javascript"), Href("./openTab.js")),
 			Script(g.Attr("src", "openTab.js")),
 		},
 		Body: []g.Node{
-			g.Attr("onload", "openTab('Network Details')"),
+			//g.Attr("onload", "openTab('Network Details')"),
+			//Forms(),
 			Banner(),
 			ButtonGroup(buttons),
 			Navbar(p.path, GetNetworks()),
@@ -66,6 +81,22 @@ func Page(p props) g.Node {
 				//Display(p.path),
 				g.If(p.path != "/", Detail(p.path[1:])),
 			),
+		},
+	})
+}
+
+func ErrorPage(p props) g.Node {
+	return c.HTML5(c.HTML5Props{
+		Title:    "Error",
+		Language: "en",
+		Head: []g.Node{
+			StyleEl(Type("text/css"),
+				g.Raw(".center{ margin:auto; width:100%; padding: 10px; text-align: center;}"),
+				g.Raw(".maincontent{margin-left:25%}"),
+			),
+		},
+		Body: []g.Node{
+			g.Text("An error occured adding new Network"),
 		},
 	})
 }
