@@ -70,6 +70,18 @@ func GetNodes(netname string) []models.Node {
 	return nodes
 }
 
+func GetAllNetIDs(extraNode string) (nets []string) {
+	if extraNode != "" {
+		nets = append(nets, extraNode)
+	}
+	networks := GetAllNets()
+	for _, network := range networks {
+		ID := network.NetID
+		nets = append(nets, ID)
+	}
+	return nets
+}
+
 func GetAllNets() (networks []models.Network) {
 	response, err := API("", http.MethodGet, "/api/networks", "secretkey")
 	if err != nil {

@@ -21,13 +21,29 @@ func Banner() g.Node {
 		),
 	)
 }
-func ButtonGroup(buttons []string) g.Node {
+func ButtonGroup(buttons []string, class string) g.Node {
 	return Div(Class("center btn-group w3-white"),
 		g.Group(g.Map(len(buttons), func(i int) g.Node {
-			return Button(Class("w3-bar-item w3-button tabbuttons"),
+			return Button(Class("w3-bar-item w3-button "+class),
 				g.Text(buttons[i]),
-				g.Attr("onClick", "openTab('"+buttons[i]+"'); changeColour(this);"),
-				//g.Attr("onClick", "changeColour(this)"),
+				//g.Attr("onClick", "openTab('"+buttons[i]+"'); changeColour(this);"),
+				g.Attr("onClick", "changeColour(this); displayTab();"),
+				g.If(i != 0, g.Attr("data-selected", "false")),
+				g.If(i == 0, g.Attr("data-selected", "true")),
+			)
+		})),
+	)
+}
+
+func VertButtonGroup(buttons []string) g.Node {
+	return Div(Class("w3-sidebar w3-bar-block"),
+		g.Group(g.Map(len(buttons), func(i int) g.Node {
+			return Button(Class("w3-button netbutton block"),
+				g.Text(buttons[i]),
+				//g.Attr("onClick", "navTo('"+buttons[i]+"'); changeColourNets(this);"),
+				g.Attr("onClick", "changeColour(this); displayTab();"),
+				g.If(i != 0, g.Attr("data-selected", "false")),
+				g.If(i == 0, g.Attr("data-selected", "true")),
 			)
 		})),
 	)
@@ -39,7 +55,7 @@ func Navbar(currentPath string, links []PageLink) g.Node {
 		g.Group(g.Map(len(links), func(i int) g.Node {
 			return NavbarLink(links[i].Path, links[i].Name, currentPath)
 		})),
-		Hr(),
+		Br(),
 	)
 }
 
@@ -67,10 +83,17 @@ func AllNodes() g.Node {
 	if nodes == nil {
 		g.Text("There are no nodes")
 	}
-	return Div(ID("Nodes"), Class("w3-container tab"),
+	return Div(ID("All Networks-Nodes"), Class("w3-container tab"),
 		g.Group(g.Map(len(nodes), func(i int) g.Node {
 			return FieldSet(
 				Legend(g.Text(nodes[i].Name)),
+				Button(ID("edit"+networks[i].NetID), Class("w3-right"),
+					Img(g.Attr("src", "/images/edit.png"),
+						g.Attr("alt", "edit"),
+						g.Attr("width", "24")),
+					// ------------this need updating -------
+					g.Attr("onClick", "document.getElementById('editnetwork').style.display='block'"),
+				),
 				FieldSet(
 					Legend(g.Text("Public Key")),
 					Label(g.Text(nodes[i].PublicKey)),
@@ -89,12 +112,12 @@ func AllNodes() g.Node {
 }
 
 func KeyHolder() g.Node {
-	return Div(ID("Access Keys"), Class("w3-container tab"),
+	return Div(ID("All Networks-Access Keys"), Class("w3-container tab"),
 		g.Text("Please select a specific network to view it's access keys"),
 	)
 }
 func DNSHolder() g.Node {
-	return Div(ID("DNS"), Class("w3-container tab"),
+	return Div(ID("All Networks-DNS"), Class("w3-container tab"),
 		g.Text("Please select a specific network to view it's DNS"),
 	)
 }
@@ -105,10 +128,33 @@ func AllNets() g.Node {
 	if networks == nil {
 		return g.Text("nothing to see here")
 	}
-	return Div(ID("Network Details"), Class("w3-container tab"),
+	return Div(ID("All Networks-Network Details"),
+		Class("w3-container tab"), g.Attr("display", "inline"),
+		P(g.Text("All Networks")),
 		g.Group(g.Map(len(networks), func(i int) g.Node {
-			return FieldSet(
+			return FieldSet(g.Attr("display", "inline"),
 				Legend(g.Text(networks[i].DisplayName)),
+				Button(ID("edit"+networks[i].NetID), Class("w3-right"),
+					Img(g.Attr("src", "/images/edit.png"),
+						g.Attr("alt", "edit"),
+						g.Attr("width", "24")),
+					// ------------this need updating -------
+					g.Attr("onClick", "document.getElementById('editnetwork').style.display='block'"),
+				),
+				Button(ID("refresh"+networks[i].NetID), Class("w3-left"),
+					Img(g.Attr("src", "/images/refresh.png"),
+						g.Attr("alt", "refresh"),
+						g.Attr("width", "24")),
+					// ------------this need updating -------
+					g.Attr("onClick", "document.getElementById('editnetwork').style.display='block'"),
+				),
+				Button(ID("addserver"+networks[i].NetID), Class("w3-left"),
+					Img(g.Attr("src", "/images/plus.png"),
+						g.Attr("alt", "addserver"),
+						g.Attr("width", "24")),
+					// ------------this need updating -------
+					g.Attr("onClick", "document.getElementById('editnetwork').style.display='block'"),
+				),
 				FieldSet(
 					Legend(g.Text("AddressRange")),
 					Label(g.Text(networks[i].AddressRange)),
@@ -117,26 +163,34 @@ func AllNets() g.Node {
 					Legend(g.Text("NodesLastModifed")),
 					Label(g.Text(time.Unix(networks[i].NodesLastModified, 0).Format("Mon Jan 2 2016 15:04:05 MST"))),
 				),
+				FieldSet(
+					Legend(g.Text("NetworkLastModifed")),
+					Label(g.Text(time.Unix(networks[i].NetworkLastModified, 0).Format("Mon Jan 2 2016 15:04:05 MST"))),
+				),
 			)
 		})),
 	)
 }
 
-func Detail(netname string) g.Node {
-	return Div(
-		Net(netname),
-		Nodes(netname),
-		Keys(netname),
-		DNS(netname),
-	)
+func Detail() g.Node {
+	networks := GetAllNetIDs("")
+	return g.Group(g.Map(len(networks), func(i int) g.Node {
+		//for _, netname := range networks {
+		return Div(
+			Net(networks[i]),
+			Nodes(networks[i]),
+			Keys(networks[i]),
+			DNS(networks[i]),
+		)
+	}))
 }
 
 func Net(netname string) g.Node {
 	network := GetNetwork(netname)
 	buttons := []string{"Edit", "Save", "Cancel", "Delete"}
 
-	return Div(ID("Network Details"), Class("w3-container tab"),
-		ButtonGroup(buttons),
+	return Div(ID(netname+"-Network Details"), Class("w3-container tab"),
+		ButtonGroup(buttons, "netbuttons"),
 		Input(Class("switch slider round"), Label(g.Text("Allow Node SignUp without Keys"))),
 		FieldSet(
 			Legend(g.Text("AddressRange")),
@@ -154,7 +208,7 @@ func Nodes(netname string) g.Node {
 	if nodes == nil {
 		g.Text("There are no nodes")
 	}
-	return Div(ID("Nodes"), Class("w3-container tab"),
+	return Div(ID(netname+"-Nodes"), Class("w3-container tab"),
 		g.Group(g.Map(len(nodes), func(i int) g.Node {
 			return FieldSet(
 				Legend(g.Text(nodes[i].Name)),
@@ -177,7 +231,7 @@ func Nodes(netname string) g.Node {
 
 func Keys(netname string) g.Node {
 	keys := GetKeys(netname)
-	return Div(ID("Access Keys"), Class("w3-container tab"),
+	return Div(ID(netname+"-Access Keys"), Class("w3-container tab"),
 		Button(Class("w3-button w3-white w3-center"),
 			g.Text("Add New Access Key"),
 		),
@@ -195,7 +249,7 @@ func Keys(netname string) g.Node {
 
 func DNS(netname string) g.Node {
 	dns := GetDNS(netname)
-	return Div(ID("DNS"), Class("w3-container tab"),
+	return Div(ID(netname+"-DNS"), Class("w3-container tab"),
 		Button(Class("w3-button w3-white w3-center"),
 			g.Text("Add Entry"),
 		),

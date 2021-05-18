@@ -10,8 +10,9 @@ import (
 )
 
 func main() {
+	images := http.FileServer(http.Dir("images/"))
 	http.HandleFunc("/", mainhandler)
-	http.HandleFunc("/images/netmaker2.png", imagehandler)
+	http.Handle("/images/", http.StripPrefix("/images/", images))
 	http.HandleFunc("/openTab.js", jshandler)
 
 	//_ = http.ListenAndServe("localhost:8080", http.HandlerFunc(handler))
@@ -19,7 +20,7 @@ func main() {
 
 }
 func imagehandler(w http.ResponseWriter, r *http.Request) {
-	http.ServeFile(w, r, "./images/netmaker2.png")
+	http.ServeFile(w, r, r.URL.Path)
 }
 func jshandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/javascript")
@@ -64,22 +65,26 @@ func Page(p props) g.Node {
 				g.Raw(".maincontent{margin-left:25%}"),
 				g.Raw(".form-popup{display:none}"),
 				g.Raw(".tabbuttons.label{cursor:pointer}"),
+				g.Raw(".block{display:block}"),
 			),
-			//Link(Rel("javascript"), Href("./openTab.js")),
+			Link(Rel("javascript"), Href("./openTab.js")),
 			Script(g.Attr("src", "openTab.js")),
 		},
 		Body: []g.Node{
-			g.Attr("onload", "openTab('Network Details')"),
+			g.Attr("onLoad", "openTab('All Networks-Network Details')"),
 			//Forms(),
 			Banner(),
-			ButtonGroup(buttons),
-			Navbar(p.path, GetNetworks()),
+			ButtonGroup(buttons, "tabbutton"),
+			VertButtonGroup(GetAllNetIDs("All Networks")),
+			//Navbar(p.path, GetNetworks()),
 			Div(Class("maincontent w3-container"),
-				H1(g.Text(p.title)),
-				P(g.Textf("Welcome to the page at %v.", p.path[1:])),
-				g.If(p.path == "/", All()),
+				//H1(g.Text(p.title)),
+				//P(g.Textf("Welcome to the page at %v.", p.path[1:])),
+				//g.If(p.path == "/", All(GetAllNetIDs)),
+				All(),
 				//Display(p.path),
-				g.If(p.path != "/", Detail(p.path[1:])),
+				//g.If(p.path != "/", Detail(p.path[1:])),
+				Detail(),
 			),
 		},
 	})
