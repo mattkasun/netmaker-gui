@@ -38,9 +38,15 @@ func GetKeys(netname string) []models.AccessKey {
 	return keys
 }
 
-func GetDNS(netname string) []models.DNSEntry {
+func GetDNS(netname string, custom bool) []models.DNSEntry {
 	var dns []models.DNSEntry
-	response, err := API("", http.MethodGet, "/api/dns/adm/"+netname, "secretkey")
+	var err error
+	var response *http.Response
+	if custom {
+		response, err = API("", http.MethodGet, "/api/dns/adm/"+netname+"/custom", "secretkey")
+	} else {
+		response, err = API("", http.MethodGet, "/api/dns/adm/"+netname, "secretkey")
+	}
 	if err != nil {
 		return []models.DNSEntry{}
 	}

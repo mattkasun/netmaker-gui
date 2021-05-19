@@ -1,12 +1,18 @@
 package main
 
 import (
+	"fmt"
 	"time"
 
 	g "github.com/maragudk/gomponents"
 	c "github.com/maragudk/gomponents/components"
 	. "github.com/maragudk/gomponents/html"
 )
+
+type ButtonData struct {
+	Name    string
+	Enabled bool
+}
 
 func Banner() g.Node {
 	return Div(Class("w3-container w3-blue center"),
@@ -21,13 +27,15 @@ func Banner() g.Node {
 		),
 	)
 }
-func ButtonGroup(buttons []string, class string) g.Node {
+func ButtonGroup(buttons []ButtonData, class, onclick string) g.Node {
+	//func ButtonGroup(buttons []string, class string) g.Node {
 	return Div(Class("center btn-group w3-white"),
 		g.Group(g.Map(len(buttons), func(i int) g.Node {
 			return Button(Class("w3-bar-item w3-button "+class),
-				g.Text(buttons[i]),
+				g.Text(buttons[i].Name),
 				//g.Attr("onClick", "openTab('"+buttons[i]+"'); changeColour(this);"),
-				g.Attr("onClick", "changeColour(this); displayTab();"),
+				g.If(!buttons[i].Enabled, g.Attr("disabled")),
+				g.Attr("onClick", onclick),
 				g.If(i != 0, g.Attr("data-selected", "false")),
 				g.If(i == 0, g.Attr("data-selected", "true")),
 			)
@@ -84,12 +92,26 @@ func AllNodes() g.Node {
 		g.Text("There are no nodes")
 	}
 	return Div(ID("All Networks-Nodes"), Class("w3-container tab"),
+		P(g.Text("All Nodes")),
 		g.Group(g.Map(len(nodes), func(i int) g.Node {
 			return FieldSet(
 				Legend(g.Text(nodes[i].Name)),
-				Button(ID("edit"+networks[i].NetID), Class("w3-right"),
+				g.Text("public ip:"),
+				g.Text(nodes[i].Endpoint),
+				g.Text(" | subnet ip:"),
+				g.Text(nodes[i].Address),
+				g.Text(" | status:"),
+				g.Text("TODO"),
+				Button(ID("edit"+nodes[i].Name), Class("w3-button w3-right"),
 					Img(g.Attr("src", "/images/edit.png"),
 						g.Attr("alt", "edit"),
+						g.Attr("width", "24")),
+					// ------------this need updating -------
+					g.Attr("onClick", "document.getElementById('editnetwork').style.display='block'"),
+				),
+				Button(ID("gateway"+nodes[i].Name), Class("w3-button w3-left"),
+					Img(g.Attr("src", "/images/network.png"),
+						g.Attr("alt", "add gateway"),
 						g.Attr("width", "24")),
 					// ------------this need updating -------
 					g.Attr("onClick", "document.getElementById('editnetwork').style.display='block'"),
@@ -104,7 +126,7 @@ func AllNodes() g.Node {
 				),
 				FieldSet(
 					Legend(g.Text("Last CheckIn")),
-					Label(g.Textf("%v", nodes[i].LastCheckIn)),
+					Label(g.Text(time.Unix(nodes[i].LastCheckIn, 0).Format("Mon Jan 2 2016 15:04:05 MST"))),
 				),
 			)
 		})),
@@ -134,36 +156,37 @@ func AllNets() g.Node {
 		g.Group(g.Map(len(networks), func(i int) g.Node {
 			return FieldSet(g.Attr("display", "inline"),
 				Legend(g.Text(networks[i].DisplayName)),
-				Button(ID("edit"+networks[i].NetID), Class("w3-right"),
+				Button(ID("edit"+networks[i].NetID), Class("w3-button w3-right"),
 					Img(g.Attr("src", "/images/edit.png"),
 						g.Attr("alt", "edit"),
 						g.Attr("width", "24")),
 					// ------------this need updating -------
 					g.Attr("onClick", "document.getElementById('editnetwork').style.display='block'"),
 				),
-				Button(ID("refresh"+networks[i].NetID), Class("w3-left"),
+				Br(), Br(),
+				Button(ID("refresh"+networks[i].NetID), Class("w3-button w3-left"),
 					Img(g.Attr("src", "/images/refresh.png"),
 						g.Attr("alt", "refresh"),
 						g.Attr("width", "24")),
 					// ------------this need updating -------
 					g.Attr("onClick", "document.getElementById('editnetwork').style.display='block'"),
 				),
-				Button(ID("addserver"+networks[i].NetID), Class("w3-left"),
+				Button(ID("addserver"+networks[i].NetID), Class("w3-button w3-left"),
 					Img(g.Attr("src", "/images/plus.png"),
 						g.Attr("alt", "addserver"),
 						g.Attr("width", "24")),
 					// ------------this need updating -------
 					g.Attr("onClick", "document.getElementById('editnetwork').style.display='block'"),
 				),
-				FieldSet(
+				FieldSet(g.Attr("display", "inline"),
 					Legend(g.Text("AddressRange")),
 					Label(g.Text(networks[i].AddressRange)),
 				),
-				FieldSet(
+				FieldSet(g.Attr("display", "inline"),
 					Legend(g.Text("NodesLastModifed")),
 					Label(g.Text(time.Unix(networks[i].NodesLastModified, 0).Format("Mon Jan 2 2016 15:04:05 MST"))),
 				),
-				FieldSet(
+				FieldSet(g.Attr("display", "inline"),
 					Legend(g.Text("NetworkLastModifed")),
 					Label(g.Text(time.Unix(networks[i].NetworkLastModified, 0).Format("Mon Jan 2 2016 15:04:05 MST"))),
 				),
@@ -187,31 +210,162 @@ func Detail() g.Node {
 
 func Net(netname string) g.Node {
 	network := GetNetwork(netname)
-	buttons := []string{"Edit", "Save", "Cancel", "Delete"}
+	buttons := []ButtonData{{"Edit", true}, {"Save", false}, {"Cancel", false}, {"Delete", true}}
 
 	return Div(ID(netname+"-Network Details"), Class("w3-container tab"),
-		ButtonGroup(buttons, "netbuttons"),
-		Input(Class("switch slider round"), Label(g.Text("Allow Node SignUp without Keys"))),
+		c.Classes{"width:600px;": true},
+		ButtonGroup(buttons, "netbuttons", ""),
+		Label(Class("switch"),
+			Input(g.Attr("type", "checkbox")),
+			//g.Raw("<span class=\"slider round\"></span>"),
+			(g.Text("Allow Node SignUp without Keys")),
+		),
+		//Editable
 		FieldSet(
-			Legend(g.Text("AddressRange")),
-			Label(g.Text(network.AddressRange)),
+			Legend(g.Text("Address Range")),
+			Input(
+				ID(netname+"."+network.AddressRange),
+				g.Attr("type", "text"),
+				g.Attr("name", "AddressRange"),
+				g.Attr("placeholder", network.AddressRange),
+				g.Attr("disabled"),
+			),
+		),
+		FieldSet(
+			Legend(g.Text("Address Range (IPv6)")),
+			Label(g.Text(network.AddressRange6)),
+		),
+		//Editable
+		FieldSet(
+			Legend(g.Text("Local Range")),
+			Input(
+				ID(netname+"."+network.LocalRange),
+				g.Attr("type", "text"),
+				g.Attr("name", "LocalRange"),
+				g.Attr("placeholder", network.LocalRange),
+				g.Attr("disabled"),
+			),
+		),
+		//Editable
+		FieldSet(
+			Legend(g.Text("Display Name")),
+			Input(
+				ID(netname+"."+network.DisplayName),
+				g.Attr("type", "text"),
+				g.Attr("name", "DefaultDisplayName"),
+				g.Attr("placeholder", network.DisplayName),
+				g.Attr("disabled"),
+			),
 		),
 		FieldSet(
 			Legend(g.Text("NodesLastModifed")),
 			Label(g.Text(time.Unix(network.NodesLastModified, 0).Format("Mon Jan 2 2016 15:04:05 MST"))),
+		),
+		FieldSet(
+			Legend(g.Text("Network Last Modified")),
+			Label(g.Text(time.Unix(network.NetworkLastModified, 0).Format("Mon Jan 2 2016 15:04:05 MST"))),
+		),
+		//Editable
+		FieldSet(
+			Legend(g.Text("Interface")),
+			Input(
+				ID(netname+"."+network.DefaultInterface),
+				g.Attr("type", "text"),
+				g.Attr("name", "DefaultInterface"),
+				g.Attr("placeholder", network.DefaultInterface),
+				g.Attr("disabled"),
+			),
+		),
+		//Editable
+		FieldSet(
+			Legend(g.Text("Listen Port")),
+			Input(
+				ID(netname+"."+fmt.Sprintf("%v", network.DefaultListenPort)),
+				g.Attr("type", "text"),
+				g.Attr("name", "DefaultListenPort"),
+				g.Attr("placeholder", fmt.Sprintf("%v", network.DefaultListenPort)),
+				g.Attr("disabled"),
+			),
+		),
+		//Editable
+		FieldSet(
+			Legend(g.Text("Post Up")),
+			Input(
+				ID(netname+"."+network.DefaultPostUp),
+				g.Attr("type", "text"),
+				g.Attr("name", "DefaultPostUp"),
+				g.Attr("placeholder", network.DefaultPostUp),
+				g.Attr("disabled"),
+			),
+		),
+		//Editable
+		FieldSet(
+			Legend(g.Text("Post Down")),
+			Input(
+				ID(netname+"."+network.DefaultPostDown),
+				g.Attr("type", "text"),
+				g.Attr("name", "DefaultPostDown"),
+				g.Attr("placeholder", network.DefaultPostDown),
+				g.Attr("disabled"),
+			),
+		),
+		//Editable
+		FieldSet(
+			Legend(g.Text("KeepAlive")),
+			Input(
+				ID(netname+"."+fmt.Sprintf("%v", network.DefaultKeepalive)),
+				g.Attr("type", "text"),
+				g.Attr("name", "DefaultKeepalive"),
+				g.Attr("placeholder", fmt.Sprintf("%v", network.DefaultKeepalive)),
+				g.Attr("disabled"),
+			),
+		),
+		//Editable
+		FieldSet(
+			Legend(g.Text("Check In Interval")),
+			Input(
+				ID(netname+"."+fmt.Sprintf("%v", network.DefaultCheckInInterval)),
+				g.Attr("type", "text"),
+				g.Attr("name", "DefaultCheckInInterval"),
+				g.Attr("placeholder", fmt.Sprintf("%v", network.DefaultCheckInInterval)),
+				g.Attr("disabled"),
+			),
+		),
+		Span(
+			Label(Class("switch"), Input(g.Attr("type", "checkbox")), g.Text("Dual Stack")),
+			Label(Class("switch"), Input(g.Attr("type", "checkbox")), g.Text("Save Config")),
 		),
 	)
 }
 
 func Nodes(netname string) g.Node {
 	nodes := GetNodes(netname)
-	if nodes == nil {
-		g.Text("There are no nodes")
-	}
 	return Div(ID(netname+"-Nodes"), Class("w3-container tab"),
+		g.Text(netname+" nodes"),
+		g.If(nodes == nil, P(g.Text("No nodes present in network"))),
 		g.Group(g.Map(len(nodes), func(i int) g.Node {
 			return FieldSet(
 				Legend(g.Text(nodes[i].Name)),
+				g.Text("public ip:"),
+				g.Text(nodes[i].Endpoint),
+				g.Text(" | subnet ip:"),
+				g.Text(nodes[i].Address),
+				g.Text(" | status:"),
+				g.Text("TODO"),
+				Button(ID("edit"+nodes[i].Name), Class("w3-button w3-right"),
+					Img(g.Attr("src", "/images/edit.png"),
+						g.Attr("alt", "edit"),
+						g.Attr("width", "24")),
+					// ------------this need updating -------
+					g.Attr("onClick", "document.getElementById('editnetwork').style.display='block'"),
+				),
+				Button(ID("gateway"+nodes[i].Name), Class("w3-button w3-left"),
+					Img(g.Attr("src", "/images/network.png"),
+						g.Attr("alt", "add gateway"),
+						g.Attr("width", "24")),
+					// ------------this need updating -------
+					g.Attr("onClick", "document.getElementById('editnetwork').style.display='block'"),
+				),
 				FieldSet(
 					Legend(g.Text("Public Key")),
 					Label(g.Text(nodes[i].PublicKey)),
@@ -222,7 +376,7 @@ func Nodes(netname string) g.Node {
 				),
 				FieldSet(
 					Legend(g.Text("Last CheckIn")),
-					Label(g.Textf("%v", nodes[i].LastCheckIn)),
+					Label(g.Text(time.Unix(nodes[i].LastCheckIn, 0).Format("Mon Jan 2 2016 15:04:05 MST"))),
 				),
 			)
 		})),
@@ -248,18 +402,32 @@ func Keys(netname string) g.Node {
 }
 
 func DNS(netname string) g.Node {
-	dns := GetDNS(netname)
+	dns := GetDNS(netname, false)
+	custom := GetDNS(netname, true)
+
 	return Div(ID(netname+"-DNS"), Class("w3-container tab"),
+		StyleEl(Type("text/css"),
+			g.Raw("table{ border: 1px solid black}"),
+			g.Raw("th { background: blue; color: white}"),
+		),
 		Button(Class("w3-button w3-white w3-center"),
 			g.Text("Add Entry"),
 		),
-		g.Group(g.Map(len(dns), func(i int) g.Node {
-			return Div(
-				Table(Tr(Th(g.Text("Name")), Th(g.Text("Address"))),
-					Tr(Td(g.Text(dns[i].Name)), Td(g.Text(dns[i].Address))),
-				),
-			)
-		})),
+		Table(Tr(Th(g.Text("Node DNS (default)"))),
+			g.Group(g.Map(len(dns), func(i int) g.Node {
+				return Tr(Td(g.Text(dns[i].Name)), Td(g.Text(dns[i].Address)))
+			})),
+		),
+		Table(Tr(Th(g.Text("Custom DNS"))),
+			g.Group(g.Map(len(custom), func(i int) g.Node {
+				return Tr(Td(g.Text(custom[i].Name)), Td(g.Text(custom[i].Address)),
+					Td(Img(g.Attr("src", "/images/delete.png"),
+						g.Attr("alt", "delete entry"),
+						g.Attr("width", "24"),
+					)),
+				)
+			})),
+		),
 	)
 }
 

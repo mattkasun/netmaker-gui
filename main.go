@@ -52,7 +52,7 @@ type props struct {
 
 // Page is a whole document to output.
 func Page(p props) g.Node {
-	buttons := []string{"Network Details", "Nodes", "Access Keys", "DNS"}
+	buttons := []ButtonData{{"Network Details", true}, {"Nodes", true}, {"Access Keys", true}, {"DNS", true}}
 	return c.HTML5(c.HTML5Props{
 		Title:    p.title,
 		Language: "en",
@@ -66,6 +66,14 @@ func Page(p props) g.Node {
 				g.Raw(".form-popup{display:none}"),
 				g.Raw(".tabbuttons.label{cursor:pointer}"),
 				g.Raw(".block{display:block}"),
+				g.Raw(".switch{position:relative; display:block; width:600px; height34px;}"),
+				g.Raw(".slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; -webkit-transition: .4s; transition: .4s; }"),
+				g.Raw(".slider:before { position: absolute; content: \"\"; height: 26px; width: 26px; left: 4px; bottom: 4px; background-color: white; -webkit-transition: .4s; transition: .4s; }"),
+				g.Raw("input:checked + .slider{background-color:#2196F3;}"),
+				g.Raw("input:checked + .slider:before { -webkit-transform: translateX(26px); -ms-transform: translateX(26px); transform: translateX(26px); }"),
+				g.Raw(".slider.round{border-radius:34px;}"),
+				g.Raw(".input[type=checkbox]{visibility: hidden;}"),
+				g.Raw(".fieldset{display: inline;}"),
 			),
 			Link(Rel("javascript"), Href("./openTab.js")),
 			Script(g.Attr("src", "openTab.js")),
@@ -74,7 +82,7 @@ func Page(p props) g.Node {
 			g.Attr("onLoad", "openTab('All Networks-Network Details')"),
 			//Forms(),
 			Banner(),
-			ButtonGroup(buttons, "tabbutton"),
+			ButtonGroup(buttons, "tabbutton", "changeColour(this); displayTab();"),
 			VertButtonGroup(GetAllNetIDs("All Networks")),
 			//Navbar(p.path, GetNetworks()),
 			Div(Class("maincontent w3-container"),
