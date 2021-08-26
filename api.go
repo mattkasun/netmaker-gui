@@ -120,7 +120,8 @@ func GetNetwork(name string) (network models.Network) {
 }
 
 func API(data interface{}, method, url, authorization string) (*http.Response, error) {
-	backendURL := "http://localhost:8081"
+	//backendURL := "http://localhost:8081"
+	backendURL := "https://api.netmaker.nusak.ca"
 	var request *http.Request
 	var err error
 	if data != "" {
