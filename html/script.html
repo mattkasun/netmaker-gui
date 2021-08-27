@@ -1,0 +1,63 @@
+{{define "script"}}
+<script>
+
+var network = "All"
+
+function setVisibility(tabName) {
+    var i;
+    var x = document.getElementsByClassName ("tab");
+    for (i=0; i<x.length; i++) {
+        x[i].style.display="none";
+    }
+    document.getElementById(tabName).style.display = "block";
+
+    var x = document.getElementsByClassName("net");
+    for (i=0; i<x.length; i++) {
+
+	if (x[i].className.includes(network) || network == "All") {
+	    x[i].style.display="block";
+	} else {
+	    x[i].style.display="none"
+	}
+    }
+
+}
+
+function openTab(evt, tabName) {
+    var i;
+    var x = document.getElementsByClassName ("tab");
+    for (i=0; i<x.length; i++) {
+        x[i].style.display="none";
+    }
+    document.getElementById(tabName).style.display = "block";
+
+    x = document.getElementsByClassName("tablink");
+    for (i=0; i<x.length; i++) {
+	x[i].className= x[i].className.replace(" w3-teal", "");
+    }
+    evt.currentTarget.className += " w3-teal";
+}
+
+function setNetwork(evt, net) {
+    var i, x;
+    network = net;
+    x = document.getElementsByClassName("netselection");
+    for (i=0; i<x.length; i++) {
+	x[i].className=x[i].className.replace(" w3-teal", "");
+    }
+    evt.currentTarget.className += " w3-teal";
+    
+    x = document.getElementsByClassName("net");
+    for (i=0; i<x.length; i++) {
+
+	if (x[i].className.includes(network) || network == "All") {
+	    x[i].style.display="block";
+	} else {
+	    x[i].style.display="none"
+	}
+    }
+
+}
+
+</script>
+{{end}}

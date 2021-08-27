@@ -1,0 +1,11 @@
+{{ define "Networks" }}
+<div style="margin-left:25%">
+<div id="Networks" class="btn-group w3-white tab" style="display=none">
+  {{ range .Networks }}
+  <button class="net {{.Name}}">{{.Name}}</button><br>
+  {{ end }}
+</div>
+</div>
+{{ end }}
+
+

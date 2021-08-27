@@ -1,0 +1,12 @@
+{{ define "Nodes" }}
+
+<div id="Nodes" class="w3-container tab" style="margin-left:25%">
+		<ul>
+			{{range .Nodes}}
+			<li class="net {{.Network}}">{{.Name }}</li>
+			{{end}}
+		</ul>
+</div>
+
+{{ end }}
+	

@@ -1,0 +1,29 @@
+{{define "layout"}}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+.tab{
+    max-width:1024px;
+    margin: auto;
+    padding: 10px;
+}
+</style>
+<!--    <link rel="stylesheet" href="stylesheet/bar.css" type="text/css">--> 
+  <link rel="stylesheet" href="https://www.w3schools.com/lib/w3.css" type="text/css">
+  <!-- <link rel="stylesheet" href="stylesheet/main.css" type="text/css"> 
+   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script> -->
+
+</head>
+<body onLoad="setVisibility('{{.Page}}')"> 
+
+    {{/*        {{template "header" .}} */}}
+    	{{template "buttonbar"}}
+	{{template "Sidebar" .}}
+	{{template "Networks" .}}
+	{{template "Nodes" .}}
+	{{ template "script" }} 
+</body>
+</html>
+{{end}}
