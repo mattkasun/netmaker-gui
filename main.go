@@ -1,3 +1,5 @@
+//©2021 Matthew R Kasun mkasun@nusak.ca
+
 package main
 
 import (

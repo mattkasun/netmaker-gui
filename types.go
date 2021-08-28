@@ -1,6 +1,10 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+
+	"github.com/gravitl/netmaker/models"
+)
 
 type User struct {
 	UserName string
@@ -50,7 +54,9 @@ func (data *PageData) Init(page string) {
 
 //NetSummary - contains summary network data for html template
 type NetSummary struct {
-	Name string
+	Name    string
+	Address string
+	Keys    []models.AccessKey
 	//AddressRange        string
 	//NodeLastModified    string
 	//NetworkLastModified string
@@ -58,8 +64,10 @@ type NetSummary struct {
 
 //NodeSummary - contains summary node data for html template
 type NodeSummary struct {
-	Name    string
-	Network string
+	Name     string
+	Network  string
+	PublicIP string
+	SubNet   string
 	//	PublicIP    string
 	//	SubNetIP    string
 	//	Status      string

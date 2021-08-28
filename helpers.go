@@ -50,6 +50,8 @@ func GetNetSummary() ([]NetSummary, error) {
 	}
 	for _, net := range body {
 		network.Name = net.DisplayName
+		network.Address = net.AddressRange
+		network.Keys = net.AccessKeys
 		result = append(result, network)
 	}
 
@@ -71,6 +73,8 @@ func GetNodeSummary() ([]NodeSummary, error) {
 	for _, net := range body {
 		node.Name = net.Name
 		node.Network = net.Network
+		node.PublicIP = net.Endpoint
+		node.SubNet = net.Address
 		result = append(result, node)
 	}
 

@@ -2,7 +2,20 @@
 <div style="margin-left:25%">
 <div id="Networks" class="btn-group w3-white tab" style="display=none">
   {{ range .Networks }}
-  <button class="net {{.Name}}">{{.Name}}</button><br>
+  <fieldset class="net {{.Name}}">
+      <legend>{{.Name}}</legend>
+      <button class="w3-circle w3-green">{{.Name}}</button><br>
+      <label>{{.Address}}<br>
+	  <fieldset>
+	  <legend>Last Modified</legend>
+	  <label>Network</label>
+	  <label>time</label><br>
+	  <label>Nodes</label>
+	  <label>time</label><br>
+	  </fieldset>
+	  <button>Delete </button><br>
+  <button>Edit</button>
+  </fieldset>
   {{ end }}
 </div>
 </div>

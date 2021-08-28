@@ -1,0 +1,26 @@
+{{ define "Keys" }}
+<div style="margin-left:25%">
+<div id="Keys" class="w3-container tab" style="display=none">
+    <form action="/newkey">
+    {{ range .Networks }} 
+    <fieldset class="net {{.Name}}">
+	<legend>{{.Name}}</legend>
+	{{ range .Keys }}
+	<fieldset>
+	    <legend>{{.Name}}</legend>
+	    <label>Value</label>
+	    <input type="text" placeholder={{.Value}} disabled><br>
+	    <label>Access String</label>
+	    <textarea rows="10" cols="50" disabled>{{.AccessString}}</textarea ><br>
+	    <label>Uses</label>
+	    <input type="text" placeholder={{.Uses}} disabled><br>
+	</fieldset>
+	{{end}} {{/*end range Keys */}}
+	<button>New Key</button>
+    </fieldset>
+    {{end}} {{/* end range Network */}}
+    </form>
+</div>
+</div>
+
+{{end}}
