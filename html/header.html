@@ -1,0 +1,27 @@
+{{define "Header"}}
+<div class="w3-container w3-cell w3-cell-middle">
+<div class = "w3-bar w3-blue">
+    <a class="w3-bar-item w3-button headerbutton" href='https://docs.netmaker.org' target="_blank">Docs</a>
+    <button class="w3-bar-item w3-button headerbutton" onclick="openTab(event, 'Users')">Users</button>
+</div>
+</div>
+<div class="w3-container w3-cell">
+    <img src="images/netmaker2.png" alt="Netmaker makes networks">
+</div>
+<div class="w3-container w3-cell w3-cell-middle">
+    <div class="w3-dropdown-hover w3-right">
+	<button class="w3-bar-item w3-button">...<button>
+		{{/*
+	    <div class="w3-dropdown-content w3-bar-block w3-card-4" >
+	      <button class="w3-bar-item w3-button" onClick="alert('About popup')">About</buton>
+	      <a href="logout" class="w3-bar-item w3-button">Logout</a>
+	    </div>
+	    */}}
+<div class="w3-dropdown-content w3-bar-block w3-card-4">
+        <a href="#" class="w3-bar-item w3-button">Link 1</a>
+        <a href="#" class="w3-bar-item w3-button">Link 2</a>
+        <button class="w3-bar-item w3-button" onClick="alert('hello')">Link 3</button>
+      </div>	    
+    </div>
+</div>
+{{end}}

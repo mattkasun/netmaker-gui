@@ -3,12 +3,19 @@
 package main
 
 import (
+	"log"
+	"net/http"
+	_ "net/http/pprof"
+
 	"github.com/gin-gonic/gin"
 )
 
 var Data PageData
 
 func main() {
+	go func() {
+		log.Println(http.ListenAndServe("localhost:6060", nil))
+	}()
 	router := SetupRouter()
 	router.Run(":8080")
 }
@@ -16,6 +23,8 @@ func main() {
 func SetupRouter() *gin.Engine {
 	router := gin.Default()
 	router.LoadHTMLGlob("html/*")
+	router.Static("images", "./images")
+	router.StaticFile("favicon.ico", "./images/favicon.ico")
 	router.GET("/", DisplayLanding)
 	return router
 }

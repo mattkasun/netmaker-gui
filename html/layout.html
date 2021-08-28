@@ -18,12 +18,13 @@
 </head>
 <body onLoad="setVisibility('{{.Page}}')"> 
 
-    {{/*        {{template "header" .}} */}}
+        {{template "Header"}} 
     	{{template "buttonbar"}}
 	{{template "Sidebar" .}}
 	{{template "Networks" .}}
 	{{template "Nodes" .}}
 	{{template "Keys" .}}
+	{{template "Users"}}
 	{{ template "script" }} 
 </body>
 </html>
