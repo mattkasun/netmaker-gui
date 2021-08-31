@@ -3,17 +3,17 @@
 <div id="Networks" class="btn-group w3-white tab" style="display=none">
   {{ range .Networks }}
   <fieldset class="net {{.Name}}">
-      <legend>{{.Name}}</legend>
+      <legend>{{.ID}}</legend>
       <button class="w3-circle w3-green" onclick="alert('Not Implemented yet')">{{.Name}}</button><br>
       <label>{{.Address}}<br>
 	  <fieldset>
 	  <legend>Last Modified</legend>
-	  <label>Network</label>
-	  <label>time</label><br>
-	  <label>Nodes</label>
-	  <label>time</label><br>
+	  <label>Network:</label>
+	  <label>{{.NetModified}}</label><br>
+	  <label>Nodes:</label>
+	  <label>{{.NodeModified}}</label><br>
 	  </fieldset>
-	  <button onclick="deleteNet('{{.Name}}')">Delete </button><br>
+	  <button onclick="deleteNet('{{.ID}}')">Delete </button><br>
 	  <button onclick="alert('Not Implemented yet')">Edit</button>
   </fieldset>
   {{ end }}
