@@ -120,3 +120,11 @@ type NodeDetail struct {
 	KeyRequired        bool
 	Static             bool
 }
+
+type NewNet struct {
+	Name    string
+	Address string
+	Dual    string
+	Local   string
+	UDP     string
+}

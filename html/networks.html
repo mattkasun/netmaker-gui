@@ -4,7 +4,7 @@
   {{ range .Networks }}
   <fieldset class="net {{.Name}}">
       <legend>{{.Name}}</legend>
-      <button class="w3-circle w3-green">{{.Name}}</button><br>
+      <button class="w3-circle w3-green" onclick="alert('Not Implemented yet')">{{.Name}}</button><br>
       <label>{{.Address}}<br>
 	  <fieldset>
 	  <legend>Last Modified</legend>
@@ -13,8 +13,8 @@
 	  <label>Nodes</label>
 	  <label>time</label><br>
 	  </fieldset>
-	  <button>Delete </button><br>
-  <button>Edit</button>
+	  <button onclick="deleteNet('{{.Name}}')">Delete </button><br>
+	  <button onclick="alert('Not Implemented yet')">Edit</button>
   </fieldset>
   {{ end }}
 </div>

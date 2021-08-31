@@ -26,5 +26,6 @@ func SetupRouter() *gin.Engine {
 	router.Static("images", "./images")
 	router.StaticFile("favicon.ico", "./images/favicon.ico")
 	router.GET("/", DisplayLanding)
+	router.POST("/create_network", CreateNetwork)
 	return router
 }

@@ -56,8 +56,23 @@ function setNetwork(evt, net) {
 	    x[i].style.display="none"
 	}
     }
-
 }
+
+
+function deleteNet(network) {
+    var r = confirm ("Delete Network "+network)
+    if (r == false) {
+	return
+    }
+    var xhttp = new XMLHttpRequest()
+    xhttp.open("DELETE", "https://api.netmaker.nusak.ca/api/networks/"+network, false)
+    xhttp.setRequestHeader("Authorization", "Bearer secretkey");
+    xhttp.send()
+    alert(xhttp.status+xhttp.statusText)
+    location.reload()
+}
+
+
 
 </script>
 {{end}}
