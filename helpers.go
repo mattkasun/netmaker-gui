@@ -3,7 +3,9 @@ package main
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"net/http"
+	"time"
 
 	"github.com/gravitl/netmaker/models"
 )
@@ -49,12 +51,15 @@ func GetNetSummary() ([]NetSummary, error) {
 		return result, err
 	}
 	for _, net := range body {
+		fmt.Println(net.NodesLastModified, net.NetworkLastModified)
+		network.ID = net.NetID
 		network.Name = net.DisplayName
 		network.Address = net.AddressRange
 		network.Keys = net.AccessKeys
+		network.NodeModified = time.Unix(net.NodesLastModified, 0).Format(time.UnixDate)
+		network.NetModified = time.Unix(net.NetworkLastModified, 0).Format(time.UnixDate)
 		result = append(result, network)
 	}
-
 	return result, err
 }
 
@@ -79,4 +84,15 @@ func GetNodeSummary() ([]NodeSummary, error) {
 	}
 
 	return result, err
+}
+
+func GetNetDetails(net string) (models.Network, error) {
+	var body models.Network
+	response, err := API("", http.MethodGet, "/api/networks/"+net, "secretkey")
+
+	if err != nil {
+		return body, err
+	}
+	err = json.NewDecoder(response.Body).Decode(&body)
+	return body, err
 }

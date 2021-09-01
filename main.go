@@ -17,7 +17,7 @@ func main() {
 		log.Println(http.ListenAndServe("localhost:6060", nil))
 	}()
 	router := SetupRouter()
-	router.Run(":8080")
+	router.Run("127.0.0.1:8080")
 }
 
 func SetupRouter() *gin.Engine {
@@ -27,5 +27,7 @@ func SetupRouter() *gin.Engine {
 	router.StaticFile("favicon.ico", "./images/favicon.ico")
 	router.GET("/", DisplayLanding)
 	router.POST("/create_network", CreateNetwork)
+	router.POST("/edit_network", EditNetwork)
+	router.POST("/updatenet", UpdateNetwork)
 	return router
 }

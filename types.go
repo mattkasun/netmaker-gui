@@ -54,9 +54,12 @@ func (data *PageData) Init(page string) {
 
 //NetSummary - contains summary network data for html template
 type NetSummary struct {
-	Name    string
-	Address string
-	Keys    []models.AccessKey
+	Name         string
+	ID           string
+	Address      string
+	NodeModified string
+	NetModified  string
+	Keys         []models.AccessKey
 	//AddressRange        string
 	//NodeLastModified    string
 	//NetworkLastModified string
@@ -77,25 +80,25 @@ type NodeSummary struct {
 }
 
 //NetDetail - contains detailed network data for html template
-type NetDetail struct {
-	Name                string
-	AddressRange        string
-	IP6Address          string
-	LocalRange          string
-	DisplayName         string
-	NodeLastModified    string
-	NetworkLastModified string
-	DefaultInterface    string
-	DefaultPort         string
-	PostUp              string
-	PostDown            string
-	KeepAlive           string
-	CheckinInterval     string
-	DualStack           bool
-	SaveConfig          bool
-	UDPHolePunch        bool
-	KeyRequired         bool
-}
+//type NetDetail struct {
+//	Name                string
+//	AddressRange        string
+//	IP6Address          string
+//	LocalRange          string
+//	DisplayName         string
+//	NodeLastModified    string
+//	NetworkLastModified string
+//	DefaultInterface    string
+//	DefaultPort         string
+//	PostUp              string
+//	PostDown            string
+//	KeepAlive           string
+//	CheckinInterval     string
+//	DualStack           bool
+//	SaveConfig          bool
+//	UDPHolePunch        bool
+//	KeyRequired         bool
+//}
 
 //NodeDetail - contains detailed node data for html template
 type NodeDetail struct {

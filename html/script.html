@@ -53,7 +53,7 @@ function setNetwork(evt, net) {
 	if (x[i].className.includes(network) || network == "All") {
 	    x[i].style.display="block";
 	} else {
-	    x[i].style.display="none"
+	    x[i].style.display="none";
 	}
     }
 }
@@ -62,16 +62,25 @@ function setNetwork(evt, net) {
 function deleteNet(network) {
     var r = confirm ("Delete Network "+network)
     if (r == false) {
-	return
+	return;
     }
-    var xhttp = new XMLHttpRequest()
-    xhttp.open("DELETE", "https://api.netmaker.nusak.ca/api/networks/"+network, false)
+    var xhttp = new XMLHttpRequest();
+    xhttp.open("DELETE", "https://api.netmaker.nusak.ca/api/networks/"+network, false);
     xhttp.setRequestHeader("Authorization", "Bearer secretkey");
-    xhttp.send()
-    alert(xhttp.status+xhttp.statusText)
-    location.reload()
+    xhttp.send();
+    alert(xhttp.status+xhttp.statusText);
+    location.reload();
 }
 
+function editNet(network) {
+    var xhttp = new XMLHttpRequest();
+    xhttp.open("GET", "https://api.netmaker.nusak.ca/api/networks/"+network, false);
+    xhttp.setRequestHeader("Authorization", "Bearer secretkey");
+    xhttp.send();
+    alert(xhttp.response);
+    var net = JSON.parse(xhttp.response);
+    alert(net);
+}
 
 
 </script>

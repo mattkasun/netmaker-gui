@@ -2,8 +2,10 @@
 <div style="margin-left:25%">
 <div id="Networks" class="btn-group w3-white tab" style="display=none">
   {{ range .Networks }}
+	  <form action="/edit_network", method="post">
   <fieldset class="net {{.Name}}">
       <legend>{{.ID}}</legend>
+      <input type="hidden" name="network" value='{{.ID}}'>
       <button class="w3-circle w3-green" onclick="alert('Not Implemented yet')">{{.Name}}</button><br>
       <label>{{.Address}}<br>
 	  <fieldset>
@@ -14,8 +16,9 @@
 	  <label>{{.NodeModified}}</label><br>
 	  </fieldset>
 	  <button onclick="deleteNet('{{.ID}}')">Delete </button><br>
-	  <button onclick="alert('Not Implemented yet')">Edit</button>
+	  <button class="w3-button" type="submit">Edit</button>
   </fieldset>
+	  </form>
   {{ end }}
 </div>
 </div>

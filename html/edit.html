@@ -1,0 +1,70 @@
+{{define "EditNet"}}
+<html>
+    <head>
+	 <meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="https://www.w3schools.com/lib/w3.css" type="text/css">
+	<style>
+		input[type=text] {
+		    width: 100%
+		}
+	</style>
+    </head>
+
+    <body>
+
+	{{template "Header"}}
+	<div id="Edit" class="w3-container w3-left-align" style="margin-left:25%; margin-right:25%">
+	    <h2> Edit Network {{.NetID}}</h2>
+	    <form action="/updatenet" method=post>
+		<input type="hidden" name="NetID" value='{{.NetID}}'>
+		Address Range:<br> <input name="Address" type="text" value='{{.AddressRange}}'/><br>
+		{{if eq .IsDualStack  "yes"}}
+		Address Range(IPv6):<br> <input name="AddressV6" type="text" value='{{.AddressRange6}}'/> <br>
+		{{end}}
+		Local Range:<br> <input name="Local" type="text" value='{{.LocalRange}}'/><br>
+		Display Name:<br> <input name="Name" type="text" value='{{.DisplayName}}'/><br>
+		Default Interface:<br> <input name="Interface" type="text" value='{{.DefaultInterface}}'/><br>
+		Default Port:<br> <input name="Port" type="text" value='{{.DefaultListenPort}}'/><br>
+		Default PostUp:<br> <input name="PostUp" type="text" value='{{.DefaultPostUp}}'/><br>
+		Default PostDown:<br> <input name="PostDown" type="text" value='{{.DefaultPostDown}}'/><br>
+		Default Keepalive:<br> <input name="Keepalive" type="text" value='{{.DefaultKeepalive}}'/><br>
+		Default CheckinInterval:<br> <input name="CheckinInterval" type="text" value='{{.DefaultCheckInInterval}}'/><br>
+	    {{ if eq .IsDualStack "yes"}}
+	       <input checked 
+	    {{ else }}
+		<input 
+	    {{ end }}      
+		      class="w3-check" type="checkbox" name="DualStack" value='yes'>Dual Stack 
+	    {{ if eq .DefaultSaveConfig "yes" }}
+	       <input checked 
+	    {{ else }}
+		<input 
+	    {{ end }}      
+		class="w3-check" type="checkbox" name="DefaultSaveConfig" value='yes'>Default SaveConfig <br>
+
+	    {{ if eq .DefaultUDPHolePunch "yes" }}
+	       <input checked 
+	    {{ else }}
+		<input 
+	    {{ end }}      
+		class="w3-check" type="checkbox" name="UDPHolePunching" value='yes'>UDP Hole Punch 
+
+	    {{ if eq .AllowManualSignUp "yes" }}
+	       <input checked 
+	    {{ else }}
+		<input 
+	    {{ end }}      
+		class="w3-check" type="checkbox" name="AllowManualSignup" value='yes'>Allow Node Signup Without Keys <br>
+
+		<br>	<button class="w3-button w3-block w3-padding w3-teal" type=submit>Update Network</button>
+		<button class="w3-button w3-block w3-padding w3-yellow" type=reset>Reset</button>
+	    </form>
+	    <form action="/" method=get>
+		<button class="w3-button w3-block w3-padding w3-red" type=cancel>Cancel</button>
+	    </form>
+	</div>
+    </body>
+</html>
+{{end}}
+
+
