@@ -34,5 +34,7 @@ func SetupRouter() *gin.Engine {
 	router.POST("/edit_network", EditNetwork)
 	router.POST("/delete_network", DeleteNetwork)
 	router.POST("/update_network", UpdateNetwork)
+	router.POST("/create_key", NewKey)
+	router.POST("/delete_key", DeleteKey)
 	return router
 }

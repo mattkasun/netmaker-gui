@@ -14,7 +14,7 @@ function setVisibility(tabName) {
     var x = document.getElementsByClassName("net");
     for (i=0; i<x.length; i++) {
 
-	if (x[i].className.includes(network) || network == "All") {
+	if (x[i].className.includes("All")) {
 	    x[i].style.display="block";
 	} else {
 	    x[i].style.display="none"
@@ -38,48 +38,33 @@ function openTab(evt, tabName) {
     evt.currentTarget.className += " w3-teal";
 }
 
-function setNetwork(evt, net) {
+function setNetwork(evt, network) {
     var i, x;
-    network = net;
+    {{/* change colour of selected button */}}
     x = document.getElementsByClassName("netselection");
     for (i=0; i<x.length; i++) {
 	x[i].className=x[i].className.replace(" w3-teal", "");
     }
     evt.currentTarget.className += " w3-teal";
-    
+
+    {{/* display subset of tabs based on network selected */}}    
     x = document.getElementsByClassName("net");
     for (i=0; i<x.length; i++) {
 
-	if (x[i].className.includes(network) || network == "All") {
+	{{/*if (x[i].className.includes(network) || network == "All") {*/}}
+	if (x[i].className.includes(network)) {
 	    x[i].style.display="block";
 	} else {
 	    x[i].style.display="none";
 	}
     }
-}
 
-
-function deleteNet(network) {
-    var r = confirm ("Delete Network "+network)
-    if (r == false) {
-	return;
+    {{/* set network for key deletions */}}
+    x = document.getElementsByClassName("net-key");
+    for (i=0; i<x.length; i++) {
+	alert(x[i].value);
+	x[i].value=network;
     }
-    var xhttp = new XMLHttpRequest();
-    xhttp.open("DELETE", "https://api.netmaker.nusak.ca/api/networks/"+network, false);
-    xhttp.setRequestHeader("Authorization", "Bearer secretkey");
-    xhttp.send();
-    alert(xhttp.status+xhttp.statusText);
-    location.reload();
-}
-
-function editNet(network) {
-    var xhttp = new XMLHttpRequest();
-    xhttp.open("GET", "https://api.netmaker.nusak.ca/api/networks/"+network, false);
-    xhttp.setRequestHeader("Authorization", "Bearer secretkey");
-    xhttp.send();
-    alert(xhttp.response);
-    var net = JSON.parse(xhttp.response);
-    alert(net);
 }
 
 

@@ -3,7 +3,7 @@
     <br>
     <button class="w3-bar-item w3-button netselection w3-teal" onclick="setNetwork(event, 'All')">All Networks</button>
     {{ range .Networks }}
-    <button class="w3-bar-item w3-button netselection" onclick="setNetwork(event, '{{.DisplayName}}')">{{ .DisplayName }} </button>
+    <button class="w3-bar-item w3-button netselection" onclick="setNetwork(event, '{{.NetID}}')">{{ .DisplayName }} </button>
     {{ end }}
 </div>
 {{end}}

@@ -151,3 +151,42 @@ func UpdateNetwork(c *gin.Context) {
 	location := url.URL{Path: "/"}
 	c.Redirect(http.StatusFound, location.RequestURI())
 }
+
+func NewKey(c *gin.Context) {
+	var key models.AccessKey
+	var err error
+	net := c.PostForm("network")
+	key.Name = c.PostForm("name")
+	key.Uses, err = strconv.Atoi(c.PostForm("uses"))
+	if err != nil {
+		key.Uses = 1
+	}
+	network, err := controller.GetNetwork(net)
+	if err != nil {
+		fmt.Println("error retrieving network ", err)
+		c.JSON(http.StatusBadRequest, err)
+		c.Abort()
+	}
+	_, err = controller.CreateAccessKey(key, network)
+	if err != nil {
+		fmt.Println("error creating key", err)
+		c.JSON(http.StatusBadRequest, err)
+		c.Abort()
+	}
+	location := url.URL{Path: "/"}
+	c.Redirect(http.StatusFound, location.RequestURI())
+}
+
+func DeleteKey(c *gin.Context) {
+	net := c.PostForm("net")
+	name := c.PostForm("key")
+	fmt.Println("Delete Key params: ", net, name)
+	if err := controller.DeleteKey(name, net); err != nil {
+		fmt.Println("error deleting key", err)
+		//c.AbortWithError(http.StatusBadRequest, err)
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.Abort()
+	}
+	location := url.URL{Path: "/"}
+	c.Redirect(http.StatusFound, location.RequestURI())
+}

@@ -1,9 +1,11 @@
 {{ define "Keys" }}
 <div style="margin-left:25%">
 <div id="Keys" class="w3-container tab" style="display=none">
-    <form action="/newkey">
+    <div class="net All">
+	<p> Please select a specific network to view its access keys. </p>
+    </div>
     {{ range .Networks }} 
-    <fieldset class="net {{.DisplayName}}">
+    <fieldset class="net {{.NetID}}">
 	<legend>{{.DisplayName}}</legend>
 	{{ range .AccessKeys }}
 	<fieldset>
@@ -15,12 +17,42 @@
 	    <label>Uses</label>
 	    <input type="text" placeholder={{.Uses}} disabled><br>
 	</fieldset>
+	<form action="/delete_key" method=POST onsubmit="return confirm('Delete Key {{.Name}}?');">
+	    <input type=hidden name="key" value='{{.Name}}'>
+	    <input class="net-key" type=hidden name="net" value="">
+	    <button type=submit>Delete</button>
+	</form>
 	{{end}} {{/*end range Keys */}}
-	<button>New Key</button>
+	<button onclick="document.getElementById('NewKey').style.display='block';
+		document.getElementById('newKeyNetwork').value='{{.NetID}}';">New Key</button>
     </fieldset>
     {{end}} {{/* end range Network */}}
-    </form>
 </div>
 </div>
+
+{{/*NewKey*/}}
+<div id="NewKey" class="w3-modal">
+    <div class="w3-modal-content w3-card-4 animate-zoom w3-padding" style="max-width:660px">
+		<div class="w3-center"><br>
+        <span onclick="document.getElementById('NewKey').style.display='none'" class="w3-button w3-xlarge w3-hover-red w3-display-topright" title="Close Modal">&times;</span>
+
+	<form class="w3-container" method=POST action="/create_key">
+	    <input type="hidden" id="newKeyNetwork" name="network" >
+        <div class="w3-section">
+          <label><b>Key Name</b></label>
+          <input class="w3-input w3-border w3-margin-bottom" type="text" placeholder="my-key" name="name" >
+          <label><b>Uses</b></label>
+          <input class="w3-input w3-border" type="text" placeholder="0" name="uses">
+          <button class="w3-button w3-block w3-green w3-section w3-padding" type="submit">Create Key</button>
+        </div>
+      </form>
+
+      <div class="w3-container w3-border-top w3-padding-16 w3-light-grey">
+        <button onclick="document.getElementById('NewKey').style.display='none'" type="button" class="w3-button w3-red">Cancel</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 
 {{end}}

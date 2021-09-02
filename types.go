@@ -32,7 +32,7 @@ type Auth struct {
 type PageData struct {
 	Page     string
 	Networks []models.Network
-	Nodes    []NodeSummary
+	Nodes    []models.Node
 }
 
 //Initializes (fetches) page data from backend
@@ -44,7 +44,7 @@ func (data *PageData) Init(page string) {
 		fmt.Println("error geting network data", err)
 	}
 	data.Networks = networks
-	nodes, err := GetNodeSummary()
+	nodes, err := models.GetAllNodes()
 	if err != nil {
 		fmt.Println("error getting node data", err)
 	}

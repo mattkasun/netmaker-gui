@@ -1,8 +1,16 @@
 {{ define "Networks" }}
 <div style="margin-left:25%">
 <div id="Networks" class="btn-group w3-white tab" style="display=none">
+    <div class="net All">
+	{{range .Networks}}
+	<ul>
+	    <li> {{.DisplayName}} {{.AddressRange}}</li>
+	</ul>
+	{{ end }}
+    </div>
+
   {{ range .Networks }}
-  <fieldset class="net {{.DisplayName}}">
+  <fieldset class="net {{.NetID}}">
       <legend>{{.NetID}}</legend>
       <button class="w3-circle w3-green" type="submit">{{.DisplayName}}</button><br>
       <label>{{.AddressRange}}<br>
