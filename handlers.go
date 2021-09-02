@@ -1,13 +1,14 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
 	"net/http"
 	"net/url"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
+	controller "github.com/gravitl/netmaker/controllers"
+	"github.com/gravitl/netmaker/functions"
 	"github.com/gravitl/netmaker/models"
 )
 
@@ -26,12 +27,11 @@ func CreateNetwork(c *gin.Context) {
 	net.IsLocal = c.PostForm("local")
 	net.DefaultUDPHolePunch = c.PostForm("udp")
 
-	response, err := API(net, http.MethodPost, "/api/networks", "secretkey")
-	var message models.ErrorResponse
-	json.NewDecoder(response.Body).Decode(&message)
-	if err != nil {
+	err := controller.CreateNetwork(net)
 
-		c.JSON(http.StatusBadRequest, response)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, err)
+		c.Abort()
 	}
 	location := url.URL{Path: "/"}
 	c.Redirect(http.StatusFound, location.RequestURI())
@@ -39,13 +39,25 @@ func CreateNetwork(c *gin.Context) {
 
 func EditNetwork(c *gin.Context) {
 	network := c.PostForm("network")
+	fmt.Println("editing network ", network)
 	var Data models.Network
-	Data, err := GetNetDetails(network)
+	Data, err := controller.GetNetwork(network)
 	if err != nil {
 		fmt.Println("error getting net details \n", err)
 		c.JSON(http.StatusBadRequest, err)
 	}
 	c.HTML(http.StatusOK, "EditNet", Data)
+}
+
+func DeleteNetwork(c *gin.Context) {
+	network := c.PostForm("network")
+	err := controller.DeleteNetwork(network)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, err)
+		c.Abort()
+	}
+	location := url.URL{Path: "/"}
+	c.Redirect(http.StatusFound, location.RequestURI())
 }
 
 func UpdateNetwork(c *gin.Context) {
@@ -107,18 +119,35 @@ func UpdateNetwork(c *gin.Context) {
 	}
 	network.IsGRPCHub = "no"
 
-	response, err := API(network, http.MethodPut, "/api/networks/"+net, "secretkey")
-	fmt.Println("response status", response.Status)
-	if err != nil || response.StatusCode != http.StatusOK {
-		var message models.ErrorResponse
-		err = json.NewDecoder(response.Body).Decode(&message)
+	oldnetwork, err := controller.GetNetwork(net)
+	if err != nil {
+		fmt.Println("error getting network ", err)
+		c.JSON(http.StatusBadRequest, err)
+		c.Abort()
+	}
+	updaterange, updatelocal, err := oldnetwork.Update(&network)
+	if err != nil {
+		fmt.Println("error updating network ", err)
+		c.JSON(http.StatusBadRequest, err)
+		c.Abort()
+	}
+	if updaterange {
+		err = functions.UpdateNetworkNodeAddresses(network.NetID)
 		if err != nil {
+			fmt.Println("error updating network Node Addresses", err)
 			c.JSON(http.StatusInternalServerError, err)
 			c.Abort()
 		}
-		c.JSON(http.StatusBadRequest, message.Message)
-		c.Abort()
 	}
+	if updatelocal {
+		err = functions.UpdateNetworkLocalAddresses(network.NetID)
+		if err != nil {
+			fmt.Println("error updating network Local Addresses", err)
+			c.JSON(http.StatusInternalServerError, err)
+			c.Abort()
+		}
+	}
+
 	location := url.URL{Path: "/"}
 	c.Redirect(http.StatusFound, location.RequestURI())
 }

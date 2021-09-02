@@ -2,23 +2,26 @@
 <div style="margin-left:25%">
 <div id="Networks" class="btn-group w3-white tab" style="display=none">
   {{ range .Networks }}
-	  <form action="/edit_network", method="post">
-  <fieldset class="net {{.Name}}">
-      <legend>{{.ID}}</legend>
-      <input type="hidden" name="network" value='{{.ID}}'>
-      <button class="w3-circle w3-green" onclick="alert('Not Implemented yet')">{{.Name}}</button><br>
-      <label>{{.Address}}<br>
+  <fieldset class="net {{.DisplayName}}">
+      <legend>{{.NetID}}</legend>
+      <button class="w3-circle w3-green" type="submit">{{.DisplayName}}</button><br>
+      <label>{{.AddressRange}}<br>
 	  <fieldset>
+	  <form action="/edit_network", method="post">
+          <input type="hidden" name="network" value='{{.NetID}}'>
 	  <legend>Last Modified</legend>
 	  <label>Network:</label>
-	  <label>{{.NetModified}}</label><br>
+	  <label>{{.NetworkLastModified}}</label><br>
 	  <label>Nodes:</label>
-	  <label>{{.NodeModified}}</label><br>
+	  <label>{{.NodesLastModified}}</label><br>
 	  </fieldset>
-	  <button onclick="deleteNet('{{.ID}}')">Delete </button><br>
-	  <button class="w3-button" type="submit">Edit</button>
-  </fieldset>
+	  <button class="w3-button" type="submit">Edit</button><br>
 	  </form>
+	  <form action="/delete_network" method=POST onsubmit="return confirm('Delete Network {{.NetID}}');">
+      		<input type="hidden" name="network" value='{{.NetID}}'>
+	  	<button class="w3-button" type="submit">Delete</button><br>
+	  </form>
+  </fieldset>
   {{ end }}
 </div>
 </div>

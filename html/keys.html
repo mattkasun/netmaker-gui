@@ -3,9 +3,9 @@
 <div id="Keys" class="w3-container tab" style="display=none">
     <form action="/newkey">
     {{ range .Networks }} 
-    <fieldset class="net {{.Name}}">
-	<legend>{{.Name}}</legend>
-	{{ range .Keys }}
+    <fieldset class="net {{.DisplayName}}">
+	<legend>{{.DisplayName}}</legend>
+	{{ range .AccessKeys }}
 	<fieldset>
 	    <legend>{{.Name}}</legend>
 	    <label>Value</label>

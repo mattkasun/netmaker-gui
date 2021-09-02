@@ -3,9 +3,7 @@ package main
 import (
 	"bytes"
 	"encoding/json"
-	"fmt"
 	"net/http"
-	"time"
 
 	"github.com/gravitl/netmaker/models"
 )
@@ -38,31 +36,31 @@ func API(data interface{}, method, url, authorization string) (*http.Response, e
 	return client.Do(request)
 }
 
-func GetNetSummary() ([]NetSummary, error) {
-	var body []models.Network
-	var network NetSummary
-	var result []NetSummary
-	response, err := API("", http.MethodGet, "/api/networks", "secretkey")
-	if err != nil {
-		return result, err
-	}
-	err = json.NewDecoder(response.Body).Decode(&body)
-	if err != nil {
-		return result, err
-	}
-	for _, net := range body {
-		fmt.Println(net.NodesLastModified, net.NetworkLastModified)
-		network.ID = net.NetID
-		network.Name = net.DisplayName
-		network.Address = net.AddressRange
-		network.Keys = net.AccessKeys
-		network.NodeModified = time.Unix(net.NodesLastModified, 0).Format(time.UnixDate)
-		network.NetModified = time.Unix(net.NetworkLastModified, 0).Format(time.UnixDate)
-		result = append(result, network)
-	}
-	return result, err
-}
-
+//func GetNetSummary() ([]NetSummary, error) {
+//	var network NetSummary
+//	var result []NetSummary
+//	//response, err := API("", http.MethodGet, "/api/networks", "secretkey")
+//	networks, err := models.GetNetworks()
+//	if err != nil {
+//		return result, err
+//	}
+//	//err = json.NewDecoder(response.Body).Decode(&body)
+//	//if err != nil {
+//	//	return result, err
+//	//}
+//	for _, net := range networks {
+//		fmt.Println(net.NodesLastModified, net.NetworkLastModified)
+//		network.ID = net.NetID
+//		network.Name = net.DisplayName
+//		network.Address = net.AddressRange
+//		network.Keys = net.AccessKeys
+//		network.NodeModified = time.Unix(net.NodesLastModified, 0).Format(time.UnixDate)
+//		network.NetModified = time.Unix(net.NetworkLastModified, 0).Format(time.UnixDate)
+//		result = append(result, network)
+//	}
+//	return result, err
+//}
+//
 func GetNodeSummary() ([]NodeSummary, error) {
 	var body []models.Node
 	var node NodeSummary

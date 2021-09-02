@@ -31,14 +31,14 @@ type Auth struct {
 //PageData -contains data for html template
 type PageData struct {
 	Page     string
-	Networks []NetSummary
+	Networks []models.Network
 	Nodes    []NodeSummary
 }
 
 //Initializes (fetches) page data from backend
 func (data *PageData) Init(page string) {
 	data.Page = page
-	networks, err := GetNetSummary()
+	networks, err := models.GetNetworks()
 	if err != nil {
 		//panic(err)
 		fmt.Println("error geting network data", err)
