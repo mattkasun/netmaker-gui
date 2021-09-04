@@ -1,0 +1,57 @@
+version: "3.4"
+
+services:
+  rqlite:
+    container_name: rqlite
+    image: rqlite/rqlite
+    network_mode: host
+    restart: always
+    volumes:
+      - sqldata:/rqlite/file/data
+  netmaker:
+    depends_on:
+      - rqlite
+    privileged: true
+    container_name: netmaker
+    image: gravitl/netmaker:v0.7.3
+    volumes:
+      - ./:/local
+      - /etc/netclient:/etc/netclient
+      - /usr/bin/wg:/usr/bin/wg
+      - /var/run/dbus/system_bus_socket:/var/run/dbus/system_bus_socket
+      - /run/systemd/system:/run/systemd/system
+      - /etc/systemd/system:/etc/systemd/system
+      - /sys/fs/cgroup:/sys/fs/cgroup
+    cap_add: 
+      - NET_ADMIN
+      - SYS_MODULE
+    restart: always
+    network_mode: host
+    environment:
+      SERVER_HOST: "132.145.97.5"
+      DNS_MODE: "off"
+      SERVER_API_CONN_STRING: "api.netmaker.nusak.ca:443"
+      SERVER_GRPC_CONN_STRING: "grpc.netmaker.nusak.ca:443"
+      GRPC_SSL: "on"
+      SERVER_HTTP_HOST: "api.netmaker.nusak.ca"
+      SERVER_GRPC_HOST: "grpc.netmaker.nusak.ca"
+      API_PORT: "8081"
+      GRPC_PORT: "50051"
+      CLIENT_MODE: "on"
+      MASTER_KEY: "secretkey"
+      SERVER_GRPC_WIREGUARD: "off"
+      CORS_ALLOWED_ORIGIN: "*"
+  netmaker-ui:
+    container_name: netmaker-gui
+    depends_on:
+      - rqlite
+    image: nusak/netmaker-gui:latest
+    links:
+      - "netmaker:api"
+    ports:
+        - "8888:80"
+    environment:
+      BACKEND_URL: "https://api.netmaker.nusak.ca"
+      MASTER_KEY: "secretkey"
+volumes:
+  sqldata: {}
