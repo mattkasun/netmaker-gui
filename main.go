@@ -62,18 +62,22 @@ func AuthRequired(c *gin.Context) {
 	fmt.Println("loggedIn status: ", loggedIn)
 	if loggedIn != true {
 		adminExists, err := controller.HasAdmin()
-		if !adminExists {
-			c.HTML(http.StatusOK, "new", nil)
-			c.Abort()
-		}
+		fmt.Println("response from HasAdmin(): ", adminExists, err)
 		if err != nil {
+			fmt.Println("error checking for admin")
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			c.Abort()
 		}
-
-		message := session.Get("error")
-		fmt.Println("user exists --- message\n", message)
-		c.HTML(http.StatusOK, "Login", gin.H{"messge": message})
-		c.Abort()
+		if !adminExists {
+			fmt.Println("no admin")
+			c.HTML(http.StatusOK, "new", nil)
+			c.Abort()
+		} else {
+			message := session.Get("error")
+			fmt.Println("user exists --- message\n", message)
+			c.HTML(http.StatusOK, "Login", gin.H{"messge": message})
+			c.Abort()
+		}
 	}
+	fmt.Println("authorized - good to go")
 }
