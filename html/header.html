@@ -5,7 +5,7 @@
 <div class="w3-container w3-cell w3-cell-middle">
 <div class="w3-bar ">
 <a class="w3-bar-item w3-button" href='https://docs.netmaker.org' target='_blank'>Docs</a>
-<button class="w3-bar-item w3-button" onclick="openTab(event, 'Users')">Users</button>
+<button class="w3-bar-item w3-button" onclick="document.getElementById('Users').style.display='block';">Users</button>
 </div>
 </div>
 
@@ -39,4 +39,51 @@
 	</div>
     </div>
 </div>
+
+<div id="Users" class=w3-modal>
+    <div id="User-Add" class="w3-modal-content w3-card-4 w3-animate-zoom w3-paddign">
+	    <h1> Create New User</h1>
+		<div class="w3-container">
+		<input id="deleteUserButton" class="w3-block w3-blue" type="button" value="Delete User" onclick="document.getElementById('User-Delete').style.display='block'; document.getElementById('User-Add').style.display='none';">
+		</div>
+		<form action="/create_user" method=POST onsubmit="return passVal('pass', 'confirm');">
+		<div class=w3-container>
+	    <input class="w3-input w3-border" type="text" name="user" placeholder="User Name*" required>
+	    <input id="pass" class="w3-input w3-border" type="password" name="pass" placeholder="Password*" required>
+	    <input id="confirm" class="w3-input w3-border" type="password" placeholder="Password Confirmation" required onchange="passVal('pass', 'confirm');">
+		</div>
+		<input id="grantadmincheckbox" class="w3-checkbox" type="checkbox" name="admin" value=true onclick="grantAdmin('grantadmincheckbox', 'netselection');"> Grant Admin Access
+		<div id="netselection" class="w3-container">
+			<p>Select Accessible Networks</p>
+			{{range .Networks}}
+			{{/*<input class"w3-checkbox" type="checkbox" name="network[]" value='{{.NetID}}'>{{.NetID}}*/}}
+			<input class="w3-checkbox" type="checkbox" name="network[]" value='{{.NetID}}'>{{.NetID}}<br>
+
+			{{end}}
+		</div>
+		<button class="w3-block w3-blue"  type="submit" >Create User</button>
+		</form>
+		<button class="w3-block w3-red" onclick="document.getElementById('Users').style.display='none';">Cancel<button>
+
+	</div>
+</div>
+
+<div id="User-Delete" class="w3-modal">
+    <div id="User-Delete" class="w3-modal-content w3-card-4 w3-animate-zoom w3-paddign">
+		<div class="w3-container">
+			<h1> Delete User</h1>
+			<form action="/delete_user" method=POST>
+				<select class="w3-select w3-border" name="user">
+					{{range .Users}}
+					<option value='{{.UserName}}'>{{.UserName}}<option>
+					{{ end }}
+				</select>
+				<button type="submit" class="w3-block w3-blue" onclick="return confirm('Are you sure you want to delete this user?');">Delete User</button>
+			</form>
+			<button class="w3-block w3-red" onclick="document.getElementById('User-Delete').style.display='none'; document.getElementById('User-Add').style.display='block';">Cancel</button>
+		</div>
+	</div>
+</div>
+
+
 {{end}}

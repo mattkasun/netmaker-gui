@@ -1,0 +1,27 @@
+{{define "Login"}}
+<!doctype html>
+<html>
+<meta charset="UTF-8">
+<head>
+  <Title>Login</Title>
+  <link rel="stylesheet" href="stylesheet/w3.css" type="text/css">
+  <link rel="stylesheet" href="stylesheet/bar.css" type="text/css">
+  <link rel="stylesheet" href="stylesheet/main.css" type="text/css">
+<head>
+<body>
+    <script>0</script>
+    <p>{{.message}}</p>
+    <p>Please log in</p>
+<div id="login">
+  <form action="/login" method=POST name="form-login">
+    <span class="fas fa-user"></span>
+    <input type="hidden" form = "login"/>
+    <input type=text name="user" autocomplete="Username" required/>
+    <span class="fas fa-lock"><span>
+    <input type=password name="pass" autocomplete="Password" required/>
+    <input type=submit value="Login" />
+  </form>
+</div>
+</body>
+</html>
+{{end}}

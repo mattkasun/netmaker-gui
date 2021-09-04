@@ -84,13 +84,13 @@ func GetNodeSummary() ([]NodeSummary, error) {
 	return result, err
 }
 
-func GetNetDetails(net string) (models.Network, error) {
-	var body models.Network
-	response, err := API("", http.MethodGet, "/api/networks/"+net, "secretkey")
-
-	if err != nil {
-		return body, err
-	}
-	err = json.NewDecoder(response.Body).Decode(&body)
-	return body, err
-}
+//func GetNetDetails(net string) (models.Network, error) {
+//	var body models.Network
+//	response, err := API("", http.MethodGet, "/api/networks/"+net, "secretkey")
+//
+//	if err != nil {
+//		return body, err
+//	}
+//	err = json.NewDecoder(response.Body).Decode(&body)
+//	return body, err
+//}

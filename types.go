@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 
+	controller "github.com/gravitl/netmaker/controllers"
 	"github.com/gravitl/netmaker/models"
 )
 
@@ -33,6 +34,7 @@ type PageData struct {
 	Page     string
 	Networks []models.Network
 	Nodes    []models.Node
+	Users    []models.ReturnUser
 }
 
 //Initializes (fetches) page data from backend
@@ -49,6 +51,11 @@ func (data *PageData) Init(page string) {
 		fmt.Println("error getting node data", err)
 	}
 	data.Nodes = nodes
+	users, err := controller.GetUsers()
+	if err != nil {
+		fmt.Println("error getting user data", err)
+	}
+	data.Users = users
 
 }
 

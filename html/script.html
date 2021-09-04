@@ -62,10 +62,36 @@ function setNetwork(evt, network) {
     {{/* set network for key deletions */}}
     x = document.getElementsByClassName("net-key");
     for (i=0; i<x.length; i++) {
-	alert(x[i].value);
 	x[i].value=network;
     }
 }
+
+function grantAdmin(id, div) {
+	var checked = document.getElementById(id).checked;
+	if (checked) {
+		yes = confirm('Are you sure? By doing this you will give the user admin rights to your Netmaker server.');
+		if (yes) {
+			document.getElementById(div).style.display='none';
+		} else {
+	        	document.getElementById(id).checked=false;
+		}
+
+	} else {
+		document.getElementById(div).style.display='block';
+	}
+}
+
+function passVal(pass1, pass2) {
+    x = document.getElementById(pass1).value;
+    y = document.getElementById(pass2).value;
+    if (x != y) {
+	alert("Passwords do not match");
+	return false;
+    }
+    return true;
+}
+
+
 
 
 </script>

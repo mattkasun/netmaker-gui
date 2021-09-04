@@ -1,0 +1,14 @@
+{{ define "net" }}
+<div id="net" class="w3-container tab">
+    <ul>
+		<li>This tab displays one networks</li>
+		<ul>
+			{{range .Networks}}
+			<li>{{.DisplayName }}</li>
+			{{end}}
+		</ul>
+		</ul>
+</div>
+
+{{ end }}
+	

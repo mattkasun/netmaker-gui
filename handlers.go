@@ -6,11 +6,59 @@ import (
 	"net/url"
 	"strconv"
 
+	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
 	controller "github.com/gravitl/netmaker/controllers"
 	"github.com/gravitl/netmaker/functions"
 	"github.com/gravitl/netmaker/models"
 )
+
+func ProcessLogin(c *gin.Context) {
+	fmt.Println("Processing Login")
+	var AuthRequest models.UserAuthParams
+	AuthRequest.UserName = c.PostForm("user")
+	AuthRequest.Password = c.PostForm("pass")
+	session := sessions.Default(c)
+	jwt, err := controller.VerifyAuthRequest(AuthRequest)
+	if err != nil {
+		fmt.Println("error verifying AuthRequest: ", jwt, err)
+		fmt.Println("setting session err to: ", err)
+		session.Set("error", err)
+		session.Set("loggedIn", false)
+		c.HTML(http.StatusUnauthorized, "login", gin.H{"message": err})
+	} else {
+		session.Set("loggedIn", true)
+		session.Set("token", jwt)
+		session.Save()
+		fmt.Println("Successful login:\n", session.Get("loggedIn"), "\njwt:\n", jwt)
+		location := url.URL{Path: "/"}
+		c.Redirect(http.StatusFound, location.RequestURI())
+	}
+}
+
+func NewUser(c *gin.Context) {
+	var user, admin models.User
+	user.UserName = c.PostForm("user")
+	user.Password = c.PostForm("pass")
+	user.IsAdmin = true
+	hasAdmin, err := controller.HasAdmin()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		c.Abort()
+	}
+	if hasAdmin {
+		c.JSON(http.StatusUnauthorized, "Admin Exists")
+		c.Abort()
+	}
+	admin, err = controller.CreateUser(user)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		c.Abort()
+	}
+	fmt.Println(admin)
+	location := url.URL{Path: "/"}
+	c.Redirect(http.StatusFound, location.RequestURI())
+}
 
 func DisplayLanding(c *gin.Context) {
 	var Data PageData
@@ -184,6 +232,48 @@ func DeleteKey(c *gin.Context) {
 	if err := controller.DeleteKey(name, net); err != nil {
 		fmt.Println("error deleting key", err)
 		//c.AbortWithError(http.StatusBadRequest, err)
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.Abort()
+	}
+	location := url.URL{Path: "/"}
+	c.Redirect(http.StatusFound, location.RequestURI())
+}
+
+func LogOut(c *gin.Context) {
+	session := sessions.Default(c)
+	session.Set("loggedIn", false)
+	session.Save()
+	fmt.Println("User Logged Out", session.Get("loggedIn"))
+	location := url.URL{Path: "/"}
+	c.Redirect(http.StatusFound, location.RequestURI())
+}
+
+func CreateUser(c *gin.Context) {
+	var user models.User
+	fmt.Println("creating new user")
+	user.UserName = c.PostForm("user")
+	user.Password = c.PostForm("pass")
+	if c.PostForm("admin") == "true" {
+		user.IsAdmin = true
+	} else {
+		user.IsAdmin = false
+	}
+	user.Networks, _ = c.GetPostFormArray("network[]")
+	fmt.Println("networks: ", user.Networks)
+	_, err := controller.CreateUser(user)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.Abort()
+	}
+
+	location := url.URL{Path: "/"}
+	c.Redirect(http.StatusFound, location.RequestURI())
+}
+
+func DeleteUser(c *gin.Context) {
+	user := c.PostForm("user")
+	success, err := controller.DeleteUser(user)
+	if !success {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		c.Abort()
 	}
