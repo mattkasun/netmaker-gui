@@ -25,7 +25,7 @@ func ProcessLogin(c *gin.Context) {
 		fmt.Println("setting session err to: ", err)
 		session.Set("error", err)
 		session.Set("loggedIn", false)
-		c.HTML(http.StatusUnauthorized, "login", gin.H{"message": err})
+		c.HTML(http.StatusUnauthorized, "Login", gin.H{"message": err})
 	} else {
 		session.Set("loggedIn", true)
 		session.Set("token", jwt)
