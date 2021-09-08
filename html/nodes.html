@@ -1,25 +1,23 @@
 {{ define "Nodes" }}
-<div style="margin-left:25%">
 <div id="Nodes" class="w3-container tab" style="display=none">
     <div class="net All">
 	{{range .Nodes}}
 	<p>{{.Name}} {{.Endpoint}} {{.Address}}</p>
 	{{end}}
     </div>
-			{{range .Nodes}}
-			<fieldset class="net {{.Network}}">
-			    <legend>{{.Name }}</legend>
-			     <label>Public IP</label>
-			     <input type="text" placeholder={{.Endpoint}} disabled><br>
-			     <label>Subnet</label>
-			     <input type="text" placeholder={{.Address}} disabled><br>
-			    <label>Status: </label><label>Healthy</label><br>
-			    <button onclick="alert('Not Implmented Yet')">Edit</button>
-			    <button onclick="alert('Not Implemented Yet')" >Delete</button>
-			</fieldset>
-			{{end}}
-</div>
+    {{range .Nodes}}
+    <fieldset class="net {{.Network}}">
+	<legend>{{.Name }}</legend>
+	<label>Public IP</label>
+	<input type="text" placeholder={{.Endpoint}} disabled><br>
+	<label>Subnet</label>
+	<input type="text" placeholder={{.Address}} disabled><br>
+	<label>Status: </label><label>Healthy</label><br>
+	<button onclick="alert('Not Implmented Yet')">Edit</button>
+	<button onclick="alert('Not Implemented Yet')" >Delete</button>
+    </fieldset>
+    {{end}}
 </div>
 
 {{ end }}
-	
+

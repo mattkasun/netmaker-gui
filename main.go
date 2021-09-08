@@ -21,20 +21,20 @@ func main() {
 	go func() {
 		log.Println(http.ListenAndServe("localhost:6060", nil))
 	}()
-	if err := database.InitializeDatabase(); err != nil {
-		log.Fatal("Error connecting to Database", err)
-	}
 	router := SetupRouter()
-	router.Run("127.0.0.1:8080")
+	router.Run(":8080")
 }
 
 func SetupRouter() *gin.Engine {
+	if err := database.InitializeDatabase(); err != nil {
+		log.Fatal("Error connecting to Database", err)
+	}
 	router := gin.Default()
 	store := memstore.NewStore([]byte("secret"))
 	router.Use(sessions.Sessions("netmaker", store))
 	router.LoadHTMLGlob("html/*")
 	router.Static("images", "./images")
-	router.StaticFile("favicon.ico", "./images/favicon.ico")
+	router.StaticFile("favicon.ico", "./images/favicon.png")
 	router.POST("/newuser", NewUser)
 	router.POST("/login", ProcessLogin)
 	//use  authorization middleware
