@@ -5,25 +5,25 @@
     </div>
     {{ range .Networks }} 
     <fieldset class="net {{.NetID}}">
+	<button class="w3-ripple" onclick="document.getElementById('NewKey').style.display='block';
+		document.getElementById('newKeyNetwork').value='{{.NetID}}';"><span class="material-icons">note_add</span> Generate New Key</button>
 	<legend>{{.DisplayName}}</legend>
 	{{ range .AccessKeys }}
 	<fieldset>
 	    <legend>{{.Name}}</legend>
-	    <label>Value</label>
-	    <input type="text" placeholder={{.Value}} disabled><br>
-	    <label>Access String</label>
-	    <textarea rows="10" cols="50" disabled>{{.AccessString}}</textarea ><br>
-	    <label>Uses</label>
-	    <input type="text" placeholder={{.Uses}} disabled><br>
-	</fieldset>
 	<form action="/delete_key" method=POST onsubmit="return confirm('Delete Key {{.Name}}?');">
 	    <input type=hidden name="key" value='{{.Name}}'>
 	    <input class="net-key" type=hidden name="net" value="">
-	    <button type=submit>Delete</button>
+	    <button class="w3-ripple" type=submit> <span class="material-icons-outlined">delete</span> Delete Key</button>
 	</form>
+	<button class="w3-ripple" onclick="copyText('accesskey');"><span class="material-icons">content_copy</span> Copy Access Key </button>
+	    <input id="accesskey" type="text" value={{.Value}} ><br>
+	    <button class="w3-ripple" onclick="copyText('token');"><span class="material-icons">content_copy</span> Copy Access Token </button><br>
+	    <textarea id="token" rows="8" cols="40" >{{.AccessString}}</textarea ><br>
+	    <label>Uses</label>
+	    <input type="text" placeholder={{.Uses}} disabled><br>
+	</fieldset>
 	{{end}} {{/*end range Keys */}}
-	<button onclick="document.getElementById('NewKey').style.display='block';
-		document.getElementById('newKeyNetwork').value='{{.NetID}}';">New Key</button>
     </fieldset>
     {{end}} {{/* end range Network */}}
 </div>

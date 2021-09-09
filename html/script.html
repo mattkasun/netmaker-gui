@@ -1,13 +1,13 @@
 {{define "script"}}
 <script>
 
-var network = "All"
+    var network = "All"
 
 function setVisibility(tabName) {
     var i;
     var x = document.getElementsByClassName ("tab");
     for (i=0; i<x.length; i++) {
-        x[i].style.display="none";
+	x[i].style.display="none";
     }
     document.getElementById(tabName).style.display = "block";
 
@@ -27,7 +27,7 @@ function openTab(evt, tabName) {
     var i;
     var x = document.getElementsByClassName ("tab");
     for (i=0; i<x.length; i++) {
-        x[i].style.display="none";
+	x[i].style.display="none";
     }
     document.getElementById(tabName).style.display = "block";
 
@@ -67,18 +67,18 @@ function setNetwork(evt, network) {
 }
 
 function grantAdmin(id, div) {
-	var checked = document.getElementById(id).checked;
-	if (checked) {
-		yes = confirm('Are you sure? By doing this you will give the user admin rights to your Netmaker server.');
-		if (yes) {
-			document.getElementById(div).style.display='none';
-		} else {
-	        	document.getElementById(id).checked=false;
-		}
-
+    var checked = document.getElementById(id).checked;
+    if (checked) {
+	yes = confirm('Are you sure? By doing this you will give the user admin rights to your Netmaker server.');
+	if (yes) {
+	    document.getElementById(div).style.display='none';
 	} else {
-		document.getElementById(div).style.display='block';
+	    document.getElementById(id).checked=false;
 	}
+
+    } else {
+	document.getElementById(div).style.display='block';
+    }
 }
 
 function passVal(pass1, pass2) {
@@ -91,7 +91,13 @@ function passVal(pass1, pass2) {
     return true;
 }
 
-
+function copyText(id) {
+    var data = document.getElementById(id);
+    data.select()
+    /*data.setSelectionRange(0,99999); /* For Mobile Devices */
+    navigator.clipboard.writeText(data.value);
+    alert(id+" was copied to clipboard ");
+}
 
 
 </script>

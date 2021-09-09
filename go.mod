@@ -3,6 +3,7 @@ module github.com/mattkasun/netmaker-gui
 go 1.16
 
 require (
+	github.com/aws/aws-sdk-go v1.34.28
 	github.com/gin-contrib/sessions v0.0.3
 	github.com/gin-gonic/gin v1.7.4
 	github.com/go-playground/validator/v10 v10.9.0 // indirect

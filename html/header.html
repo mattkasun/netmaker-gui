@@ -3,14 +3,17 @@
 
     <div class="w3-cell-row">
 	<div class="w3-container w3-cell w3-cell-middle">
-	    <div class="w3-bar ">
+	    <div class="w3-bar">
 		<a class="w3-bar-item w3-button" href='https://docs.netmaker.org' target='_blank'>Docs</a>
 		<button class="w3-bar-item w3-button" onclick="document.getElementById('Users').style.display='block';">Users</button>
 	    </div>
 	</div>
 
-	<div class="w3-container w3-cell">
+	<div class="w3-container w3-cell w3-hide-small w3-hide-medium">
 	    <img src="images/netmaker2.png" alt="Netmaker Makes Networks">
+	</div>
+	<div class="w3-container w3-cell w3-hide-large">
+	    <img src="images/netmaker-small.png" alt="Netmaker Makes Networks">
 	</div>
 
 	<div class="w3-container w3-cell w3-cell-middle">
@@ -27,7 +30,7 @@
 </div>
 
 <div id="About" class=w3-modal>
-    <div class="w3-modal-content w3-card-4 w3-animate-zoom w3-padding">
+    <div class="w3-modal-content w3-card-4 w3-animate-zoom w3-padding" style="width:50%">
 	<div class="w3-container w3-center">
 	    <h2>An Alternate UI for Netmaker</h2>
 	    <a href="https://github.com/gravitl/netmaker",  target='_blank'>github.com/gravitl/netmaker</a>
