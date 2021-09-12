@@ -13,6 +13,7 @@ import (
 	"github.com/gin-gonic/gin"
 	controller "github.com/gravitl/netmaker/controllers"
 	"github.com/gravitl/netmaker/database"
+	"github.com/gravitl/netmaker/servercfg"
 )
 
 var Data PageData
@@ -26,11 +27,13 @@ func main() {
 }
 
 func SetupRouter() *gin.Engine {
+	fmt.Println("using database: ", servercfg.GetDB())
 	if err := database.InitializeDatabase(); err != nil {
-		log.Fatal("Error connecting to Database", err)
+		log.Fatal("Error connecting to Database:\n", err)
 	}
 	router := gin.Default()
 	store := memstore.NewStore([]byte("secret"))
+
 	router.Use(sessions.Sessions("netmaker", store))
 	router.LoadHTMLGlob("html/*")
 	router.Static("images", "./images")
@@ -57,7 +60,10 @@ func SetupRouter() *gin.Engine {
 
 func AuthRequired(c *gin.Context) {
 	session := sessions.Default(c)
-	fmt.Println("checking authorization\n", session)
+	options := session.Options
+
+	fmt.Println("checking authorization\n", options)
+	fmt.Printf("type %v value %s\n", options, options)
 	loggedIn := session.Get("loggedIn")
 	fmt.Println("loggedIn status: ", loggedIn)
 	if loggedIn != true {

@@ -29,6 +29,7 @@ func ProcessLogin(c *gin.Context) {
 	} else {
 		session.Set("loggedIn", true)
 		session.Set("token", jwt)
+		session.Options(sessions.Options{MaxAge: 300})
 		session.Save()
 		fmt.Println("Successful login:\n", session.Get("loggedIn"), "\njwt:\n", jwt)
 		location := url.URL{Path: "/"}
