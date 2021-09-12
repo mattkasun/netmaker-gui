@@ -19,6 +19,7 @@ func ProcessLogin(c *gin.Context) {
 	AuthRequest.UserName = c.PostForm("user")
 	AuthRequest.Password = c.PostForm("pass")
 	session := sessions.Default(c)
+	//not sure need the jwt
 	jwt, err := controller.VerifyAuthRequest(AuthRequest)
 	if err != nil {
 		fmt.Println("error verifying AuthRequest: ", jwt, err)
@@ -28,8 +29,16 @@ func ProcessLogin(c *gin.Context) {
 		c.HTML(http.StatusUnauthorized, "Login", gin.H{"message": err})
 	} else {
 		session.Set("loggedIn", true)
+		//not sure need the jwt
 		session.Set("token", jwt)
 		session.Options(sessions.Options{MaxAge: 300})
+		user, err := controller.GetUser(AuthRequest.UserName)
+		if err != nil {
+			fmt.Println("err retrieving user: ", err)
+		}
+		session.Set("username", user.UserName)
+		session.Set("isAdmin", user.IsAdmin)
+		session.Set("networks", user.Networks)
 		session.Save()
 		fmt.Println("Successful login:\n", session.Get("loggedIn"), "\njwt:\n", jwt)
 		location := url.URL{Path: "/"}
@@ -63,7 +72,7 @@ func NewUser(c *gin.Context) {
 
 func DisplayLanding(c *gin.Context) {
 	var Data PageData
-	Data.Init("Networks")
+	Data.Init("Networks", c)
 	c.HTML(http.StatusOK, "layout", Data)
 }
 

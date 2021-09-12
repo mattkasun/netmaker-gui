@@ -3,6 +3,8 @@ package main
 import (
 	"fmt"
 
+	"github.com/gin-contrib/sessions"
+	"github.com/gin-gonic/gin"
 	controller "github.com/gravitl/netmaker/controllers"
 	"github.com/gravitl/netmaker/models"
 )
@@ -32,31 +34,69 @@ type Auth struct {
 //PageData -contains data for html template
 type PageData struct {
 	Page     string
+	Admin    bool
 	Networks []models.Network
 	Nodes    []models.Node
 	Users    []models.ReturnUser
 }
 
 //Initializes (fetches) page data from backend
-func (data *PageData) Init(page string) {
+func (data *PageData) Init(page string, c *gin.Context) {
 	data.Page = page
+	session := sessions.Default(c)
+	user := session.Get("username").(string)
+	isAdmin := session.Get("isAdmin").(bool)
+	data.Admin = isAdmin
+	allowedNets := session.Get("networks").([]string)
 	networks, err := models.GetNetworks()
 	if err != nil {
 		//panic(err)
 		fmt.Println("error geting network data", err)
 	}
-	data.Networks = networks
 	nodes, err := models.GetAllNodes()
 	if err != nil {
 		fmt.Println("error getting node data", err)
 	}
-	data.Nodes = nodes
 	users, err := controller.GetUsers()
 	if err != nil {
 		fmt.Println("error getting user data", err)
 	}
-	data.Users = users
+	if isAdmin {
+		data.Networks = networks
+		data.Nodes = nodes
+		data.Users = users
+	} else {
+		var nets []models.Network
+		for _, network := range networks {
+			if SliceContains(allowedNets, network.NetID) {
+				nets = append(nets, network)
+			}
+			data.Networks = nets
+		}
+		var hosts []models.Node
+		for _, node := range nodes {
+			if SliceContains(allowedNets, node.Network) {
+				hosts = append(hosts, node)
+			}
+			data.Nodes = hosts
+		}
+		user := models.ReturnUser{user, allowedNets, isAdmin}
 
+		data.Users = append([]models.ReturnUser{}, user)
+	}
+
+}
+
+func SliceContains(s []string, x string) bool {
+	if len(s) == 0 {
+		return false
+	}
+	for i := range s {
+		if s[i] == x {
+			return true
+		}
+	}
+	return false
 }
 
 //NetSummary - contains summary network data for html template

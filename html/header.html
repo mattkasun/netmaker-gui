@@ -5,7 +5,9 @@
 	<div class="w3-container w3-cell w3-cell-middle">
 	    <div class="w3-bar">
 		<a class="w3-bar-item w3-button" href='https://docs.netmaker.org' target='_blank'>Docs</a>
+		{{ if .Admin }}
 		<button class="w3-bar-item w3-button" onclick="document.getElementById('Users').style.display='block';">Users</button>
+		{{end}}
 	    </div>
 	</div>
 
