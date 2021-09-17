@@ -9,27 +9,38 @@ import (
 	"github.com/gravitl/netmaker/models"
 )
 
-type User struct {
-	UserName string
-	Password string
-	IsAdmin  bool
+type NodeUpdate struct {
+	Oldmac  string
+	Oldnet  string
+	NewNode *models.Node
 }
 
-type ErrorResponse struct {
-	Code    int
-	Message string
+type NodeStatus struct {
+	Mac    string
+	Status string
 }
 
-type Success struct {
-	Code     int
-	Message  string
-	Response Auth
-}
-
-type Auth struct {
-	UserName  string
-	AuthToken string
-}
+//type User struct {
+//	UserName string
+//	Password string
+//	IsAdmin  bool
+//}
+//
+//type ErrorResponse struct {
+//	Code    int
+//	Message string
+//}
+//
+//type Success struct {
+//	Code     int
+//	Message  string
+//	Response Auth
+//}
+//
+//type Auth struct {
+//	UserName  string
+//	AuthToken string
+//}
 
 //PageData -contains data for html template
 type PageData struct {

@@ -53,6 +53,10 @@ func SetupRouter() *gin.Engine {
 		private.POST("/delete_key", DeleteKey)
 		private.POST("/create_user", CreateUser)
 		private.POST("/delete_user", DeleteUser)
+		private.POST("/edit_node", EditNode)
+		private.POST("/delete_node", DeleteNode)
+		private.POST("/update_node/:net/:mac", UpdateNode)
+		private.GET("/node_health/", NodeHealth)
 		private.GET("/logout", LogOut)
 	}
 	return router

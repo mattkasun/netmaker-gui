@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"net/url"
 	"strconv"
+	"time"
 
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
@@ -31,7 +32,7 @@ func ProcessLogin(c *gin.Context) {
 		session.Set("loggedIn", true)
 		//not sure need the jwt
 		session.Set("token", jwt)
-		session.Options(sessions.Options{MaxAge: 300})
+		session.Options(sessions.Options{MaxAge: 1800})
 		user, err := controller.GetUser(AuthRequest.UserName)
 		if err != nil {
 			fmt.Println("err retrieving user: ", err)
@@ -289,4 +290,81 @@ func DeleteUser(c *gin.Context) {
 	}
 	location := url.URL{Path: "/"}
 	c.Redirect(http.StatusFound, location.RequestURI())
+}
+
+func EditNode(c *gin.Context) {
+	network := c.PostForm("network")
+	mac := c.PostForm("mac")
+	var node models.Node
+	node, err := controller.GetNode(mac, network)
+	if err != nil {
+		fmt.Println("error getting node details \n", err)
+		c.JSON(http.StatusBadRequest, err)
+	}
+	c.HTML(http.StatusOK, "EditNode", node)
+}
+
+func DeleteNode(c *gin.Context) {
+	mac := c.PostForm("mac")
+	net := c.PostForm("net")
+	fmt.Println("deleting node ", mac, net)
+	err := controller.DeleteNode(mac+"###"+net, false)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.Abort()
+	}
+	location := url.URL{Path: "/"}
+	c.Redirect(http.StatusFound, location.RequestURI())
+}
+
+func UpdateNode(c *gin.Context) {
+
+	var node *models.Node
+	if err := c.ShouldBind(&node); err != nil {
+		fmt.Println("should bind")
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	net := c.Param("net")
+	mac := c.Param("mac")
+	fmt.Printf("=============%T %T %T %v %v %v", net, mac, node, net, mac, node)
+	oldnode, err := models.GetNode(mac, net)
+	if err != nil {
+		fmt.Println("Get node with mac ", mac, " and Network ", net)
+		//c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.JSON(http.StatusBadRequest, node)
+		return
+	}
+	if err = oldnode.Update(node); err != nil {
+		fmt.Println("update network")
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	location := url.URL{Path: "/"}
+	c.Redirect(http.StatusFound, location.RequestURI())
+
+}
+
+func NodeHealth(c *gin.Context) {
+	nodes, err := models.GetAllNodes()
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	var response []NodeStatus
+	var nodeHealth NodeStatus
+	for _, node := range nodes {
+		nodeHealth.Mac = node.MacAddress
+		lastupdate := time.Now().Sub(time.Unix(node.LastCheckIn, 0))
+		if lastupdate.Minutes() > 15.0 {
+			nodeHealth.Status = "Dead"
+		} else if lastupdate.Minutes() > 5.0 {
+			nodeHealth.Status = "Warning"
+		} else {
+			nodeHealth.Status = "Healthy"
+		}
+		response = append(response, nodeHealth)
+	}
+	c.JSON(http.StatusOK, response)
+	return
 }

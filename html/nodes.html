@@ -8,16 +8,73 @@
     {{range .Nodes}}
     <fieldset class="net {{.Network}}">
 	<legend>{{.Name }}</legend>
-	<label>Public IP</label>
-	<input type="text" placeholder={{.Endpoint}} disabled><br>
-	<label>Subnet</label>
-	<input type="text" placeholder={{.Address}} disabled><br>
-	<label>Status: </label><label>Healthy</label><br>
-	<button onclick="alert('Not Implmented Yet')">Edit</button>
-	<button onclick="alert('Not Implemented Yet')" >Delete</button>
+	<form action="/edit_node" method=POST>
+	    <input type=hidden name="network" value='{{.Network}}'>
+	    <input type=hidden name="mac" value='{{.MacAddress}}'>
+	    <label>Public IP</label>
+	    <input type="text" placeholder={{.Endpoint}} disabled><br>
+	    <label>Subnet</label>
+	    <input type="text" placeholder={{.Address}} disabled><br>
+	    <label>Status: </label><label id="node_status{{.MacAddress}}">Healthy</label><br>
+	    <button type=submit class="w3-button">Edit</button><br>
+	</form>
+	<form action="delete_node" method=POST>
+	    <input type=hidden name="net" value='{{.Network}}'>
+	    <input type=hidden name="mac" value='{{.MacAddress}}'>
+	    <button type=submit class="w3-button" onclick="alert('Are you sure you want to delete node {{.Name}} from Network {{.Network}}?')" >Delete</button>
+	</form>
     </fieldset>
     {{end}}
 </div>
 
 {{ end }}
+
+{{define "EditNode"}}
+<html>
+    <head>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="https://www.w3schools.com/lib/w3.css" type="text/css">
+    </head>
+
+    <body onLoad="document.getElementById('EditNode').style.display='block';">
+
+	{{template "Header"}}
+	<div id="EditNode" class="w3-modal">
+	    <div class="w3-modal-content w3-card-4 w3-padding">
+		<h2> Edit Node {{.Name}}</h2>
+		<form action="/update_node/{{.Network}}/{{.MacAddress}}"  method=post>
+		    Address:<br> <input name="Address" type="text" value='{{.Address}}'/><br>
+		    Address Range(IPv6):<br> <input name="AddressV6" type="text" value='{{.Address6}}'/> <br>
+		    Local Range:<br> <input name="LocalRange" type="text" value='{{.LocalRange}}'/><br>
+		    Name:<br> <input name="Name" type="text" value='{{.Name}}'/><br>
+		    Listen Port:<br> <input name="ListenPort" type="text" value='{{.ListenPort}}'/><br>
+		    PublicKey:<br> <input disabled type="text" value='{{.PublicKey}}'/><br>
+		    EndPoint:<br> <input name="Endpoint" type="text" value='{{.Endpoint}}'/><br>
+		    PostUp:<br> <input name="PostUp" type="text" value='{{.PostUp}}'/><br>
+		    PostDown:<br> <input name="PostDown" type="text" value='{{.PostDown}}'/><br>
+		    Persistent Keepalive:<br> <input name="PersistentKeepalive" type="text" value='{{.PersistentKeepalive}}'/><br>
+		    Save Config:<br> <input name="SaveConfig" type="text" value='{{.SaveConfig}}'/><br>
+		    Interface:<br> <input name="Interface" type="text" value='{{.Interface}}'/><br>
+		    Last Modified:<br> <input name="LastModified" type="text" value='{{.LastModified}}'/><br>
+		    Last CheckIn:<br> <input name="LastCheckIn" type="text" value='{{.LastCheckIn}}'/><br>
+		    MacAddress:<br> <input name="MadAddress" type="text" value='{{.MacAddress}}'/><br>
+		    Network:<br> <input name="Network" type="text" value='{{.Network}}'/><br>
+		    Local Address:<br> <input name="LocalAddress" type="text" value='{{.LocalAddress}}'/><br>
+		    Egress Gateway Ranges:<br> <input name="EgressGatewayRanges" type="text" value='{{.EgressGatewayRanges}}'/><br>
+		    Allowed IPs:<br> <input name="AllowedIPs" type="text" value='{{.AllowedIPs}}'/><br>
+		    UDP Hole Punch:<br> <input name="UDPHolePunch" type="text" value='{{.UDPHolePunch}}'/><br>
+		    Static:<br> <input name="IsStatic" type="text" value='{{.IsStatic}}'/><br>
+		    <br><button class="w3-button w3-block w3-padding w3-teal" type=submit>Update Node</button>
+		    <button class="w3-button w3-block w3-padding w3-yellow" type=reset>Reset</button>
+		</form>
+		<form action="/" method=get>
+		    <button class="w3-button w3-block w3-padding w3-red" type=cancel>Cancel</button>
+		</form>
+	    </div>
+	</div>
+    </body>
+</html>
+{{end}}
+
+
 

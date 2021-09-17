@@ -8,28 +8,28 @@
 	{{ end }}
     </div>
 
-  {{ range .Networks }}
-  <fieldset class="net {{.NetID}}">
-      <legend>{{.NetID}}</legend>
-      <button class="w3-circle w3-green" type="submit">{{.DisplayName}}</button><br>
-      <label>{{.AddressRange}}<br>
-	  <fieldset>
-	  <form action="/edit_network", method="post">
-          <input type="hidden" name="network" value='{{.NetID}}'>
-	  <legend>Last Modified</legend>
-	  <label>Network:</label>
-	  <label>{{.NetworkLastModified}}</label><br>
-	  <label>Nodes:</label>
-	  <label>{{.NodesLastModified}}</label><br>
-	  </fieldset>
-	  <button class="w3-button" type="submit">Edit</button><br>
-	  </form>
-	  <form action="/delete_network" method=POST onsubmit="return confirm('Delete Network {{.NetID}}');">
-      		<input type="hidden" name="network" value='{{.NetID}}'>
-	  	<button class="w3-button" type="submit">Delete</button><br>
-	  </form>
-  </fieldset>
-  {{ end }}
+    {{ range .Networks }}
+    <fieldset class="net {{.NetID}}">
+	<legend>{{.NetID}}</legend>
+	<button class="w3-circle w3-green" type="submit">{{.DisplayName}}</button><br>
+	<label>{{.AddressRange}}<br>
+	    <fieldset>
+		<form action="/edit_network", method="post">
+		    <input type="hidden" name="network" value='{{.NetID}}'>
+		    <legend>Last Modified</legend>
+		    <label>Network:</label>
+		    <label>{{.NetworkLastModified}}</label><br>
+		    <label>Nodes:</label>
+		    <label>{{.NodesLastModified}}</label><br>
+	    </fieldset>
+	    <button class="w3-button" type="submit">Edit</button><br>
+		</form>
+		<form action="/delete_network" method=POST onsubmit="return confirm('Delete Network {{.NetID}}');">
+		    <input type="hidden" name="network" value='{{.NetID}}'>
+		    <button class="w3-button" type="submit">Delete</button><br>
+		</form>
+    </fieldset>
+    {{ end }}
 </div>
 {{ end }}
 

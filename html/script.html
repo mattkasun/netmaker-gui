@@ -1,7 +1,12 @@
 {{define "script"}}
 <script>
 
-    var network = "All"
+    var network = "All";
+
+function setUp(tabName) {
+    setVisibility(tabName);
+    window.setInterval(getNodeStatus(), 180000);
+}
 
 function setVisibility(tabName) {
     var i;
@@ -99,6 +104,19 @@ function copyText(id) {
     alert(id+" was copied to clipboard ");
 }
 
+function getNodeStatus() {
+    xHttp = new XMLHttpRequest();
+    xHttp.open("GET", "node_health", true);
+    xHttp.onload = function() {
+	const nodes = JSON.parse(this.responseText);
+	console.log(this.responseText);
+	nodes.forEach((element, index, array) => {
+	console.log(element.Mac, element.Status)
+	document.getElementById("node_status"+element.Mac).innerHTML=element.Status;
+	});
+   }
+   xHttp.send();
+}
 
 </script>
 {{end}}
