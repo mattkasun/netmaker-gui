@@ -2,7 +2,7 @@
 <div id="Nodes" class="w3-container tab" style="display=none">
     <div class="net All">
 	{{range .Nodes}}
-	<p>{{.Name}} {{.Endpoint}} {{.Address}}</p>
+	<button onclick="setNetwork('{{.Network}}');">{{.Name}} {{.Endpoint}} {{.Address}}</p>
 	{{end}}
     </div>
     {{range .Nodes}}
@@ -40,7 +40,7 @@
 
 	{{template "Header"}}
 	<div id="EditNode" class="w3-modal">
-	    <div class="w3-modal-content w3-card-4 w3-padding">
+	    <div class="w3-modal-content w3-card-4 w3-padding" style="width:50%">
 		<h2> Edit Node {{.Name}}</h2>
 		<form action="/update_node/{{.Network}}/{{.MacAddress}}"  method=post>
 		    Address:<br> <input name="Address" type="text" value='{{.Address}}'/><br>

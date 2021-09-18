@@ -14,7 +14,7 @@ input[type=text] {
 
 	{{template "Header"}}
 	<div id="Edit" class="w3-modal">
-	    <div class="w3-modal-content w3-card-4 w3-padding">
+	    <div class="w3-modal-content w3-card-4 w3-padding style="width:50%">
 		<h2> Edit Network {{.NetID}}</h2>
 		<form action="/update_network" method=post>
 		    <input type="hidden" name="NetID" value='{{.NetID}}'>
