@@ -6,7 +6,7 @@
 function setUp(tabName) {
     setVisibility(tabName);
     window.setInterval(getNodeStatus, 30000);
-    window.setInterval(refresh, 120000);
+    {{/* window.setInterval(refresh, 120000); */}}
 }
 
 function setVisibility(tabName) {
@@ -109,6 +109,10 @@ function getNodeStatus() {
     xHttp = new XMLHttpRequest();
     xHttp.open("GET", "node_health", true);
     xHttp.onload = function() {
+	if (xHttp.status != 200) {
+	    xHttp.abort()
+	    return
+	}
 	const nodes = JSON.parse(this.responseText);
 	console.log(this.responseText);
 	nodes.forEach((element, index, array) => {

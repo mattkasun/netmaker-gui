@@ -86,7 +86,7 @@ func AuthRequired(c *gin.Context) {
 		} else {
 			message := session.Get("error")
 			fmt.Println("user exists --- message\n", message)
-			c.HTML(http.StatusOK, "Login", gin.H{"messge": message})
+			c.HTML(http.StatusUnauthorized, "Login", gin.H{"messge": message})
 			c.Abort()
 		}
 	}
