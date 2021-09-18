@@ -211,6 +211,17 @@ func UpdateNetwork(c *gin.Context) {
 	c.Redirect(http.StatusFound, location.RequestURI())
 }
 
+func RefreshKeys(c *gin.Context) {
+	net := c.Param("net")
+	_, err := controller.KeyUpdate(net)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	location := url.URL{Path: "/"}
+	c.Redirect(http.StatusFound, location.RequestURI())
+}
+
 func NewKey(c *gin.Context) {
 	var key models.AccessKey
 	var err error
@@ -357,11 +368,11 @@ func NodeHealth(c *gin.Context) {
 		nodeHealth.Mac = node.MacAddress
 		lastupdate := time.Now().Sub(time.Unix(node.LastCheckIn, 0))
 		if lastupdate.Minutes() > 15.0 {
-			nodeHealth.Status = "Dead"
+			nodeHealth.Status = "Dead: Node last checked in more than 15 minutes ago"
 		} else if lastupdate.Minutes() > 5.0 {
-			nodeHealth.Status = "Warning"
+			nodeHealth.Status = "Warning: Node last checked in more than 5 minutes ago"
 		} else {
-			nodeHealth.Status = "Healthy"
+			nodeHealth.Status = "Healthy: Node checked in within the last 5 minutes"
 		}
 		response = append(response, nodeHealth)
 	}

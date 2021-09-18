@@ -49,6 +49,7 @@ func SetupRouter() *gin.Engine {
 		private.POST("/edit_network", EditNetwork)
 		private.POST("/delete_network", DeleteNetwork)
 		private.POST("/update_network", UpdateNetwork)
+		private.GET("/refreshkeys/:net", RefreshKeys)
 		private.POST("/create_key", NewKey)
 		private.POST("/delete_key", DeleteKey)
 		private.POST("/create_user", CreateUser)

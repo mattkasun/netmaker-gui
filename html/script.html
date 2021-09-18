@@ -5,7 +5,8 @@
 
 function setUp(tabName) {
     setVisibility(tabName);
-    window.setInterval(getNodeStatus(), 180000);
+    window.setInterval(getNodeStatus, 30000);
+    window.setInterval(refresh, 120000);
 }
 
 function setVisibility(tabName) {
@@ -43,14 +44,14 @@ function openTab(evt, tabName) {
     evt.currentTarget.className += " w3-teal";
 }
 
-function setNetwork(evt, network) {
+function setNetwork(network) {
     var i, x;
     {{/* change colour of selected button */}}
     x = document.getElementsByClassName("netselection");
     for (i=0; i<x.length; i++) {
 	x[i].className=x[i].className.replace(" w3-teal", "");
     }
-    evt.currentTarget.className += " w3-teal";
+    document.getElementById("sidebarbutton"+network).className += " w3-teal";
 
     {{/* display subset of tabs based on network selected */}}    
     x = document.getElementsByClassName("net");
@@ -116,6 +117,10 @@ function getNodeStatus() {
 	});
    }
    xHttp.send();
+}
+
+function refresh() {
+    location.reload()
 }
 
 </script>

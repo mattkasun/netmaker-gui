@@ -2,9 +2,11 @@
 <div id="Networks" class="btn-group w3-white tab" style="display=none">
     <div class="net All">
 	{{range .Networks}}
-	<ul>
-	    <li> {{.DisplayName}} {{.AddressRange}}</li>
-	</ul>
+	    <button onclick="setNetwork('{{.NetID}}');"> {{.DisplayName}} {{.AddressRange}}</button>
+	<form action="/refreshkeys/{{.NetID}}" method="GET">
+	    <button title="Refresh Keys" class="w3-button w3-circle w3-white"><span class="material-icons">autorenew</span></button>
+	    </button>
+	</form>
 	{{ end }}
     </div>
 
