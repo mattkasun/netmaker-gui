@@ -369,10 +369,13 @@ func NodeHealth(c *gin.Context) {
 		lastupdate := time.Now().Sub(time.Unix(node.LastCheckIn, 0))
 		if lastupdate.Minutes() > 15.0 {
 			nodeHealth.Status = "Dead: Node last checked in more than 15 minutes ago"
+			nodeHealth.Color = "red"
 		} else if lastupdate.Minutes() > 5.0 {
 			nodeHealth.Status = "Warning: Node last checked in more than 5 minutes ago"
+			nodeHealth.Color = "yellow"
 		} else {
 			nodeHealth.Status = "Healthy: Node checked in within the last 5 minutes"
+			nodeHealth.Color = "green"
 		}
 		response = append(response, nodeHealth)
 	}

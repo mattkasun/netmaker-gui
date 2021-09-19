@@ -2,7 +2,7 @@
 <div id="Nodes" class="w3-container tab" style="display=none">
     <div class="net All">
 	{{range .Nodes}}
-	<button onclick="setNetwork('{{.Network}}');">{{.Name}} {{.Endpoint}} {{.Address}}</p>
+	<button id="node{{.MacAddress}}" style="background-color:grey"  onclick="setNetwork('{{.Network}}');">{{.Name}} {{.Endpoint}} {{.Address}}</p>
 	{{end}}
     </div>
     {{range .Nodes}}

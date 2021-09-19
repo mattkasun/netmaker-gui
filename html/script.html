@@ -114,10 +114,9 @@ function getNodeStatus() {
 	    return
 	}
 	const nodes = JSON.parse(this.responseText);
-	console.log(this.responseText);
 	nodes.forEach((element, index, array) => {
-	console.log(element.Mac, element.Status)
 	document.getElementById("node_status"+element.Mac).innerHTML=element.Status;
+	document.getElementById("node"+element.Mac).style.backgroundColor=element.Color
 	});
    }
    xHttp.send();

@@ -18,6 +18,7 @@ type NodeUpdate struct {
 type NodeStatus struct {
 	Mac    string
 	Status string
+	Color  string
 }
 
 //type User struct {
