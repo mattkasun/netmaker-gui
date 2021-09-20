@@ -58,6 +58,11 @@ func SetupRouter() *gin.Engine {
 		private.POST("/delete_node", DeleteNode)
 		private.POST("/update_node/:net/:mac", UpdateNode)
 		private.GET("/node_health", NodeHealth)
+		private.POST("/create_egress/:net/:mac", CreateEgress)
+		private.POST("/process_egress/:net/:mac", ProcessEgress)
+		private.POST("/delete_egress/:net/:mac", DeleteEgress)
+		private.POST("/create_ingress/:net/:mac", CreateIngress)
+		private.POST("/delete_ingress/:net/:mac", DeleteIngress)
 		private.GET("/logout", LogOut)
 	}
 	return router

@@ -2,11 +2,10 @@
 <div id="Networks" class="btn-group w3-white tab" style="display=none">
     <div class="net All">
 	{{range .Networks}}
-	    <button onclick="setNetwork('{{.NetID}}');"> {{.DisplayName}} {{.AddressRange}}</button>
-	<form action="/refreshkeys/{{.NetID}}" method="GET">
-	    <button title="Refresh Keys" class="w3-button w3-circle w3-white"><span class="material-icons">autorenew</span></button>
-	    </button>
-	</form>
+	<form action="/refreshkeys/{{.NetID}}" method="GET" style="display:inline">
+	<p><button class="w3-bar-item" onclick="event.preventDefault();setNetwork('{{.NetID}}');"> {{.DisplayName}} {{.AddressRange}}</button>
+	    <button title="Refresh Keys" class="w3-bar-item w3-button w3-circle w3-white"><span class="material-icons">autorenew</span></button>
+	</form></p>
 	{{ end }}
     </div>
 
@@ -15,8 +14,8 @@
 	<legend>{{.NetID}}</legend>
 	<button class="w3-circle w3-green" type="submit">{{.DisplayName}}</button><br>
 	<label>{{.AddressRange}}<br>
-	    <fieldset>
 		<form action="/edit_network", method="post">
+	    <fieldset>
 		    <input type="hidden" name="network" value='{{.NetID}}'>
 		    <legend>Last Modified</legend>
 		    <label>Network:</label>

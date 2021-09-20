@@ -1,0 +1,39 @@
+{{ define "ExtClient" }}
+<div id="ExtClient" class="w3-row tab" style="display=none">
+    <div class="w3-third">
+	<p> Available Ingress Gateways
+	{{range .Nodes}}
+	<form action="/create_ingress/{{.Network}}/{{.MacAddress}}" method="POST" style="display:inline">
+	    <label>{{.Name}}</label>
+	    <label>{{.Network}}</label>
+	    <button title="Create Client" onclick="return confirm('Are you sure you want to add an extenal client to the {{.Network}} network?');" class="w3-circle w3-blue"><span class="material-icons">add_circle_outline</span></button>
+	</form>
+	{{end}}
+    </div>
+
+    <div class="w3-twothird">
+	<p>External Clients</p>
+	{{range .ExtClients}}
+	<button class="w3-block w3-white w3-left-align" onclick="openClient('{{.ClientID}}');">{{.ClientID}} @ {{.Network}}</button>
+	<div id="client{{.ClientID}}" class="w3-container w3-hide">
+	    <p><label>IP </label><input type=disabled placeholder="{{.Address}}"></p>
+	    <p><label>Public Key </label><input type=disabled placeholder="{{.PublicKey}}"></p>
+	    <p><label>Holder for QR Code </label></p>
+	    <div class=btn-group>
+		<button class="w3-bar-item w3-circle w3-white"><span class="material-icons">edit</span></button>
+		<form style="display:inline" action="/delete_extclient/{{.Network}}/{{.ClientID}}" method=POST>
+		    <p><button class="w3-bar-item w3-circle w3-red"><span class="material-icons">delete</span></button>
+		</form>
+
+		<form style="display:inline" action="/delete_extclient/{{.Network}}/{{.ClientID}}" method=POST>
+		    <p><button class="w3-bar-item">DownLoad Config</button>
+		</form>
+	    </div>
+	</div>
+	{{end}}
+    </div>
+</div>
+
+{{end}}
+
+

@@ -1,9 +1,22 @@
 {{ define "Nodes" }}
-<div id="Nodes" class="w3-container tab" style="display=none">
+<div id="Nodes" class="btn-group w3-white tab" style="display=none">
     <div class="net All">
-	{{range .Nodes}}
+    {{range .Nodes}}
 	<p><button id="node{{.MacAddress}}" class="w3-lightgrey"  onclick="setNetwork('{{.Network}}');">{{.Name}} {{.Endpoint}} {{.Address}}</button></p>
+	{{if eq .IsEgressGateway "yes" }}
+	<button class="w3-bar-item w3-circle w3-white" title="Remove Egress Gateway" onclick="removeEgress('{{.MacAddress}}, {{.Network}}');"><span class="material-icons">highlight_off</span></button> 
+	{{ else }}
+	<form action="/create_egress/{{.Network}}/{{.MacAddress}}" Method="POST" style="display:inline">
+	<button class="w3-bar-item w3-circle w3-white" title="Create Egress Gateway"><span class="material-icons">router</span></button>
+	</form>
 	{{end}}
+	{{if eq .IsIngressGateway "yes"}}
+	<p>{{.IsIngressGateway}}</p>
+	<button class="w3-bar-item w3-circle w3-white" title="Remove Ingress Gateway" onclick="removeIngress('{{.MacAddress}}', '{{.Network}}');"><span class="material-icons">highlight_off</span></button> 
+	{{ else }}
+	<button class="w3-bar-item w3-circle w3-white" title="Create Ingress Gateway" onclick="addIngress('{{.MacAddress}}', '{{.Network}}');"><span class="material-icons">highlight_off</span></button> 
+	{{end}}
+    {{end}}
     </div>
     {{range .Nodes}}
     <fieldset class="net {{.Network}}">
@@ -28,7 +41,35 @@
 </div>
 
 {{ end }}
+{{/*
+<div id="Egress" class="w3-modal">
+    <div class="w3-modal-content w3-card-4 w3-animate-zoom w3-padding" style="width:50%">
+	<div class="w3-container w3-center">
+	    <p>Make Gateway</p>
+	    <div class="w3-right">
+		<select name="network" onChange="fillEgressForm()" id="egressnetwork">
+		    {{range .Nodes}}
+		    <option value='{{.Name}}'>{{.Name}}</option>
+		    {{end}}
+		    <option value="vpn">Internet(VPN)
+		</select>
+	    </div>
+	    <form action="/creategateway/{{$.Nodes.Network}}/{{$.Nodes.MacAddress}}" method="POST">
+		<label>Address Range (comma separated)</label>
+		<input type="text" id="egressrange" placeholder="0.0.0.0/0" required>
+		<label>Network Interface</label>
+		<input type="text" id="egressnet" placeholder="eth0" required>
 
+		<br>	<button class="w3-button w3-block w3-padding w3-teal" type=submit>Create GateWay</button>
+		<button class="w3-button w3-block w3-padding w3-yellow" type=reset>Reset</button>
+	    </form>
+	    <button class="w3-button w3-block w3-padding w3-red" type=Cancel></button>
+	</div>
+    </div>
+</div>
+{{end}}
+
+*/}}
 {{define "EditNode"}}
 <html>
     <head>
@@ -75,6 +116,13 @@
     </body>
 </html>
 {{end}}
+
+
+
+
+
+
+
 
 
 

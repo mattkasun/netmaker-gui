@@ -382,3 +382,54 @@ func NodeHealth(c *gin.Context) {
 	c.JSON(http.StatusOK, response)
 	return
 }
+
+func CreateEgress(c *gin.Context) {
+	c.HTML(http.StatusOK, "Egress", nil)
+}
+
+func ProcessEgress(c *gin.Context) {
+	var egress models.EgressGatewayRequest
+	//net := c.Param("net")
+	//mac := c.Param("mac")
+	_, err := controller.CreateEgressGateway(egress)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"message": "Ingress Gateway Created"})
+}
+
+func DeleteEgress(c *gin.Context) {
+	net := c.Param("net")
+	mac := c.Param("mac")
+	_, err := controller.DeleteEgressGateway(net, mac)
+	if err != nil {
+		fmt.Println(err)
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"message": "Ingress Gateway Created"})
+}
+
+func CreateIngress(c *gin.Context) {
+	net := c.Param("net")
+	mac := c.Param("mac")
+	_, err := controller.CreateIngressGateway(net, mac)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"message": "Ingress Gateway Created"})
+}
+
+func DeleteIngress(c *gin.Context) {
+	net := c.Param("net")
+	mac := c.Param("mac")
+	_, err := controller.DeleteIngressGateway(net, mac)
+	if err != nil {
+		fmt.Println(err)
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"message": "Ingress Gateway Created"})
+}

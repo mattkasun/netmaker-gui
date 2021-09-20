@@ -9,12 +9,12 @@ import (
 	"github.com/gravitl/netmaker/models"
 )
 
-type NodeUpdate struct {
-	Oldmac  string
-	Oldnet  string
-	NewNode *models.Node
-}
-
+//type NodeUpdate struct {
+//	Oldmac  string
+//	Oldnet  string
+//	NewNode *models.Node
+//}
+//
 type NodeStatus struct {
 	Mac    string
 	Status string
@@ -45,11 +45,12 @@ type NodeStatus struct {
 
 //PageData -contains data for html template
 type PageData struct {
-	Page     string
-	Admin    bool
-	Networks []models.Network
-	Nodes    []models.Node
-	Users    []models.ReturnUser
+	Page       string
+	Admin      bool
+	Networks   []models.Network
+	Nodes      []models.Node
+	Users      []models.ReturnUser
+	ExtClients []models.ExtClient
 }
 
 //Initializes (fetches) page data from backend
@@ -61,6 +62,7 @@ func (data *PageData) Init(page string, c *gin.Context) {
 	data.Admin = isAdmin
 	allowedNets := session.Get("networks").([]string)
 	networks, err := models.GetNetworks()
+	extclients := GetAllExtClients()
 	if err != nil {
 		//panic(err)
 		fmt.Println("error geting network data", err)
@@ -77,6 +79,7 @@ func (data *PageData) Init(page string, c *gin.Context) {
 		data.Networks = networks
 		data.Nodes = nodes
 		data.Users = users
+		data.ExtClients = extclients
 	} else {
 		var nets []models.Network
 		for _, network := range networks {
@@ -93,10 +96,26 @@ func (data *PageData) Init(page string, c *gin.Context) {
 			data.Nodes = hosts
 		}
 		user := models.ReturnUser{user, allowedNets, isAdmin}
-
 		data.Users = append([]models.ReturnUser{}, user)
+
+		data.ExtClients = extclients
 	}
 
+}
+
+func GetAllExtClients() []models.ExtClient {
+	var clients []models.ExtClient
+	var client models.ExtClient
+	client.ClientID = "clientid"
+	client.Description = "description"
+	client.PrivateKey = "private key"
+	client.PublicKey = "my public key"
+	client.Network = "net"
+	client.Address = "10.2.2.23"
+	client.IngressGatewayID = "tbd"
+
+	clients = append(clients, client)
+	return clients
 }
 
 func SliceContains(s []string, x string) bool {
