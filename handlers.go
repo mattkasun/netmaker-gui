@@ -472,7 +472,11 @@ func CreateIngressClient(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	c.JSON(http.StatusOK, gin.H{"message": "Ingress Client Created"})
+	session := sessions.Default(c)
+	session.Set("message", "external client has been created")
+	session.Save()
+	location := url.URL{Path: "/"}
+	c.Redirect(http.StatusFound, location.RequestURI())
 }
 
 func DeleteIngressClient(c *gin.Context) {
