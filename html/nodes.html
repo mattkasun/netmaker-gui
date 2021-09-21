@@ -4,7 +4,7 @@
     {{range .Nodes}}
 	<p><button id="node{{.MacAddress}}" class="w3-lightgrey"  onclick="setNetwork('{{.Network}}');">{{.Name}} {{.Endpoint}} {{.Address}}</button></p>
 	{{if eq .IsEgressGateway "yes" }}
-	<button class="w3-bar-item w3-circle w3-white" title="Remove Egress Gateway" onclick="removeEgress('{{.MacAddress}}, {{.Network}}');"><span class="material-icons">highlight_off</span></button> 
+	<button class="w3-bar-item w3-circle w3-white" title="Remove Egress Gateway" onclick="removeEgress('{{.MacAddress}}', '{{.Network}}');"><span class="material-icons">highlight_off</span></button> 
 	{{ else }}
 	<form action="/create_egress/{{.Network}}/{{.MacAddress}}" Method="POST" style="display:inline">
 	<button class="w3-bar-item w3-circle w3-white" title="Create Egress Gateway"><span class="material-icons">router</span></button>
