@@ -116,6 +116,7 @@ function getNodeStatus() {
 	if (xHttp.status == 401) {
 	    clearInterval(nodeStatus);
 	    xHttp.abort();
+	    location.reload();
 	    return;
 	}
 

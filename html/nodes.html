@@ -11,7 +11,6 @@
 	</form>
 	{{end}}
 	{{if eq .IsIngressGateway "yes"}}
-	<p>{{.IsIngressGateway}}</p>
 	<button class="w3-bar-item w3-circle w3-white" title="Remove Ingress Gateway" onclick="removeIngress('{{.MacAddress}}', '{{.Network}}');"><span class="material-icons">highlight_off</span></button> 
 	{{ else }}
 	<button class="w3-bar-item w3-circle w3-white" title="Create Ingress Gateway" onclick="addIngress('{{.MacAddress}}', '{{.Network}}');"><span class="material-icons">highlight_off</span></button> 

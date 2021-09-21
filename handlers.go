@@ -451,3 +451,27 @@ func DeleteIngress(c *gin.Context) {
 	}
 	c.JSON(http.StatusOK, gin.H{"message": "Ingress Gateway Created"})
 }
+
+func CreateIngressClient(c *gin.Context) {
+	var client models.ExtClient
+	client.Network = c.Param("net")
+	client.IngressGatewayID = c.Param("mac")
+	//
+	//	node, err := functions.GetNodeByMacAddress(client.Network, client.IngressGatewayID)
+	//	if err != nil {
+	//		fmt.Println(err)
+	//		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+	//		return
+	//	}
+	//
+	//	client.IngressGatewayEndpoint = node.Endpoint + ":" + strconv.FormatInt(int64(node.ListenPort), 10)
+	//
+	fmt.Println("----------------------------\n", client)
+	err := controller.CreateExtClient(client)
+	if err != nil {
+		fmt.Println(err)
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"message": "Ingress Client Created"})
+}
