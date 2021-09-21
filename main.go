@@ -64,6 +64,7 @@ func SetupRouter() *gin.Engine {
 		private.POST("/create_ingress/:net/:mac", CreateIngress)
 		private.POST("/delete_ingress/:net/:mac", DeleteIngress)
 		private.POST("/create_ingress_client/:net/:mac", CreateIngressClient)
+		private.POST("/delete_ingress_client/:net/:id", DeleteIngressClient)
 		private.GET("/logout", LogOut)
 	}
 	return router

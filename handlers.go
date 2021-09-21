@@ -466,7 +466,6 @@ func CreateIngressClient(c *gin.Context) {
 
 	client.IngressGatewayEndpoint = node.Endpoint + ":" + strconv.FormatInt(int64(node.ListenPort), 10)
 
-	fmt.Println("----------------------------\n", client)
 	err = controller.CreateExtClient(client)
 	if err != nil {
 		fmt.Println(err)
@@ -474,4 +473,21 @@ func CreateIngressClient(c *gin.Context) {
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{"message": "Ingress Client Created"})
+}
+
+func DeleteIngressClient(c *gin.Context) {
+	net := c.Param("net")
+	id := c.Param("id")
+	err := controller.DeleteExtClient(net, id)
+	if err != nil {
+		fmt.Println(err)
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	session := sessions.Default(c)
+	session.Set("message", "external client "+id+" @ "+net+" has been deleted")
+	session.Save()
+	location := url.URL{Path: "/"}
+	c.Redirect(http.StatusFound, location.RequestURI())
 }
