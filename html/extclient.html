@@ -18,22 +18,55 @@
 	<div id="client{{.ClientID}}" class="w3-container w3-hide">
 	    <p><label>IP </label><input type=disabled placeholder="{{.Address}}"></p>
 	    <p><label>Public Key </label><input type=disabled placeholder="{{.PublicKey}}"></p>
-	    <p><label>Holder for QR Code </label></p>
 	    <div class=btn-group>
-		<button class="w3-bar-item w3-circle w3-white"><span class="material-icons">edit</span></button>
-		<form style="display:inline" action="/delete_extclient/{{.Network}}/{{.ClientID}}" method=POST>
-		    <p><button class="w3-bar-item w3-circle w3-red"><span class="material-icons">delete</span></button>
+		<form class="form-inline" action="display_QR/{{.Network}}/{{.ClientID}}" method=POST>
+
+		    <button class="w3-bar-item", type=submit>Show QR Code <span class="material-icons">qr_code</span></Button>
+		</form>
+		<form class="form-inline" action="/download_config/{{.Network}}/{{.ClientID}}" method=POST>
+		    <button class="w3-bar-item">DownLoad Config <span class="material-icons">cloud_download</span></button>
+		</form>
+		<form class="form-inline" action="/edit_client/{{.Network}}/{{.ClientID}}">
+		<button class="w3-bar-item w3-circle w3-white" onclick="document.GetElmentById('EditExtClient');"><span class="material-icons">edit</span></button>
+		</form>
+		<form class="form-inline" action="/delete_extclient/{{.Network}}/{{.ClientID}}" method=POST>
+		    <button class="w3-bar-item w3-circle w3-red"><span class="material-icons">delete</span></button>
 		</form>
 
-		<form style="display:inline" action="/delete_extclient/{{.Network}}/{{.ClientID}}" method=POST>
-		    <p><button class="w3-bar-item">DownLoad Config</button>
-		</form>
 	    </div>
 	</div>
 	{{end}}
     </div>
 </div>
-
 {{end}}
+
+{{ define "EditExtClient" }}
+<html>
+    <head>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="https://www.w3schools.com/lib/w3.css" type="text/css">
+    </head>
+
+    <body onLoad="document.getElementById('EditExtClient').style.display='block';">
+
+	{{template "Header"}}
+
+<div id="EditExtClient" class="w3-modal">
+    <div class="w3-modal-content w3-card-4 w3-animate-zoom w3-padding" style="width:50%">
+	<div class="w3-center">
+	    <span onclick="document.getElementById('NewNetwork').style.display='none'" class="w3-button w3-xlarge w3-hover-red w3-display-topright" title="Close Modal">&times;</span>
+	    <form class=w3-container method=POST action="/update_extclient/{{.Network}}/{{.ClientID}}">
+		<input type=text placeholder="New Client ID" required>
+		<br>	<button class="w3-button w3-block w3-padding w3-teal" type=submit>Create GateWay</button>
+		<button class="w3-button w3-block w3-padding w3-yellow" type=reset>Reset</button>
+	    <button class="w3-button w3-block w3-padding w3-red" type=Cancel></button>
+
+	    </form>
+	</div>
+    </div>
+</div>
+{{end}}
+
+
 
 

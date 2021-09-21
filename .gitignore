@@ -1,0 +1,4 @@
+*.bak
+netmaker-gui
+config/*
+data/*

@@ -4,9 +4,12 @@
     var network = "All";
 var nodeStatus;
 
-function setUp(tabName) {
+function setUp(tabName, message) {
     setVisibility(tabName);
     nodeStatus = window.setInterval(getNodeStatus, 30000);
+    if (message != "") {
+	alert(message)
+    }
     {{/* window.setInterval(refresh, 120000); */}}
 }
 
@@ -189,6 +192,20 @@ function openClient(client) {
     }
 }
 
-
+function fillEgressForm(address, interface) {
+    var x = document.getElementById('egressnetwork').value;
+    if (x === 'none') {
+	document.getElementById('egressform').reset();
+    } else if (x === 'vpn') {
+	document.getElementById('egressrange').value = "0.0.0.0/0";
+	document.getElementById('egressnet').value = "eth0";
+    } else {
+    alert(x+address+interface);
+	document.getElementById('egressrange').value = address+"/24";
+	document.getElementById('egressnet').value = interface;
+    }
+}
+	
+	
 </script>
     {{end}}

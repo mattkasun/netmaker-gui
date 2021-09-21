@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"net/url"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/gin-contrib/sessions"
@@ -20,18 +21,17 @@ func ProcessLogin(c *gin.Context) {
 	AuthRequest.UserName = c.PostForm("user")
 	AuthRequest.Password = c.PostForm("pass")
 	session := sessions.Default(c)
-	//not sure need the jwt
-	jwt, err := controller.VerifyAuthRequest(AuthRequest)
+	//don't need the jwt
+	_, err := controller.VerifyAuthRequest(AuthRequest)
 	if err != nil {
-		fmt.Println("error verifying AuthRequest: ", jwt, err)
-		fmt.Println("setting session err to: ", err)
-		session.Set("error", err)
+		fmt.Println("error verifying AuthRequest: ", err)
+		session.Set("message", err.Error())
 		session.Set("loggedIn", false)
 		c.HTML(http.StatusUnauthorized, "Login", gin.H{"message": err})
 	} else {
 		session.Set("loggedIn", true)
-		//not sure need the jwt
-		session.Set("token", jwt)
+		//init message
+		session.Set("message", "")
 		session.Options(sessions.Options{MaxAge: 1800})
 		user, err := controller.GetUser(AuthRequest.UserName)
 		if err != nil {
@@ -41,7 +41,6 @@ func ProcessLogin(c *gin.Context) {
 		session.Set("isAdmin", user.IsAdmin)
 		session.Set("networks", user.Networks)
 		session.Save()
-		fmt.Println("Successful login:\n", session.Get("loggedIn"), "\njwt:\n", jwt)
 		location := url.URL{Path: "/"}
 		c.Redirect(http.StatusFound, location.RequestURI())
 	}
@@ -383,20 +382,39 @@ func NodeHealth(c *gin.Context) {
 	return
 }
 
-func CreateEgress(c *gin.Context) {
-	c.HTML(http.StatusOK, "Egress", nil)
-}
-
 func ProcessEgress(c *gin.Context) {
 	var egress models.EgressGatewayRequest
-	//net := c.Param("net")
-	//mac := c.Param("mac")
-	_, err := controller.CreateEgressGateway(egress)
+	egress.NodeID = c.Param("mac")
+	egress.NetID = c.Param("net")
+	node, err := controller.GetNode(egress.NodeID, egress.NetID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+	}
+	egress.Ranges = strings.Split(c.PostForm("ranges"), ",")
+	egress.Interface = c.PostForm("interface")
+
+	_, err = controller.CreateEgressGateway(egress)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	c.JSON(http.StatusOK, gin.H{"message": "Ingress Gateway Created"})
+
+	session := sessions.Default(c)
+	session.Set("message", node.Name+" is now a gateway")
+	session.Save()
+	location := url.URL{Path: "/"}
+	c.Redirect(http.StatusFound, location.RequestURI())
+}
+
+func CreateEgress(c *gin.Context) {
+	net := c.Param("net")
+	mac := c.Param("mac")
+	node, err := controller.GetNode(mac, net)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	c.HTML(http.StatusOK, "Egress", node)
 }
 
 func DeleteEgress(c *gin.Context) {

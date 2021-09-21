@@ -19,7 +19,7 @@
      <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script> -->
 
     </head>
-    <body onLoad="setUp('{{.Page}}')"> 
+    <body onLoad="setUp('{{.Page}}', '{{.Message}}')"> 
 	{{template "Header" . }} 
 	{{template "buttonbar"}}
 	{{template "Sidebar" .}}

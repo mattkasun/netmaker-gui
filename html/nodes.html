@@ -41,35 +41,48 @@
 </div>
 
 {{ end }}
-{{/*
+{{ define "Egress" }}
+<html>
+    <head>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="https://www.w3schools.com/lib/w3.css" type="text/css">
+    </head>
+
+    <body onLoad="document.getElementById('Egress').style.display='block';">
+
+	{{template "Header"}}
+
 <div id="Egress" class="w3-modal">
     <div class="w3-modal-content w3-card-4 w3-animate-zoom w3-padding" style="width:50%">
 	<div class="w3-container w3-center">
-	    <p>Make Gateway</p>
+	    <p>Make {{.Name}} into Gateway</p>
 	    <div class="w3-right">
-		<select name="network" onChange="fillEgressForm()" id="egressnetwork">
-		    {{range .Nodes}}
-		    <option value='{{.Name}}'>{{.Name}}</option>
-		    {{end}}
+		<select name="network" onChange="fillEgressForm({{.Address}}, {{.Interface}});" id="egressnetwork">
+		    <option value='none'></option>
+		    <option value='{{.Network}}'>{{.Network}}</option>
 		    <option value="vpn">Internet(VPN)
 		</select>
 	    </div>
-	    <form action="/creategateway/{{$.Nodes.Network}}/{{$.Nodes.MacAddress}}" method="POST">
-		<label>Address Range (comma separated)</label>
-		<input type="text" id="egressrange" placeholder="0.0.0.0/0" required>
-		<label>Network Interface</label>
-		<input type="text" id="egressnet" placeholder="eth0" required>
+	    <br>
+	    <form id="egressform" action="/process_egress/{{.Network}}/{{.MacAddress}}" method="POST">
+		<p><label>Address Range (comma separated)</label>
+		<input type="text" id="egressrange" name="ranges" placeholder="192.168.1.1/24" required></p>
+		<p><label>Network Interface</label>
+		<input type="text" id="egressnet" name="interface" required></p>
 
-		<br>	<button class="w3-button w3-block w3-padding w3-teal" type=submit>Create GateWay</button>
+		<br><br><button class="w3-button w3-block w3-padding w3-teal" type=submit>Create GateWay</button>
 		<button class="w3-button w3-block w3-padding w3-yellow" type=reset>Reset</button>
 	    </form>
-	    <button class="w3-button w3-block w3-padding w3-red" type=Cancel></button>
+
+		<form action="/" method=get>
+	    <button class="w3-button w3-block w3-padding w3-red" type=submit formaction="/" formmethod=get>Cancel</button>
+		</form>
 	</div>
     </div>
 </div>
+{{template "script"}}
 {{end}}
 
-*/}}
 {{define "EditNode"}}
 <html>
     <head>
