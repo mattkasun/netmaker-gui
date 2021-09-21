@@ -6,6 +6,7 @@ import (
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
 	controller "github.com/gravitl/netmaker/controllers"
+	"github.com/gravitl/netmaker/functions"
 	"github.com/gravitl/netmaker/models"
 )
 
@@ -36,10 +37,13 @@ func (data *PageData) Init(page string, c *gin.Context) {
 	data.Admin = isAdmin
 	allowedNets := session.Get("networks").([]string)
 	networks, err := models.GetNetworks()
-	extclients := GetAllExtClients()
 	if err != nil {
 		//panic(err)
 		fmt.Println("error geting network data", err)
+	}
+	extclients, err := functions.GetAllExtClients()
+	if err != nil {
+		fmt.Println("error getting external client data", err)
 	}
 	nodes, err := models.GetAllNodes()
 	if err != nil {
@@ -72,7 +76,13 @@ func (data *PageData) Init(page string, c *gin.Context) {
 		user := models.ReturnUser{user, allowedNets, isAdmin}
 		data.Users = append([]models.ReturnUser{}, user)
 
-		data.ExtClients = extclients
+		var clients []models.ExtClient
+		for _, client := range extclients {
+			if SliceContains(allowedNets, client.Network) {
+				clients = append(clients, client)
+			}
+			data.ExtClients = clients
+		}
 	}
 
 }
