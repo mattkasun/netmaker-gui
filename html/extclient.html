@@ -23,7 +23,7 @@
 
 		    <button class="w3-bar-item", type=submit>Show QR Code <span class="material-icons">qr_code</span></Button>
 		</form>
-		<form class="form-inline" action="/download_config/{{.Network}}/{{.ClientID}}" method=POST>
+		<form class="form-inline" action="get_client_config/{{.Network}}/{{.ClientID}}" method=POST>
 		    <button class="w3-bar-item">DownLoad Config <span class="material-icons">cloud_download</span></button>
 		</form>
 		<form class="form-inline" action="/edit_client/{{.Network}}/{{.ClientID}}">

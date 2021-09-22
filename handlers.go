@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 	"net/url"
+	"os"
 	"strconv"
 	"strings"
 	"time"
@@ -494,4 +495,85 @@ func DeleteIngressClient(c *gin.Context) {
 	session.Save()
 	location := url.URL{Path: "/"}
 	c.Redirect(http.StatusFound, location.RequestURI())
+}
+
+func EditIngressClient(c *gin.Context) {
+}
+
+func GetQR(c *gin.Context) {
+}
+
+func GetConf(net, id string) (string, error) {
+	client, err := controller.GetExtClient(id, net)
+	if err != nil {
+		return "", err
+	}
+	gwnode, err := functions.GetNodeByMacAddress(client.Network, client.IngressGatewayID)
+	if err != nil {
+		return "", err
+	}
+	network, err := functions.GetParentNetwork(client.Network)
+	if err != nil {
+		return "", err
+	}
+	keepalive := ""
+	if network.DefaultKeepalive != 0 {
+		keepalive = "PersistentKeepalive = " + strconv.Itoa(int(network.DefaultKeepalive))
+	}
+	gwendpoint := gwnode.Endpoint + ":" + strconv.Itoa(int(gwnode.ListenPort))
+	newAllowedIPs := network.AddressRange
+	if egressGatewayRanges, err := client.GetEgressRangesOnNetwork(); err == nil {
+		for _, egressGatewayRange := range egressGatewayRanges {
+			newAllowedIPs += "," + egressGatewayRange
+		}
+	}
+	defaultDNS := ""
+	if network.DefaultExtClientDNS != "" {
+		defaultDNS = "DNS = " + network.DefaultExtClientDNS
+	}
+
+	config := fmt.Sprintf(`[Interface]
+Address = %s
+PrivateKey = %s
+%s
+
+[Peer]
+PublicKey = %s
+AllowedIPs = %s
+Endpoint = %s
+%s
+
+`, client.Address+"/32",
+		client.PrivateKey,
+		defaultDNS,
+		gwnode.PublicKey,
+		newAllowedIPs,
+		gwendpoint,
+		keepalive)
+
+	return config, nil
+}
+
+func GetClientConfig(c *gin.Context) {
+	net := c.Param("net")
+	id := c.Param("id")
+	config, err := GetConf(net, id)
+	b := []byte(config)
+	if err != nil {
+		fmt.Println(err)
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	filename := id + ".conf"
+	filepath := "/tmp/" + filename
+	err = os.WriteFile(filepath, b, 0644)
+	if err != nil {
+		fmt.Println(err)
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	c.FileAttachment(filepath, filename)
+	c.Header("Content-Description", "File Transfer")
+	c.Header("Content-Disposition", "attachment: filename="+filename)
+	c.Data(http.StatusOK, "application/octet-stream", b)
 }
