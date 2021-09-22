@@ -54,13 +54,17 @@
 	<div id="EditExtClient" class="w3-modal">
 	    <div class="w3-modal-content w3-card-4 w3-animate-zoom w3-padding" style="width:50%">
 		<div class="w3-center">
-		    <span onclick="document.getElementById('NewNetwork').style.display='none'" class="w3-button w3-xlarge w3-hover-red w3-display-topright" title="Close Modal">&times;</span>
+		    <form action="/" method=get>
+			<button class="w3-button w3-xlarge w3-hover-red w3-display-topright" title="Close">&times;</button><br>
+		    </form>
 		    <form class=w3-container method=POST action="/update_extclient/{{.Network}}/{{.ClientID}}">
-			<input type=text placeholder="New Client ID" required>
+			<p>Editing client:{{.ClientID}}</p>
+			<p><input type=text placeholder="New Client ID" required></p>
 			<br>	<button class="w3-button w3-block w3-padding w3-teal" type=submit>Create GateWay</button>
 			<button class="w3-button w3-block w3-padding w3-yellow" type=reset>Reset</button>
-			<button class="w3-button w3-block w3-padding w3-red" type=Cancel></button>
-
+		    </form>
+		    <form action="/" method=get>
+			<button class="w3-button w3-block w3-padding w3-red" type=Cancel>Cancel</button>
 		    </form>
 		</div>
 	    </div>

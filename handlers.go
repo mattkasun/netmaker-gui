@@ -498,6 +498,15 @@ func DeleteIngressClient(c *gin.Context) {
 }
 
 func EditIngressClient(c *gin.Context) {
+	net := c.Param("net")
+	id := c.Param("id")
+	client, err := controller.GetExtClient(id, net)
+	if err != nil {
+		fmt.Println(err)
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	c.HTML(http.StatusOK, "EditExtClient", client)
 }
 
 func GetQR(c *gin.Context) {
