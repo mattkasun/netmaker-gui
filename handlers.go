@@ -595,3 +595,27 @@ func GetClientConfig(c *gin.Context) {
 	c.Header("Content-Disposition", "attachment: filename="+filename)
 	c.Data(http.StatusOK, "application/octet-stream", b)
 }
+
+func UpdateClient(c *gin.Context) {
+	net := c.Param("net")
+	id := c.Param("id")
+	newid := c.PostForm("newid")
+
+	client, err := controller.GetExtClient(id, net)
+	if err != nil {
+		fmt.Println(err)
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	_, err = controller.UpdateExtClient(newid, net, client)
+	if err != nil {
+		fmt.Println(err)
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	session := sessions.Default(c)
+	session.Set("message", "External client has been updated")
+	session.Save()
+	location := url.URL{Path: "/"}
+	c.Redirect(http.StatusFound, location.RequestURI())
+}

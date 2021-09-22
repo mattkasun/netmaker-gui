@@ -68,6 +68,7 @@ func SetupRouter() *gin.Engine {
 		private.POST("/edit_ingress_client/:net/:id", EditIngressClient)
 		private.POST("/get_qr/:net/:id", GetQR)
 		private.POST("/get_client_config/:net/:id", GetClientConfig)
+		private.POST("/update_client/:net/:id", UpdateClient)
 
 		private.GET("/logout", LogOut)
 	}
