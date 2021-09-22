@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"net/http"
 	"net/url"
-	"os"
 	"strconv"
 	"strings"
 	"time"
@@ -14,6 +13,7 @@ import (
 	controller "github.com/gravitl/netmaker/controllers"
 	"github.com/gravitl/netmaker/functions"
 	"github.com/gravitl/netmaker/models"
+	"github.com/skip2/go-qrcode"
 )
 
 func ProcessLogin(c *gin.Context) {
@@ -501,6 +501,22 @@ func EditIngressClient(c *gin.Context) {
 }
 
 func GetQR(c *gin.Context) {
+	net := c.Param("net")
+	id := c.Param("id")
+	config, err := GetConf(net, id)
+	if err != nil {
+		fmt.Println(err)
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	b, err := qrcode.Encode(config, qrcode.Medium, 220)
+	if err != nil {
+		fmt.Println(err)
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	c.Header("Content-Type", "image/png")
+	c.Data(http.StatusOK, "application/octet-strean", b)
 }
 
 func GetConf(net, id string) (string, error) {
@@ -565,14 +581,7 @@ func GetClientConfig(c *gin.Context) {
 		return
 	}
 	filename := id + ".conf"
-	filepath := "/tmp/" + filename
-	err = os.WriteFile(filepath, b, 0644)
-	if err != nil {
-		fmt.Println(err)
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
-	}
-	c.FileAttachment(filepath, filename)
+	//c.FileAttachment(filepath, filename)
 	c.Header("Content-Description", "File Transfer")
 	c.Header("Content-Disposition", "attachment: filename="+filename)
 	c.Data(http.StatusOK, "application/octet-stream", b)
