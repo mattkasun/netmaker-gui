@@ -19,8 +19,7 @@
      <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script> -->
 
     </head>
-    <body onLoad="setVisibility('{{.Page}}')"> 
-
+    <body onLoad="setUp('{{.Page}}', '{{.Message}}')"> 
 	{{template "Header" . }} 
 	{{template "buttonbar"}}
 	{{template "Sidebar" .}}
@@ -29,6 +28,7 @@
 	    {{template "Networks" .}}
 	    {{template "Nodes" .}}
 	    {{template "Keys" .}}
+	    {{template "ExtClient" .}}
 	</div>
 	{{ template "script" }} 
     </body>

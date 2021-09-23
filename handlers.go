@@ -5,12 +5,15 @@ import (
 	"net/http"
 	"net/url"
 	"strconv"
+	"strings"
+	"time"
 
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
 	controller "github.com/gravitl/netmaker/controllers"
 	"github.com/gravitl/netmaker/functions"
 	"github.com/gravitl/netmaker/models"
+	"github.com/skip2/go-qrcode"
 )
 
 func ProcessLogin(c *gin.Context) {
@@ -19,18 +22,26 @@ func ProcessLogin(c *gin.Context) {
 	AuthRequest.UserName = c.PostForm("user")
 	AuthRequest.Password = c.PostForm("pass")
 	session := sessions.Default(c)
-	jwt, err := controller.VerifyAuthRequest(AuthRequest)
+	//don't need the jwt
+	_, err := controller.VerifyAuthRequest(AuthRequest)
 	if err != nil {
-		fmt.Println("error verifying AuthRequest: ", jwt, err)
-		fmt.Println("setting session err to: ", err)
-		session.Set("error", err)
+		fmt.Println("error verifying AuthRequest: ", err)
+		session.Set("message", err.Error())
 		session.Set("loggedIn", false)
 		c.HTML(http.StatusUnauthorized, "Login", gin.H{"message": err})
 	} else {
 		session.Set("loggedIn", true)
-		session.Set("token", jwt)
+		//init message
+		session.Set("message", "")
+		session.Options(sessions.Options{MaxAge: 1800})
+		user, err := controller.GetUser(AuthRequest.UserName)
+		if err != nil {
+			fmt.Println("err retrieving user: ", err)
+		}
+		session.Set("username", user.UserName)
+		session.Set("isAdmin", user.IsAdmin)
+		session.Set("networks", user.Networks)
 		session.Save()
-		fmt.Println("Successful login:\n", session.Get("loggedIn"), "\njwt:\n", jwt)
 		location := url.URL{Path: "/"}
 		c.Redirect(http.StatusFound, location.RequestURI())
 	}
@@ -62,7 +73,7 @@ func NewUser(c *gin.Context) {
 
 func DisplayLanding(c *gin.Context) {
 	var Data PageData
-	Data.Init("Networks")
+	Data.Init("Networks", c)
 	c.HTML(http.StatusOK, "layout", Data)
 }
 
@@ -200,6 +211,17 @@ func UpdateNetwork(c *gin.Context) {
 	c.Redirect(http.StatusFound, location.RequestURI())
 }
 
+func RefreshKeys(c *gin.Context) {
+	net := c.Param("net")
+	_, err := controller.KeyUpdate(net)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	location := url.URL{Path: "/"}
+	c.Redirect(http.StatusFound, location.RequestURI())
+}
+
 func NewKey(c *gin.Context) {
 	var key models.AccessKey
 	var err error
@@ -277,6 +299,358 @@ func DeleteUser(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		c.Abort()
 	}
+	location := url.URL{Path: "/"}
+	c.Redirect(http.StatusFound, location.RequestURI())
+}
+
+func EditUser(c *gin.Context) {
+	session := sessions.Default(c)
+	username := session.Get("username").(string)
+	user, err := controller.GetUser(username)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.Abort()
+	}
+	c.HTML(http.StatusOK, "EditUser", user)
+}
+
+func UpdateUser(c *gin.Context) {
+	var new models.User
+	username := c.Param("user")
+	user, err := controller.GetUserInternal(username)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.Abort()
+		return
+	}
+	new.UserName = c.PostForm("username")
+	new.Password = c.PostForm("password")
+	_, err = controller.UpdateUser(new, user)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.Abort()
+		return
+	}
+	session := sessions.Default(c)
+	session.Set("message", "user has been updated")
+	session.Save()
+	location := url.URL{Path: "/"}
+	c.Redirect(http.StatusFound, location.RequestURI())
+}
+
+func EditNode(c *gin.Context) {
+	network := c.PostForm("network")
+	mac := c.PostForm("mac")
+	var node models.Node
+	node, err := controller.GetNode(mac, network)
+	if err != nil {
+		fmt.Println("error getting node details \n", err)
+		c.JSON(http.StatusBadRequest, err)
+	}
+	c.HTML(http.StatusOK, "EditNode", node)
+}
+
+func DeleteNode(c *gin.Context) {
+	mac := c.PostForm("mac")
+	net := c.PostForm("net")
+	fmt.Println("deleting node ", mac, net)
+	err := controller.DeleteNode(mac+"###"+net, false)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.Abort()
+	}
+	location := url.URL{Path: "/"}
+	c.Redirect(http.StatusFound, location.RequestURI())
+}
+
+func UpdateNode(c *gin.Context) {
+
+	var node *models.Node
+	if err := c.ShouldBind(&node); err != nil {
+		fmt.Println("should bind")
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	net := c.Param("net")
+	mac := c.Param("mac")
+	fmt.Printf("=============%T %T %T %v %v %v", net, mac, node, net, mac, node)
+	oldnode, err := models.GetNode(mac, net)
+	if err != nil {
+		fmt.Println("Get node with mac ", mac, " and Network ", net)
+		//c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.JSON(http.StatusBadRequest, node)
+		return
+	}
+	if err = oldnode.Update(node); err != nil {
+		fmt.Println("update network")
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	location := url.URL{Path: "/"}
+	c.Redirect(http.StatusFound, location.RequestURI())
+
+}
+
+func NodeHealth(c *gin.Context) {
+	nodes, err := models.GetAllNodes()
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	var response []NodeStatus
+	var nodeHealth NodeStatus
+	for _, node := range nodes {
+		nodeHealth.Mac = node.MacAddress
+		lastupdate := time.Now().Sub(time.Unix(node.LastCheckIn, 0))
+		if lastupdate.Minutes() > 15.0 {
+			nodeHealth.Status = "Dead: Node last checked in more than 15 minutes ago"
+			nodeHealth.Color = "w3-deep-orange"
+		} else if lastupdate.Minutes() > 5.0 {
+			nodeHealth.Status = "Warning: Node last checked in more than 5 minutes ago"
+			nodeHealth.Color = "w3-khaki"
+		} else {
+			nodeHealth.Status = "Healthy: Node checked in within the last 5 minutes"
+			nodeHealth.Color = "w3-teal"
+		}
+		response = append(response, nodeHealth)
+	}
+	c.JSON(http.StatusOK, response)
+	return
+}
+
+func ProcessEgress(c *gin.Context) {
+	var egress models.EgressGatewayRequest
+	egress.NodeID = c.Param("mac")
+	egress.NetID = c.Param("net")
+	node, err := controller.GetNode(egress.NodeID, egress.NetID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+	}
+	egress.Ranges = strings.Split(c.PostForm("ranges"), ",")
+	egress.Interface = c.PostForm("interface")
+
+	_, err = controller.CreateEgressGateway(egress)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	session := sessions.Default(c)
+	session.Set("message", node.Name+" is now a gateway")
+	session.Save()
+	location := url.URL{Path: "/"}
+	c.Redirect(http.StatusFound, location.RequestURI())
+}
+
+func CreateEgress(c *gin.Context) {
+	net := c.Param("net")
+	mac := c.Param("mac")
+	node, err := controller.GetNode(mac, net)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	c.HTML(http.StatusOK, "Egress", node)
+}
+
+func DeleteEgress(c *gin.Context) {
+	net := c.Param("net")
+	mac := c.Param("mac")
+	_, err := controller.DeleteEgressGateway(net, mac)
+	if err != nil {
+		fmt.Println(err)
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"message": "Ingress Gateway Created"})
+}
+
+func CreateIngress(c *gin.Context) {
+	net := c.Param("net")
+	mac := c.Param("mac")
+	_, err := controller.CreateIngressGateway(net, mac)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"message": "Ingress Gateway Created"})
+}
+
+func DeleteIngress(c *gin.Context) {
+	net := c.Param("net")
+	mac := c.Param("mac")
+	_, err := controller.DeleteIngressGateway(net, mac)
+	if err != nil {
+		fmt.Println(err)
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"message": "Ingress Gateway Created"})
+}
+
+func CreateIngressClient(c *gin.Context) {
+	var client models.ExtClient
+	client.Network = c.Param("net")
+	client.IngressGatewayID = c.Param("mac")
+
+	node, err := functions.GetNodeByMacAddress(client.Network, client.IngressGatewayID)
+	if err != nil {
+		fmt.Println(err)
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	client.IngressGatewayEndpoint = node.Endpoint + ":" + strconv.FormatInt(int64(node.ListenPort), 10)
+
+	err = controller.CreateExtClient(client)
+	if err != nil {
+		fmt.Println(err)
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	session := sessions.Default(c)
+	session.Set("message", "external client has been created")
+	session.Save()
+	location := url.URL{Path: "/"}
+	c.Redirect(http.StatusFound, location.RequestURI())
+}
+
+func DeleteIngressClient(c *gin.Context) {
+	net := c.Param("net")
+	id := c.Param("id")
+	err := controller.DeleteExtClient(net, id)
+	if err != nil {
+		fmt.Println(err)
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	session := sessions.Default(c)
+	session.Set("message", "external client "+id+" @ "+net+" has been deleted")
+	session.Save()
+	location := url.URL{Path: "/"}
+	c.Redirect(http.StatusFound, location.RequestURI())
+}
+
+func EditIngressClient(c *gin.Context) {
+	net := c.Param("net")
+	id := c.Param("id")
+	client, err := controller.GetExtClient(id, net)
+	if err != nil {
+		fmt.Println(err)
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	c.HTML(http.StatusOK, "EditExtClient", client)
+}
+
+func GetQR(c *gin.Context) {
+	net := c.Param("net")
+	id := c.Param("id")
+	config, err := GetConf(net, id)
+	if err != nil {
+		fmt.Println(err)
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	b, err := qrcode.Encode(config, qrcode.Medium, 220)
+	if err != nil {
+		fmt.Println(err)
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	c.Header("Content-Type", "image/png")
+	c.Data(http.StatusOK, "application/octet-strean", b)
+}
+
+func GetConf(net, id string) (string, error) {
+	client, err := controller.GetExtClient(id, net)
+	if err != nil {
+		return "", err
+	}
+	gwnode, err := functions.GetNodeByMacAddress(client.Network, client.IngressGatewayID)
+	if err != nil {
+		return "", err
+	}
+	network, err := functions.GetParentNetwork(client.Network)
+	if err != nil {
+		return "", err
+	}
+	keepalive := ""
+	if network.DefaultKeepalive != 0 {
+		keepalive = "PersistentKeepalive = " + strconv.Itoa(int(network.DefaultKeepalive))
+	}
+	gwendpoint := gwnode.Endpoint + ":" + strconv.Itoa(int(gwnode.ListenPort))
+	newAllowedIPs := network.AddressRange
+	if egressGatewayRanges, err := client.GetEgressRangesOnNetwork(); err == nil {
+		for _, egressGatewayRange := range egressGatewayRanges {
+			newAllowedIPs += "," + egressGatewayRange
+		}
+	}
+	defaultDNS := ""
+	if network.DefaultExtClientDNS != "" {
+		defaultDNS = "DNS = " + network.DefaultExtClientDNS
+	}
+
+	config := fmt.Sprintf(`[Interface]
+Address = %s
+PrivateKey = %s
+%s
+
+[Peer]
+PublicKey = %s
+AllowedIPs = %s
+Endpoint = %s
+%s
+
+`, client.Address+"/32",
+		client.PrivateKey,
+		defaultDNS,
+		gwnode.PublicKey,
+		newAllowedIPs,
+		gwendpoint,
+		keepalive)
+
+	return config, nil
+}
+
+func GetClientConfig(c *gin.Context) {
+	net := c.Param("net")
+	id := c.Param("id")
+	config, err := GetConf(net, id)
+	b := []byte(config)
+	if err != nil {
+		fmt.Println(err)
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	filename := id + ".conf"
+	//c.FileAttachment(filepath, filename)
+	c.Header("Content-Description", "File Transfer")
+	c.Header("Content-Disposition", "attachment: filename="+filename)
+	c.Data(http.StatusOK, "application/octet-stream", b)
+}
+
+func UpdateClient(c *gin.Context) {
+	net := c.Param("net")
+	id := c.Param("id")
+	newid := c.PostForm("newid")
+
+	client, err := controller.GetExtClient(id, net)
+	if err != nil {
+		fmt.Println(err)
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	_, err = controller.UpdateExtClient(newid, net, client)
+	if err != nil {
+		fmt.Println(err)
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	session := sessions.Default(c)
+	session.Set("message", "External client has been updated")
+	session.Save()
 	location := url.URL{Path: "/"}
 	c.Redirect(http.StatusFound, location.RequestURI())
 }

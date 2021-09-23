@@ -1,27 +1,32 @@
 {{define "Login"}}
 <!doctype html>
 <html>
-<meta charset="UTF-8">
-<head>
-  <Title>Login</Title>
-  <link rel="stylesheet" href="stylesheet/w3.css" type="text/css">
-  <link rel="stylesheet" href="stylesheet/bar.css" type="text/css">
-  <link rel="stylesheet" href="stylesheet/main.css" type="text/css">
-<head>
-<body>
-    <script>0</script>
-    <p>{{.message}}</p>
-    <p>Please log in</p>
-<div id="login">
-  <form action="/login" method=POST name="form-login">
-    <span class="fas fa-user"></span>
-    <input type="hidden" form = "login"/>
-    <input type=text name="user" autocomplete="Username" required/>
-    <span class="fas fa-lock"><span>
-    <input type=password name="pass" autocomplete="Password" required/>
-    <input type=submit value="Login" />
-  </form>
-</div>
-</body>
+	<meta charset="UTF-8">
+	<head>
+		<Title>Login</Title>
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+		<link rel="stylesheet" href="https://www.w3schools.com/lib/w3-theme-light-blue.css">
+
+	</head>
+		<body class="w3-container">
+			<div class="w3-row">
+				<div class="w3-third">&nbsp 
+				</div>
+				<div class="w3-third">
+					<form action="/login" class="w3-panel w3-card-4 w3-theme" method=POST name="form-login">
+						<h2>Login Form</h2>
+						<p>{{.message}}</p>
+						<p>Please log in</p>
+						<span class="fas fa-user"></span>
+						<input type="hidden" form = "login"/>
+						<p><input class="w3-input w3-theme-l3" type=text name="user" placeholder="Username" required/></p>
+						<span class="fas fa-lock"><span>
+						<p><input class="w3-input w3-theme-l3" type=password name="pass" placeholder="Password" required/></p>
+						<p><input class="w3-btn w3-theme-d3" type=submit value="Login" /></p>
+					</form>
+				</div>
+			</div>
+		</body>
 </html>
 {{end}}

@@ -1,0 +1,81 @@
+{{ define "ExtClient" }}
+<div id="ExtClient" class="w3-row tab" style="display=none">
+    <div class="w3-third">
+	<p> Available Ingress Gateways
+	{{range .Nodes}}
+	<form action="/create_ingress_client/{{.Network}}/{{.MacAddress}}" method="POST" style="display:inline">
+	    <label>{{.Name}}</label>
+	    <label>{{.Network}}</label>
+	    <button title="Create Client" onclick="return confirm('Are you sure you want to add an extenal client to the {{.Network}} network?');" class="w3-circle w3-blue"><span class="material-icons">add_circle_outline</span></button>
+	</form>
+	{{end}}
+    </div>
+
+    <div class="w3-twothird">
+	<p>External Clients</p>
+	{{range .ExtClients}}
+	<button class="w3-block w3-white w3-left-align" onclick="openClient('{{.ClientID}}');">{{.ClientID}} @ {{.Network}}</button>
+	<div id="client{{.ClientID}}" class="w3-container w3-hide">
+	    <p><label>IP </label><input type=disabled placeholder="{{.Address}}"></p>
+	    <p><label>Public Key </label><input type=disabled placeholder="{{.PublicKey}}"></p>
+	    <div class=btn-group>
+		<form class="form-inline" action="get_qr/{{.Network}}/{{.ClientID}}" method=POST>
+
+		    <button class="w3-bar-item", type=submit>Show QR Code <span class="material-icons">qr_code</span></Button>
+		</form>
+		<form class="form-inline" action="get_client_config/{{.Network}}/{{.ClientID}}" method=POST>
+		    <button class="w3-bar-item">DownLoad Config <span class="material-icons">cloud_download</span></button>
+		</form>
+		<form class="form-inline" action="/edit_ingress_client/{{.Network}}/{{.ClientID}}" method=POST>
+		    <button class="w3-bar-item w3-circle w3-white" onclick="document.getElementById('EditExtClient');"><span class="material-icons">edit</span></button>
+		</form>
+		<form class="form-inline" action="/delete_ingress_client/{{.Network}}/{{.ClientID}}" method=POST>
+		    <button class="w3-bar-item w3-circle w3-red"><span class="material-icons">delete</span></button>
+		</form>
+
+	    </div>
+	</div>
+	{{end}}
+    </div>
+</div>
+{{end}}
+
+{{ define "EditExtClient" }}
+<html>
+    <head>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="https://www.w3schools.com/lib/w3.css" type="text/css">
+    </head>
+
+    <body onLoad="document.getElementById('EditExtClient').style.display='block';">
+
+	{{template "Header"}}
+
+	<div id="EditExtClient" class="w3-modal">
+	    <div class="w3-modal-content w3-card-4 w3-animate-zoom w3-padding" style="width:50%">
+		<div class="w3-center">
+		    <form action="/" method=get>
+			<button class="w3-button w3-xlarge w3-hover-red w3-display-topright" title="Close">&times;</button><br>
+		    </form>
+		    <form class=w3-container method=POST action="/update_client/{{.Network}}/{{.ClientID}}">
+			<p>Editing client:{{.ClientID}}</p>
+			<p><input name="newid" type=text placeholder="New Client ID" required></p>
+			<br>	<button class="w3-button w3-block w3-padding w3-teal" type=submit>Update</button>
+			<button class="w3-button w3-block w3-padding w3-yellow" type=reset>Reset</button>
+		    </form>
+		    <form action="/" method=get>
+			<button class="w3-button w3-block w3-padding w3-red" type=Cancel>Cancel</button>
+		    </form>
+		</div>
+	    </div>
+	</div>
+    </body>
+</html>
+{{end}}
+
+
+
+
+
+
+

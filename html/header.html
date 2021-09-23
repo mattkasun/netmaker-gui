@@ -1,32 +1,32 @@
 {{define "Header"}}
-<div class="w3-container w3-blue">
+<div class="w3-cell-row w3-blue">
+    <div class="w3-cell ">&nbsp&nbsp&nbsp&nbsp</div>
+    <div class="w3-cell w3-cell-middle w3-blue w3-hide-small w3-hide-medium">
+	<img src="/images/netmaker2.png" alt="Netmaker Makes Networks">
+    </div>
+    <div class="w3-cell w3-cell-middle w3-blue w3-hide-large">
+	<center><img src="/images/netmaker-small.png" alt="Netmaker Makes Networks"></center>
+    </div>
+    <div class="w3-cell w3-blue" >
+	<div class="w3-dropdown-hover w3-right">
+	    <button class="w3-button w3-blue w3-xlarge ">&#9776 &nbsp&nbsp&nbsp&nbsp &nbsp&nbsp </button>
+	    <div class="w3-dropdown-content w3-bar-block w3-border">
+		{{ if .Admin }}
+		<button class="w3-bar-item w3-button" onclick="document.getElementById('AddUser').style.display='block';">Add User</button>
+		<button class="w3-bar-item w3-button" onclick="document.getElementById('DeleteUser').style.display='block';">Delete User</button>
+		{{end}}
+		<button class="w3-bar-item w3-button" onclick="document.location='edit_user';">Update User</button>
 
-    <div class="w3-cell-row">
-	<div class="w3-container w3-cell w3-cell-middle">
-	    <div class="w3-bar">
-		<a class="w3-bar-item w3-button" href='https://docs.netmaker.org' target='_blank'>Docs</a>
-		<button class="w3-bar-item w3-button" onclick="document.getElementById('Users').style.display='block';">Users</button>
-	    </div>
-	</div>
+		<button class="w3-bar-item w3-button" onclick="document.location='https://docs.netmaker.org';">Docs</a>
+		<button class="w3-bar-item w3-button" onclick="document.location='/logout';">LogOut</a>
 
-	<div class="w3-container w3-cell w3-hide-small w3-hide-medium">
-	    <img src="images/netmaker2.png" alt="Netmaker Makes Networks">
-	</div>
-	<div class="w3-container w3-cell w3-hide-large">
-	    <img src="images/netmaker-small.png" alt="Netmaker Makes Networks">
-	</div>
-
-	<div class="w3-container w3-cell w3-cell-middle">
-	    <div class="w3-dropdown-hover w3-right">
-		<button class="w3-button w3-blue w-xlarge">&#9776</button>
-		<div class="w3-dropdown-content w3-bar-block w3-border">
-		    <a href="/logout" class="w3-bar-item w3-button">Logout</a>
-		    <button class="w3-bar-item w3-button" onclick="document.getElementById('About').style.display='block'">About</button>
-		</div>
+		<button class="w3-bar-item w3-button" onclick="document.getElementById('About').style.display='block'">About</button>
 	    </div>
 	</div>
     </div>
-    <div class="w3-clear"></div>
+</div>
+
+
 </div>
 
 <div id="About" class=w3-modal>
@@ -43,12 +43,9 @@
     </div>
 </div>
 
-<div id="Users" class=w3-modal>
-    <div id="User-Add" class="w3-modal-content w3-card-4 w3-animate-zoom w3-paddign">
+<div id="AddUser" class=w3-modal>
+    <div class="w3-modal-content w3-card-4 w3-animate-zoom w3-padding" style="width:50%">
 	<h1> Create New User</h1>
-	<div class="w3-container">
-	    <input id="deleteUserButton" class="w3-block w3-blue" type="button" value="Delete User" onclick="document.getElementById('User-Delete').style.display='block'; document.getElementById('User-Add').style.display='none';">
-	</div>
 	<form action="/create_user" method=POST onsubmit="return passVal('pass', 'confirm');">
 	    <div class=w3-container>
 		<input class="w3-input w3-border" type="text" name="user" placeholder="User Name*" required>
@@ -66,13 +63,13 @@
 	    </div>
 	    <button class="w3-block w3-blue"  type="submit" >Create User</button>
 	</form>
-	<button class="w3-block w3-red" onclick="document.getElementById('Users').style.display='none';">Cancel<button>
+	<button class="w3-block w3-red" onclick="document.getElementById('AddUser').style.display='none';">Cancel</button>
 
     </div>
 </div>
 
-<div id="User-Delete" class="w3-modal">
-    <div id="User-Delete" class="w3-modal-content w3-card-4 w3-animate-zoom w3-paddign">
+<div id="DeleteUser" class="w3-modal">
+    <div class="w3-modal-content w3-card-4 w3-animate-zoom w3-paddign" style="width:50%">
 	<div class="w3-container">
 	    <h1> Delete User</h1>
 	    <form action="/delete_user" method=POST>
@@ -83,10 +80,40 @@
 		</select>
 		<button type="submit" class="w3-block w3-blue" onclick="return confirm('Are you sure you want to delete this user?');">Delete User</button>
 	    </form>
-	    <button class="w3-block w3-red" onclick="document.getElementById('User-Delete').style.display='none'; document.getElementById('User-Add').style.display='block';">Cancel</button>
+	    <button class="w3-block w3-red" onclick="document.getElementById('DeleteUser').style.display='none';">Cancel</button>
 	</div>
     </div>
 </div>
 
+
+{{end}}
+
+{{define "EditUser"}}
+<html>
+    <head>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="https://www.w3schools.com/lib/w3.css" type="text/css">
+    </head>
+
+    <body onLoad="document.getElementById('EditUser').style.display='block';">
+
+	{{template "Header"}}
+	<div id="EditUser" class="w3-modal">
+	    <div class="w3-modal-content w3-card-4 w3-padding" style="width:50%">
+		<h2> Updating User {{.UserName}}</h2>
+		<form action="/update_user/{{.UserName}}" method=POST>
+		    <p><input type=text name=username placeholder="UserName"></p>
+		    <p><input id=pass type=password name=password placeholder="Password" required></p>
+		    <p><input id=confirm type=password placeholder="Password Confirmation" required  onchange="passVal(pass, confirm);">
+		    <button class="w3-block w3-blue"  type="submit" >Update User</button>
+		</form>
+		<form action="/" method=get>
+		    <button class="w3-button w3-block w3-padding w3-red" type=cancel>Cancel</button>
+		</form>
+	    </div>
+	</div>
+	{{ template "script" }}
+    </body>
+</html>
 
 {{end}}
