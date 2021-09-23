@@ -303,6 +303,41 @@ func DeleteUser(c *gin.Context) {
 	c.Redirect(http.StatusFound, location.RequestURI())
 }
 
+func EditUser(c *gin.Context) {
+	session := sessions.Default(c)
+	username := session.Get("username").(string)
+	user, err := controller.GetUser(username)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.Abort()
+	}
+	c.HTML(http.StatusOK, "EditUser", user)
+}
+
+func UpdateUser(c *gin.Context) {
+	var new models.User
+	username := c.Param("user")
+	user, err := controller.GetUserInternal(username)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.Abort()
+		return
+	}
+	new.UserName = c.PostForm("username")
+	new.Password = c.PostForm("password")
+	_, err = controller.UpdateUser(new, user)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.Abort()
+		return
+	}
+	session := sessions.Default(c)
+	session.Set("message", "user has been updated")
+	session.Save()
+	location := url.URL{Path: "/"}
+	c.Redirect(http.StatusFound, location.RequestURI())
+}
+
 func EditNode(c *gin.Context) {
 	network := c.PostForm("network")
 	mac := c.PostForm("mac")
