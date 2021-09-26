@@ -4,9 +4,9 @@
 	<p> Available Ingress Gateways
 	{{range .Nodes}}
 	<form action="/create_ingress_client/{{.Network}}/{{.MacAddress}}" method="POST" style="display:inline">
-	    <label>{{.Name}}</label>
+	    <label>{{.Name}}</label>@
 	    <label>{{.Network}}</label>
-	    <button title="Create Client" onclick="return confirm('Are you sure you want to add an extenal client to the {{.Network}} network?');" class="w3-circle w3-blue"><span class="material-icons">add_circle_outline</span></button>
+	    <button title="Create Client" onclick="return confirm('Are you sure you want to add an extenal client to the {{.Network}} network?');" class="w3-circle w3-blue"><span class="material-icons">add_circle_outline</span></button><br>
 	</form>
 	{{end}}
     </div>
