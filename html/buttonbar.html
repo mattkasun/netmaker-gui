@@ -1,5 +1,6 @@
 {{define "buttonbar"}}
 <div class="w3-bar w3-blue">
+<div class="w3-content w3-blue">
     <button class="w3-bar-item w3-button w3-blue" onclick="document.getElementById('NewNetwork').style.display='block'">Create Network</button>
     <button class="w3-bar-item w3-button"></button>
     <button class="w3-bar-item w3-button tablink w3-teal" onclick="openTab(event, 'Networks')">Network Details</button>
@@ -7,6 +8,23 @@
     <button class="w3-bar-item w3-button tablink" onclick="openTab(event, 'Keys')">Access Keys</button>
     <button class="w3-bar-item w3-button tablink" onclick="alert('Not Implemented Yet')">DNS</button>
     <button class="w3-bar-item w3-button tablink" onclick="openTab(event, 'ExtClient')">External Clients</button>
+
+</div>
+<div class="w3-dropdown-hover w3-right">
+	    <button class="w3-button w3-blue w3-xlarge ">&#9776 &nbsp&nbsp&nbsp&nbsp &nbsp&nbsp </button>
+	    <div class="w3-dropdown-content w3-bar-block w3-border">
+		{{ if .Admin }}
+		<button class="w3-bar-item w3-button" onclick="document.getElementById('AddUser').style.display='block';">Add User</button>
+		<button class="w3-bar-item w3-button" onclick="document.getElementById('DeleteUser').style.display='block';">Delete User</button>
+		{{end}}
+		<button class="w3-bar-item w3-button" onclick="document.location='edit_user';">Update User</button>
+
+		<button class="w3-bar-item w3-button" onclick="document.location='https://docs.netmaker.org';">Docs</a>
+		<button class="w3-bar-item w3-button" onclick="document.location='/logout';">LogOut</a>
+
+		<button class="w3-bar-item w3-button" onclick="document.getElementById('About').style.display='block'">About</button>
+	    </div>
+	</div>
 
 </div>
 

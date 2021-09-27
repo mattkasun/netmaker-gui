@@ -1,33 +1,13 @@
 {{define "Header"}}
 <div class="w3-cell-row w3-blue">
-    <div class="w3-cell ">&nbsp&nbsp&nbsp&nbsp</div>
-    <div class="w3-cell w3-cell-middle w3-blue w3-hide-small w3-hide-medium">
-	<img src="/images/netmaker2.png" alt="Netmaker Makes Networks">
-    </div>
-    <div class="w3-cell w3-cell-middle w3-blue w3-hide-large">
-	<center><img src="/images/netmaker-small.png" alt="Netmaker Makes Networks"></center>
-    </div>
-    <div class="w3-cell w3-blue" >
-	<div class="w3-dropdown-hover w3-right">
-	    <button class="w3-button w3-blue w3-xlarge ">&#9776 &nbsp&nbsp&nbsp&nbsp &nbsp&nbsp </button>
-	    <div class="w3-dropdown-content w3-bar-block w3-border">
-		{{ if .Admin }}
-		<button class="w3-bar-item w3-button" onclick="document.getElementById('AddUser').style.display='block';">Add User</button>
-		<button class="w3-bar-item w3-button" onclick="document.getElementById('DeleteUser').style.display='block';">Delete User</button>
-		{{end}}
-		<button class="w3-bar-item w3-button" onclick="document.location='edit_user';">Update User</button>
-
-		<button class="w3-bar-item w3-button" onclick="document.location='https://docs.netmaker.org';">Docs</a>
-		<button class="w3-bar-item w3-button" onclick="document.location='/logout';">LogOut</a>
-
-		<button class="w3-bar-item w3-button" onclick="document.getElementById('About').style.display='block'">About</button>
-	    </div>
+	<div class="w3-hide-small w3-hide-medium">
+		<center><img src="/images/netmaker2.png" alt="Netmaker Makes Networks"></center>
 	</div>
-    </div>
+	<div class="w3-hide-large">
+	<center><img src="/images/netmaker-small.png" alt="Netmaker Makes Networks"></center>
+	</div>
 </div>
 
-
-</div>
 
 <div id="About" class=w3-modal>
     <div class="w3-modal-content w3-card-4 w3-animate-zoom w3-padding" style="width:50%">
