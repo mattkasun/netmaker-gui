@@ -20,7 +20,7 @@ function setVisibility(tabName) {
 	x[i].style.display="none";
     }
     document.getElementById(tabName).style.display = "block";
-
+    {{/*
     var x = document.getElementsByClassName("net");
     for (i=0; i<x.length; i++) {
 
@@ -30,6 +30,7 @@ function setVisibility(tabName) {
 	    x[i].style.display="none"
 	}
     }
+       */}}
 
 }
 
@@ -75,6 +76,7 @@ function setNetwork(network) {
 	x[i].value=network;
     }
 }
+
 
 function grantAdmin(id, div) {
     var checked = document.getElementById(id).checked;
@@ -187,9 +189,10 @@ function removeIngress(mac, network) {
 function expand(div) {
     var x = document.getElementById(div);
     if (x.className.indexOf("w3-show") == -1) {
-	x.className += " w3-show";
+	x.className = x.className.replace(" w3-hide", " w3-show");
+	{{/*x.className += " w3-show";*/}}
     } else {
-	x.className = x.className.replace(" w3-show", "");
+	x.className = x.className.replace(" w3-show", " w3-hide");
     }
 }
 

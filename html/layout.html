@@ -3,14 +3,6 @@
 <html>
     <head>
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<style>
-.tab{
-    max-width:1024px;
-    margin: auto;
-    padding: 10px;
-}
-	</style>
-	<!--    <link rel="stylesheet" href="stylesheet/bar.css" type="text/css">--> 
 	<link rel="stylesheet" href="https://www.w3schools.com/lib/w3.css" type="text/css">
 	<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
 	<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined">
@@ -21,7 +13,7 @@
     </head>
     <body onLoad="setUp('{{.Page}}', '{{.Message}}')"> 
 	{{template "Header" . }} 
-	{{template "buttonbar"}}
+	{{template "buttonbar" . }}
 	{{template "Sidebar" .}}
 	<div class="w3-main" style="margin-left:200px">
 	    <button class="w3-button w3-grey w3-small w3-hide-large" onclick="document.getElementById('sidebar').style.display='block';">&#9776;</button>
