@@ -9,7 +9,8 @@
 
 		<div class="net {{.Network}}" id='ext{{.MacAddress}}'>
 			<form action="/create_ingress_client/{{.Network}}/{{.MacAddress}}" method="POST" style="display:inline">
-	  		<button title="Create Client" onclick="return confirm('Are you sure you want to add an extenal client to the {{.Network}} network?');" class="w3-circle w3-blue"><span class="material-icons">add_circle_outline</span></button><br>
+				<label> Add External Client </label>
+	  		<button title="Create Client" onclick="return confirm('Are you sure you want to add an extenal client to the {{.Network}} network?');" class="w3-circle w3-blue"><span class="material-icons"> add_circle_outline</span></button><br>
 			</form>
   	</div>
 	{{end}}
