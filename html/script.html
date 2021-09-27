@@ -184,8 +184,8 @@ function removeIngress(mac, network) {
     xHttp.send();
 }
 
-function openClient(client) {
-    var x = document.getElementById('client'+client);
+function expand(div) {
+    var x = document.getElementById(div);
     if (x.className.indexOf("w3-show") == -1) {
 	x.className += " w3-show";
     } else {

@@ -2,23 +2,12 @@
 <div id="Nodes" class="btn-group w3-white tab" style="display=none">
     <div class="net All">
     {{range .Nodes}}
-	<p><button id="node{{.MacAddress}}" class="w3-lightgrey"  onclick="setNetwork('{{.Network}}');">{{.Name}} {{.Endpoint}} {{.Address}}</button></p>
-	{{if eq .IsEgressGateway "yes" }}
-	<button class="w3-bar-item w3-circle w3-white" title="Remove Egress Gateway" onclick="removeEgress('{{.MacAddress}}', '{{.Network}}');"><span class="material-icons">highlight_off</span></button> 
-	{{ else }}
-	<form action="/create_egress/{{.Network}}/{{.MacAddress}}" Method="POST" style="display:inline">
-	<button class="w3-bar-item w3-circle w3-white" title="Create Egress Gateway"><span class="material-icons">router</span></button>
-	</form>
-	{{end}}
-	{{if eq .IsIngressGateway "yes"}}
-	<button class="w3-bar-item w3-circle w3-white" title="Remove Ingress Gateway" onclick="removeIngress('{{.MacAddress}}', '{{.Network}}');"><span class="material-icons">highlight_off</span></button> 
-	{{ else }}
-	<button class="w3-bar-item w3-circle w3-white" title="Create Ingress Gateway" onclick="addIngress('{{.MacAddress}}', '{{.Network}}');"><span class="material-icons">highlight_off</span></button> 
-	{{end}}
-    {{end}}
+	<p><button id="node{{.MacAddress}}" class="w3-lightgrey"  onclick="expand('node{{.MacAddress}}');">{{.Name}} {{.Endpoint}} {{.Address}}</button></p>
     </div>
-    {{range .Nodes}}
-    <fieldset class="net {{.Network}}">
+
+
+
+    <fieldset class="net {{.Network}}" id='node{{.MacAddress}}'>
 	<legend>{{.Name }}</legend>
 	<form action="/edit_node" method=POST>
 	    <input type=hidden name="network" value='{{.Network}}'>
@@ -35,6 +24,19 @@
 	    <input type=hidden name="mac" value='{{.MacAddress}}'>
 	    <button type=submit class="w3-button" onclick="alert('Are you sure you want to delete node {{.Name}} from Network {{.Network}}?')" >Delete</button>
 	</form>
+	{{if eq .IsEgressGateway "yes" }}
+	<button class="w3-bar-item w3-circle w3-white" title="Remove Egress Gateway" onclick="removeEgress('{{.MacAddress}}', '{{.Network}}');"><span class="material-icons">highlight_off</span></button> 
+	{{ else }}
+	<form action="/create_egress/{{.Network}}/{{.MacAddress}}" Method="POST" style="display:inline">
+	<button class="w3-bar-item w3-circle w3-white" title="Create Egress Gateway"><span class="material-icons">router</span></button>
+	</form>
+	{{end}}
+	{{if eq .IsIngressGateway "yes"}}
+	<button class="w3-bar-item w3-circle w3-white" title="Remove Ingress Gateway" onclick="removeIngress('{{.MacAddress}}', '{{.Network}}');"><span class="material-icons">highlight_off</span></button> 
+	{{ else }}
+	<button class="w3-bar-item w3-circle w3-white" title="Create Ingress Gateway" onclick="addIngress('{{.MacAddress}}', '{{.Network}}');"><span class="material-icons">highlight_off</span></button> 
+	{{end}}
+
     </fieldset>
     {{end}}
 </div>
