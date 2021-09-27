@@ -1,20 +1,25 @@
 {{ define "ExtClient" }}
 <div id="ExtClient" class="w3-row tab" style="display=none">
-    <div class="w3-third">
-	<p> Available Ingress Gateways
+  <div class="w3-third">
+		<div class="net All">
+			<p> Available Ingress Gateways</p>
 	{{range .Nodes}}
-	<form action="/create_ingress_client/{{.Network}}/{{.MacAddress}}" method="POST" style="display:inline">
-	    <label>{{.Name}}</label>@
-	    <label>{{.Network}}</label>
-	    <button title="Create Client" onclick="return confirm('Are you sure you want to add an extenal client to the {{.Network}} network?');" class="w3-circle w3-blue"><span class="material-icons">add_circle_outline</span></button><br>
-	</form>
-	{{end}}
-    </div>
+	<p><button id="node{{.MacAddress}}" class="w3-lightgrey"  onclick="expand('ext{{.MacAddress}}');">{{.Name}} @ {{.Network}}</button></p>
+		</div>
 
-    <div class="w3-twothird">
+		<div class="net {{.Network}}" id='ext{{.MacAddress}}'>
+			<form action="/create_ingress_client/{{.Network}}/{{.MacAddress}}" method="POST" style="display:inline">
+	  		<button title="Create Client" onclick="return confirm('Are you sure you want to add an extenal client to the {{.Network}} network?');" class="w3-circle w3-blue"><span class="material-icons">add_circle_outline</span></button><br>
+			</form>
+  	</div>
+	{{end}}
+	</div>
+
+
+   <div class="w3-twothird">
 	<p>External Clients</p>
 	{{range .ExtClients}}
-	<button class="w3-block w3-white w3-left-align" onclick="openClient('{{.ClientID}}');">{{.ClientID}} @ {{.Network}}</button>
+	<button class="w3-block w3-white w3-left-align" onclick="expand('client{{.ClientID}}');">{{.ClientID}} @ {{.Network}}</button>
 	<div id="client{{.ClientID}}" class="w3-container w3-hide">
 	    <p><label>IP </label><input type=disabled placeholder="{{.Address}}"></p>
 	    <p><label>Public Key </label><input type=disabled placeholder="{{.PublicKey}}"></p>
