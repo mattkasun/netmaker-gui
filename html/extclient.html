@@ -40,6 +40,7 @@
 
 {{define "ExtClientDetails"}}
 <button class="w3-block w3-white w3-left-align" onclick="openClient('{{.ClientID}}');">{{.ClientID}} @ {{.Network}}</button>
+
 	<div id="client{{.ClientID}}" class="w3-container w3-hide">
 		<p><label>IP </label><input type=disabled placeholder="{{.Address}}"></p>
 	   <p><label>Public Key </label><input type=disabled placeholder="{{.PublicKey}}"></p>

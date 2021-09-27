@@ -1,0 +1,7 @@
+FROM golang:1.17.1
+WORKDIR /
+COPY *.go go.* ./
+RUN GOOS=linux go build -v .
+ADD /images/* images/
+ADD /html/* html/
+CMD ["./netmaker-gui"]
