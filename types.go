@@ -8,18 +8,12 @@ import (
 	controller "github.com/gravitl/netmaker/controllers"
 	"github.com/gravitl/netmaker/functions"
 	"github.com/gravitl/netmaker/models"
-	"github.com/gravitl/netmaker/servercfg"
 )
 
 type NodeStatus struct {
 	Mac    string
 	Status string
 	Color  string
-}
-
-type Version struct {
-	Backend string
-	Mine    string
 }
 
 //PageData -contains data for html template
@@ -31,7 +25,6 @@ type PageData struct {
 	Nodes      []models.Node
 	Users      []models.ReturnUser
 	ExtClients []models.ExtClient
-	Version    Version
 }
 
 //Initializes (fetches) page data from backend
@@ -91,8 +84,7 @@ func (data *PageData) Init(page string, c *gin.Context) {
 			data.ExtClients = clients
 		}
 	}
-	data.Version.Backend = servercfg.GetVersion()
-	data.Version.Mine = "v0.1.0"
+
 }
 
 func GetAllExtClients() []models.ExtClient {

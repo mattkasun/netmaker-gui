@@ -1,35 +1,41 @@
 {{ define "Networks" }}
-<div id="Networks" class="btn-group w3-white tab" style="display=none">
-    <div class="net All">
+<div id="Networks" class="w3-white tab" style="display=none">
 	{{range .Networks}}
-	<p><button class="w3-bar-item" onclick="expand('net{{.NetID}}');"> {{.DisplayName}} {{.AddressRange}}</button>
-    </div>
+	<p><button class="w3-btn w3-light-grey net {{.NetID}} All" onclick="expand('net{{.NetID}}');"> {{.DisplayName}} {{.AddressRange}}</button></p>
+	{{template "NetDetails" .}}
+		{{end}}
+</div>
+{{end}}
 
-    <fieldset class="net {{.NetID}}" id=net{{.NetID}}>
-	<legend>{{.NetID}}</legend>
-	<button class="w3-circle w3-green" type="submit">{{.DisplayName}}</button><br>
-	<label>{{.AddressRange}}<br>
-		<form action="/edit_network", method="post">
-	    <fieldset>
-		    <input type="hidden" name="network" value='{{.NetID}}'>
-		    <legend>Last Modified</legend>
-		    <label>Network:</label>
-		    <label>{{.NetworkLastModified}}</label><br>
-		    <label>Nodes:</label>
-		    <label>{{.NodesLastModified}}</label><br>
-	    </fieldset>
-	    <button class="w3-button" type="submit">Edit</button><br>
+
+
+{{define "NetDetails"}}
+<div class="net {{.NetID}} w3-content w3-hide" id=net{{.NetID}} >
+	<form action="/edit_network", method="post">
+		<fieldset>
+		<legend>{{.NetID}}</legend>
+			<button class="w3-circle w3-green" type="submit">{{.DisplayName}}</button><br>
+			<label>{{.AddressRange}}</label><br>
+	    	<fieldset>
+		    	<input type="hidden" name="network" value='{{.NetID}}'>
+		    	<legend>Last Modified</legend>
+		    	<label>Network:</label>
+		    	<label>{{.NetworkLastModified}}</label><br>
+		    	<label>Nodes:</label>
+		    	<label>{{.NodesLastModified}}</label><br>
+	    	</fieldset>
+	    	<button class="w3-button" type="submit">Edit</button><br>
 		</form>
 		<form action="/delete_network" method=POST onsubmit="return confirm('Delete Network {{.NetID}}');">
-		    <input type="hidden" name="network" value='{{.NetID}}'>
-		    <button class="w3-button" type="submit">Delete</button><br>
+			<input type="hidden" name="network" value='{{.NetID}}'>
+		  <button class="w3-button" type="submit">Delete</button><br>
 		</form>
-	<form action="/refreshkeys/{{.NetID}}" method="GET" style="display:inline">
+		<form action="/refreshkeys/{{.NetID}}" method="GET" style="display:inline">
 	    <button title="Refresh Keys" class="w3-bar-item w3-button w3-circle w3-white"><span class="material-icons">autorenew</span></button>
-	</form></p>
-    </fieldset>
-    {{ end }}
+		</form>
+  </fieldset>
 </div>
 {{ end }}
+
 
 
