@@ -20,9 +20,9 @@
 		    	<input type="hidden" name="network" value='{{.NetID}}'>
 		    	<legend>Last Modified</legend>
 		    	<label>Network:</label>
-		    	<label>{{.NetworkLastModified}}</label><br>
+					<label>{{ printTimestamp .NetworkLastModified}}</label><br>
 		    	<label>Nodes:</label>
-		    	<label>{{.NodesLastModified}}</label><br>
+		    	<label>{{printTimestamp .NodesLastModified}}</label><br>
 	    	</fieldset>
 	    	<button class="w3-button" type="submit">Edit</button><br>
 		</form>

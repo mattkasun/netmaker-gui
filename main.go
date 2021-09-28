@@ -10,9 +10,11 @@ package main
 
 import (
 	"fmt"
+	"html/template"
 	"log"
 	"net/http"
 	_ "net/http/pprof"
+	"time"
 
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-contrib/sessions/memstore"
@@ -33,6 +35,9 @@ func main() {
 }
 
 func SetupRouter() *gin.Engine {
+	funcMap := template.FuncMap{
+		"printTimestamp": PrintTimestamp,
+	}
 	fmt.Println("using database: ", servercfg.GetDB())
 	if err := database.InitializeDatabase(); err != nil {
 		log.Fatal("Error connecting to Database:\n", err)
@@ -41,7 +46,9 @@ func SetupRouter() *gin.Engine {
 	store := memstore.NewStore([]byte("secret"))
 
 	router.Use(sessions.Sessions("netmaker", store))
-	router.LoadHTMLGlob("html/*")
+	//router.LoadHTMLGlob("html/*")
+	templates := template.Must(template.New("").Funcs(funcMap).ParseGlob("html/*"))
+	router.SetHTMLTemplate(templates)
 	router.Static("images", "./images")
 	router.StaticFile("favicon.ico", "./images/favicon.png")
 	router.POST("/newuser", NewUser)
@@ -81,6 +88,11 @@ func SetupRouter() *gin.Engine {
 		private.GET("/logout", LogOut)
 	}
 	return router
+}
+
+func PrintTimestamp(t int64) string {
+	time := time.Unix(t, 0)
+	return time.String()
 }
 
 func AuthRequired(c *gin.Context) {
