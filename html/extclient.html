@@ -39,7 +39,7 @@
 {{end}}
 
 {{define "ExtClientDetails"}}
-<button class="w3-block w3-white w3-left-align" onclick="openClient('{{.ClientID}}');">{{.ClientID}} @ {{.Network}}</button>
+<button class="w3-block w3-white w3-left-align" onclick="expand('client{{.ClientID}}');">{{.ClientID}} @ {{.Network}}</button>
 
 	<div id="client{{.ClientID}}" class="w3-container w3-hide">
 		<p><label>IP </label><input type=disabled placeholder="{{.Address}}"></p>
@@ -47,7 +47,7 @@
 	  <div class=btn-group>
 			<form class="form-inline" action="get_qr/{{.Network}}/{{.ClientID}}" method=POST>
 
-		    <button class="w3-bar-item", type=submit>Show QR Code <span class="material-icons">qr_code</span></Button>
+		    <button class="w3-bar-item", type=submit>Show QR Code <span class="material-icons">qr_code</span></button>
 			</form>
 			<form class="form-inline" action="get_client_config/{{.Network}}/{{.ClientID}}" method=POST>
 		    <button class="w3-bar-item">DownLoad Config <span class="material-icons">cloud_download</span></button>

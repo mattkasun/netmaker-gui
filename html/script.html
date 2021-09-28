@@ -66,6 +66,10 @@ function setNetwork(network) {
 	} else {
 	    x[i].style.display="none";
 	}
+	{{/* collapse accodians not belong to current net */}}
+        if (!x[i].className.includes(network)) {
+    		x[i].className=x[i].className.replace("w3-show", "w3-hide");
+	}
     }
 
     {{/* set network for key deletions */}}
@@ -127,11 +131,11 @@ function getNodeStatus() {
 	const nodes = JSON.parse(this.responseText);
 	nodes.forEach((element, index, array) => {
 	    document.getElementById("node_status"+element.Mac).innerHTML=element.Status;
-	    document.getElementById("node"+element.Mac).classList.remove("w3-lightgrey")
-	    document.getElementById("node"+element.Mac).classList.remove("w3-deep-orange")
-	    document.getElementById("node"+element.Mac).classList.remove("w3-khaki")
-	    document.getElementById("node"+element.Mac).classList.remove("w3-teal")
-	    document.getElementById("node"+element.Mac).classList.add(element.Color)
+	    document.getElementById("button"+element.Mac).classList.remove("w3-lightgrey")
+	    document.getElementById("button"+element.Mac).classList.remove("w3-deep-orange")
+	    document.getElementById("button"+element.Mac).classList.remove("w3-khaki")
+	    document.getElementById("button"+element.Mac).classList.remove("w3-teal")
+	    document.getElementById("button"+element.Mac).classList.add(element.Color)
 	});
     }
     xHttp.send();
@@ -188,10 +192,14 @@ function expand(div) {
     var x = document.getElementById(div);
     if (x.className.indexOf("w3-show") == -1) {
 	x.className = x.className.replace(" w3-hide", " w3-show");
-	{{/*x.className += " w3-show";*/}}
-    } else {
-	x.className = x.className.replace(" w3-show", " w3-hide");
-    }
+} else {
+    x.className = x.className.replace(" w3-show", " w3-hide");
+}
+if (x.style.display==='none') {
+    x.style.display='block';
+} else {
+    x.style.display='none';
+}
 }
 
 function fillEgressForm(address, interface) {
@@ -202,12 +210,12 @@ function fillEgressForm(address, interface) {
 	document.getElementById('egressrange').value = "0.0.0.0/0";
 	document.getElementById('egressnet').value = "eth0";
     } else {
-    alert(x+address+interface);
+	alert(x+address+interface);
 	document.getElementById('egressrange').value = address+"/24";
 	document.getElementById('egressnet').value = interface;
     }
 }
-	
-	
+
+
 </script>
     {{end}}
