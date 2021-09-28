@@ -111,8 +111,8 @@
 							Persistent Keepalive:<br> <input name="PersistentKeepalive" type="text" value='{{.PersistentKeepalive}}'/><br>
 							Save Config:<br> <input name="SaveConfig" type="text" value='{{.SaveConfig}}'/><br>
 							Interface:<br> <input name="Interface" type="text" value='{{.Interface}}'/><br>
-							Last Modified:<br> <input name="LastModified" type="text" value='{{.LastModified}}'/><br>
-							Last CheckIn:<br> <input name="LastCheckIn" type="text" value='{{.LastCheckIn}}'/><br>
+							Last Modified:<br> <input name="LastModified" type="text" value='{{printTimestamp .LastModified}}'/><br>
+							Last CheckIn:<br> <input name="LastCheckIn" type="text" value='{{printTimestamp .LastCheckIn}}'/><br>
 							MacAddress:<br> <input name="MadAddress" type="text" value='{{.MacAddress}}'/><br>
 							Network:<br> <input name="Network" type="text" value='{{.Network}}'/><br>
 							Local Address:<br> <input name="LocalAddress" type="text" value='{{.LocalAddress}}'/><br>
