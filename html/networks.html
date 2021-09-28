@@ -1,5 +1,5 @@
 {{ define "Networks" }}
-<div id="Networks" class="w3-white tab" style="display=none">
+<div id="Networks" class="w3-content w3-white tab" style="display=none">
 	{{range .Networks}}
 	<p><button class="w3-btn w3-light-grey net {{.NetID}} All" onclick="expand('net{{.NetID}}');"> {{.DisplayName}} {{.AddressRange}}</button></p>
 	{{template "NetDetails" .}}

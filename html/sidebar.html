@@ -1,6 +1,5 @@
 {{define "Sidebar"}}
-<div id="sidebar" class="w3-sidebar w3-bar-block w3-collapse w-3-animate-left" style="width:200px">
-    <br>
+<div id="sidebar" class="w3-sidebar w3-bar-block w3-card w-3-animate-left" style="display:none">
     <button class="w3-bar-item w3-button w3-large w3-hide-large" onclick="document.getElementById('sidebar').style.display='none';">Close &times</button> 
     <button id="sidebarbuttonAll" class="w3-bar-item w3-button netselection w3-teal" onclick="setNetwork('All');document.getElementById('sidebar').style.display='none';">All Networks</button>
     {{ range .Networks }}

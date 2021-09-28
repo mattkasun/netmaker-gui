@@ -1,5 +1,9 @@
 {{define "Header"}}
-<div class="w3-cell-row w3-blue">
+{{template "Sidebar" .}}
+{{template "Rightsidebar" .}}
+<div class="w3-blue">
+	<button class="w3-button w3-blue w3-small w3-left" onclick="document.getElementById('sidebar').style.display='block';">&#9776; Select Network</button>
+	<button class="w3-button w3-blue w3-small w3-right" onclick="document.getElementById('rightsidebar').style.display='block';">Menu &#9776;</button>
 	<div class="w3-hide-small w3-hide-medium">
 		<center><img src="/images/netmaker2.png" alt="Netmaker Makes Networks"></center>
 	</div>

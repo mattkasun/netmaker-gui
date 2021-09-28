@@ -1,5 +1,5 @@
 {{ define "Nodes" }}
-<div id="Nodes" class="w3-white tab" style="display=none">
+<div id="Nodes" class="w3-content w3-white tab" style="display=none">
 			{{range .Nodes}}
 			<p><button id="button{{.MacAddress}}" class="net {{.Network}} All w3-lightgrey"  onclick="expand('node{{.MacAddress}}');">{{.Name}}@{{.Network}} {{.Endpoint}} {{.Address}}</button></p>
 	{{template "NodeDetails" .}}
