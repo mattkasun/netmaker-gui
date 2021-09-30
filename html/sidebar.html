@@ -1,11 +1,18 @@
 {{define "Sidebar"}}
-<div id="sidebar" class="w3-sidebar w3-bar-block w3-card w-3-animate-left" style="display:none">
-    <button class="w3-bar-item w3-button w3-large w3-hide-large" onclick="document.getElementById('sidebar').style.display='none';">Close &times</button> 
-    <button id="sidebarbuttonAll" class="w3-bar-item w3-button netselection w3-teal" onclick="setNetwork('All');document.getElementById('sidebar').style.display='none';">All Networks</button>
-    {{ range .Networks }}
-    <button id="sidebarbutton{{.NetID}}" class="w3-bar-item w3-button netselection" onclick="setNetwork('{{.NetID}}');document.getElementById('sidebar').style.display='none';">{{ .DisplayName }} </button>
-    {{ end }}
+<div class=w3-hide-large>
+	<div id="sidebar" class="w3-sidebar w3-bar-block w3-card w-3-animate-left w3-hide-large" style="display:none">
+		<button class="w3-bar-item w3-button w3-large w3-hide-large" onclick="document.getElementById('sidebar').style.display='none';">Close &times</button> 
+		{{template "SideBarContent" . }}
+	</div>
 </div>
 {{end}}
 
+{{define "SideBarContent"}}
+<div class=w3-bar-block>
+<button id="sidebarbuttonAll" class="w3-bar-item w3-button netselection w3-teal" onclick="setNetwork('All');document.getElementById('sidebar').style.display='none';">All Networks</button>
+{{ range .Networks }}
+<button id="sidebarbutton{{.NetID}}" class="w3-bar-item w3-button netselection" onclick="setNetwork('{{.NetID}}');document.getElementById('sidebar').style.display='none';">{{ .DisplayName }} </button>
+{{ end }}
+</div>
+{{end}}
 
