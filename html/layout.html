@@ -10,12 +10,23 @@
 	<body onLoad="setUp('{{.Page}}', '{{.Message}}')"> 
 		{{template "Header" . }} 
 		{{template "buttonbar" . }}
-		{{template "Networks" .}}
-		{{template "Nodes" .}}
-		{{template "Keys" .}}
-		{{template "ExtClient" .}}
-		</div>
+		{{template "Content" . }}
 		{{ template "script" }} 
 	</body>
 </html>
 {{end}}
+
+{{define "Content"}}
+	<div class="w3-third w3-hide-small w3-hide-medium">
+		{{template "SideBarContent" .}}
+	</div>
+	<div class=w3-twothird>
+{{template "Networks" .}}
+{{template "Nodes" .}}
+{{template "Keys" .}}
+{{template "ExtClient" .}}
+	</div>
+</div>
+{{end}}
+
+
