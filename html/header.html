@@ -1,6 +1,4 @@
-{{define "Header"}}
-{{template "Sidebar" .}}
-{{template "Rightsidebar" .}}
+{{define "HeaderIcons"}}
 <div class="w3-blue">
 	<button class="w3-button w3-blue w3-small w3-left" onclick="document.getElementById('sidebar').style.display='block';">&#9776; Filter By Network</button>
 	<button class="w3-button w3-blue w3-small w3-right" onclick="document.getElementById('rightsidebar').style.display='block';">Menu &#9776;</button>
@@ -11,6 +9,15 @@
 	<center><img src="/images/netmaker-small.png" alt="Netmaker Makes Networks"></center>
 	</div>
 </div>
+
+{{end}}
+
+
+{{define "Header"}}
+{{template "Sidebar" .}}
+{{template "Rightsidebar" .}}
+{{template "HeaderIcons"}}
+
 
 
 <div id="About" class=w3-modal>

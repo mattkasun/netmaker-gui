@@ -48,7 +48,7 @@ func ProcessLogin(c *gin.Context) {
 }
 
 func NewUser(c *gin.Context) {
-	var user, admin models.User
+	var user models.User
 	user.UserName = c.PostForm("user")
 	user.Password = c.PostForm("pass")
 	user.IsAdmin = true
@@ -61,20 +61,28 @@ func NewUser(c *gin.Context) {
 		c.JSON(http.StatusUnauthorized, "Admin Exists")
 		c.Abort()
 	}
-	admin, err = controller.CreateUser(user)
+	_, err = controller.CreateUser(user)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		c.Abort()
 	}
-	fmt.Println(admin)
 	location := url.URL{Path: "/"}
 	c.Redirect(http.StatusFound, location.RequestURI())
 }
 
 func DisplayLanding(c *gin.Context) {
-	var Data PageData
-	Data.Init("Networks", c)
-	c.HTML(http.StatusOK, "layout", Data)
+	var data PageData
+	page := ""
+	session := sessions.Default(c)
+	if session.Get("page") != nil {
+		page = session.Get("page").(string)
+	}
+	if page != "" {
+		data.Init(page, c)
+	} else {
+		data.Init("Networks", c)
+	}
+	c.HTML(http.StatusOK, "layout", data)
 }
 
 func CreateNetwork(c *gin.Context) {
@@ -485,7 +493,55 @@ func DeleteIngress(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	c.JSON(http.StatusOK, gin.H{"message": "Ingress Gateway Created"})
+	c.JSON(http.StatusOK, gin.H{"message": "Ingress Gateway Deleted"})
+}
+
+func CreateRelay(c *gin.Context) {
+	var relayData Relay
+	mac := c.Param("mac")
+	net := c.Param("net")
+	node, err := controller.GetNode(mac, net)
+	if err != nil {
+		ReturnError(c, err, "Nodes")
+		return
+	}
+	nodes, err := controller.GetNetworkNodes(node.Network)
+	if err != nil {
+		ReturnError(c, err, "Nodes")
+		return
+	}
+	relayData.Node = node
+	relayData.Nodes = nodes
+	c.HTML(http.StatusOK, "CreateRelay", relayData)
+}
+
+func ProcessRelayCreation(c *gin.Context) {
+	var request models.RelayRequest
+	request.NodeID = c.Param("mac")
+	request.NetID = c.Param("net")
+	request.RelayAddrs = c.PostFormArray("address")
+	_, err := controller.CreateRelay(request)
+	if err != nil {
+		ReturnError(c, err, "Nodes")
+	}
+	session := sessions.Default(c)
+	session.Set("message", "Relay Gateway Created")
+	session.Set("page", "Nodes")
+	session.Save()
+	location := url.URL{Path: "/"}
+	c.Redirect(http.StatusFound, location.RequestURI())
+}
+
+func DeleteRelay(c *gin.Context) {
+	net := c.Param("net")
+	mac := c.Param("mac")
+	_, err := controller.DeleteRelay(net, mac)
+	if err != nil {
+		fmt.Println(err)
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"message": "Relay Gateway Deleted"})
 }
 
 func CreateIngressClient(c *gin.Context) {
@@ -650,6 +706,15 @@ func UpdateClient(c *gin.Context) {
 	}
 	session := sessions.Default(c)
 	session.Set("message", "External client has been updated")
+	session.Save()
+	location := url.URL{Path: "/"}
+	c.Redirect(http.StatusFound, location.RequestURI())
+}
+
+func ReturnError(c *gin.Context, err error, page string) {
+	session := sessions.Default(c)
+	session.Set("message", err.Error())
+	session.Set("page", page)
 	session.Save()
 	location := url.URL{Path: "/"}
 	c.Redirect(http.StatusFound, location.RequestURI())

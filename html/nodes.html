@@ -1,7 +1,7 @@
 {{ define "Nodes" }}
 <div id="Nodes" class="w3-content w3-white tab" style="display=none">
-			{{range .Nodes}}
-			<p><button id="button{{.MacAddress}}" class="net {{.Network}} All w3-lightgrey"  onclick="expand('node{{.MacAddress}}');">{{.Name}}@{{.Network}} {{.Endpoint}} {{.Address}}</button></p>
+	{{range .Nodes}}
+	<p><button id="button{{.MacAddress}}" class="net {{.Network}} All w3-lightgrey"  onclick="expand('node{{.MacAddress}}');">{{.Name}}@{{.Network}} {{.Endpoint}} {{.Address}}</button></p>
 	{{template "NodeDetails" .}}
 	{{end}}
 </div>
@@ -34,14 +34,57 @@
 		</form>
 		{{end}}
 		{{if eq .IsIngressGateway "yes"}}
-		<button class="w3-bar-item w3-circle w3-white" title="Remove Ingress Gateway" onclick="removeIngress('{{.MacAddress}}', '{{.Network}}');"><span class="material-icons">highlight_off</span></button> 
+		<button class="w3-bar-item w3-circle w3-white" title="Remove Ingress Gateway" onclick="removeIngress('{{.MacAddress}}', '{{.Network}}');"><span class="material-icons">wifi_off</span></button> 
 		{{ else }}
-		<button class="w3-bar-item w3-circle w3-white" title="Create Ingress Gateway" onclick="addIngress('{{.MacAddress}}', '{{.Network}}');"><span class="material-icons">highlight_off</span></button> 
+		<button class="w3-bar-item w3-circle w3-white" title="Create Ingress Gateway" onclick="addIngress('{{.MacAddress}}', '{{.Network}}');"><span class="material-icons">settings_input_antenna</span></button> 
 		{{end}}
 
+		{{if eq .IsRelay "yes"}}
+		<button class="w3-bar-item w3-circle w3-white" title="Remove Relay Gateway" onclick="deleteRelay('{{.MacAddress}}', '{{.Network}}');"><span class="material-icons">sensors_off/span></button> 
+		{{ else }}
+		<form action="/create_relay/{{.Network}}/{{.MacAddress}}" method=post style="display:inline">
+		<button class="w3-bar-item w3-circle w3-white" title="Create Relay Gateway" type=submit><span class="material-icons">local_phone</span></button> 
+		</form>
+		{{end}}
 	</fieldset>
 </div>
 {{ end }}
+
+{{define "CreateRelay"}} 
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<link rel="stylesheet" href="https://www.w3schools.com/lib/w3.css" type="text/css">
+		<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+		<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined">
+	</head>
+	<body onLoad="document.getElementById('CreateRelay').style.display='block';">
+		{{template "HeaderIcons"}} 
+
+<div id="CreateRelay" class=w3-modal>
+	<div class="w3-modal-content w3-card-4 w3-animate-zoom w3-padding" style="width:50%">
+		<div class="w3-container w3-center">
+			<h2> Create Relay </h2>
+		<form action="/process_relay/{{.Node.Network}}/{{.Node.MacAddress}}" method=post style="display:inline">
+			<div class=w3-content>
+				<p>select nodes to relay</p>
+				{{ $Net := .Node.Network}}
+				{{range .Nodes }}
+				{{ if eq .Network $Net}}
+				<input type="checkbox" id=address>{{.Name}}</label>
+				{{end}} {{end}}
+			</div>
+			<button class="w3-block w3-blue"  type="submit" >Create User</button>
+		</form>
+		<button class="w3-block w3-red" onclick="window.history.back();">Cancel</button>
+	</div>
+</div>
+
+{{end}}
+
+
+
 
 {{ define "Egress" }}
 <html>
@@ -111,8 +154,8 @@
 							Persistent Keepalive:<br> <input name="PersistentKeepalive" type="text" value='{{.PersistentKeepalive}}'/><br>
 							Save Config:<br> <input name="SaveConfig" type="text" value='{{.SaveConfig}}'/><br>
 							Interface:<br> <input name="Interface" type="text" value='{{.Interface}}'/><br>
-							Last Modified:<br> <input name="LastModified" type="text" value='{{printTimestamp .LastModified}}'/><br>
-							Last CheckIn:<br> <input name="LastCheckIn" type="text" value='{{printTimestamp .LastCheckIn}}'/><br>
+							Last Modified:<br> <input name="LastModified" type="text" placeholder='{{printTimestamp .LastModified}}' value={{.LastModified}} disabled/><br>
+							Last CheckIn:<br> <input name="LastCheckIn" type="text" placeholder='{{printTimestamp .LastCheckIn}}' value={{.LastCheckIn}} disabled /><br>
 							MacAddress:<br> <input name="MadAddress" type="text" value='{{.MacAddress}}'/><br>
 							Network:<br> <input name="Network" type="text" value='{{.Network}}'/><br>
 							Local Address:<br> <input name="LocalAddress" type="text" value='{{.LocalAddress}}'/><br>
