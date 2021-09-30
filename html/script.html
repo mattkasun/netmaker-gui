@@ -1,221 +1,241 @@
 {{define "script"}}
 <script>
 
-    var network = "All";
+	var network = "All";
 var nodeStatus;
 
 function setUp(tabName, message) {
-    setVisibility(tabName);
-    nodeStatus = window.setInterval(getNodeStatus, 30000);
-    if (message != "") {
-	alert(message)
-    }
-    {{/* window.setInterval(refresh, 120000); */}}
+	setVisibility(tabName);
+	nodeStatus = window.setInterval(getNodeStatus, 30000);
+	if (message != "") {
+		alert(message)
+	}
+	{{/* window.setInterval(refresh, 120000); */}}
 }
 
 function setVisibility(tabName) {
-    var i;
-    var x = document.getElementsByClassName ("tab");
-    for (i=0; i<x.length; i++) {
-	x[i].style.display="none";
-    }
-    document.getElementById(tabName).style.display = "block";
-    var x = document.getElementsByClassName("net");
-    for (i=0; i<x.length; i++) {
-
-	if (x[i].className.includes("All")) {
-	    x[i].style.display="block";
-	} else {
-	    x[i].style.display="none"
+	var i;
+	var x = document.getElementsByClassName ("tab");
+	for (i=0; i<x.length; i++) {
+		x[i].style.display="none";
 	}
-    }
+	document.getElementById(tabName).style.display = "block";
+	var x = document.getElementsByClassName("net");
+	for (i=0; i<x.length; i++) {
+
+		if (x[i].className.includes("All")) {
+			x[i].style.display="block";
+		} else {
+			x[i].style.display="none"
+		}
+	}
 
 }
 
 function openTab(evt, tabName) {
-    var i;
-    var x = document.getElementsByClassName ("tab");
-    for (i=0; i<x.length; i++) {
-	x[i].style.display="none";
-    }
-    document.getElementById(tabName).style.display = "block";
+	var i;
+	var x = document.getElementsByClassName ("tab");
+	for (i=0; i<x.length; i++) {
+		x[i].style.display="none";
+	}
+	document.getElementById(tabName).style.display = "block";
 
-    x = document.getElementsByClassName("tablink");
-    for (i=0; i<x.length; i++) {
-	x[i].className= x[i].className.replace(" w3-teal", "");
-    }
-    evt.currentTarget.className += " w3-teal";
+	x = document.getElementsByClassName("tablink");
+	for (i=0; i<x.length; i++) {
+		x[i].className= x[i].className.replace(" w3-teal", "");
+	}
+	evt.currentTarget.className += " w3-teal";
 }
 
 function setNetwork(network) {
-    var i, x;
-    {{/* change colour of selected button */}}
-    x = document.getElementsByClassName("netselection");
-    for (i=0; i<x.length; i++) {
-	x[i].className=x[i].className.replace(" w3-teal", "");
-    }
-    document.getElementById("sidebarbutton"+network).className += " w3-teal";
-
-    {{/* display subset of tabs based on network selected */}}    
-    x = document.getElementsByClassName("net");
-    for (i=0; i<x.length; i++) {
-
-	{{/*if (x[i].className.includes(network) || network == "All") {*/}}
-	if (x[i].className.includes(network)) {
-	    x[i].style.display="block";
-	} else {
-	    x[i].style.display="none";
+	var i, x;
+	{{/* change colour of selected button */}}
+	x = document.getElementsByClassName("netselection");
+	for (i=0; i<x.length; i++) {
+		x[i].className=x[i].className.replace(" w3-teal", "");
 	}
-	{{/* collapse accodians not belong to current net */}}
-        if (!x[i].className.includes(network)) {
-    		x[i].className=x[i].className.replace("w3-show", "w3-hide");
-	}
-    }
+	document.getElementById("sidebarbutton"+network).className += " w3-teal";
 
-    {{/* set network for key deletions */}}
-    x = document.getElementsByClassName("net-key");
-    for (i=0; i<x.length; i++) {
-	x[i].value=network;
-    }
+	{{/* display subset of tabs based on network selected */}}    
+	x = document.getElementsByClassName("net");
+	for (i=0; i<x.length; i++) {
+
+		{{/*if (x[i].className.includes(network) || network == "All") {*/}}
+		if (x[i].className.includes(network)) {
+			x[i].style.display="block";
+		} else {
+			x[i].style.display="none";
+			x[i].className=x[i].className.replace("w3-show", "w3-hide");
+			{{/* collapse accodians not belong to current net */}}
+		}
+	}
+
+	{{/* set network for key deletions */}}
+	x = document.getElementsByClassName("net-key");
+	for (i=0; i<x.length; i++) {
+		x[i].value=network;
+	}
 }
 
 
 function grantAdmin(id, div) {
-    var checked = document.getElementById(id).checked;
-    if (checked) {
-	yes = confirm('Are you sure? By doing this you will give the user admin rights to your Netmaker server.');
-	if (yes) {
-	    document.getElementById(div).style.display='none';
-	} else {
-	    document.getElementById(id).checked=false;
-	}
+	var checked = document.getElementById(id).checked;
+	if (checked) {
+		yes = confirm('Are you sure? By doing this you will give the user admin rights to your Netmaker server.');
+		if (yes) {
+			document.getElementById(div).style.display='none';
+		} else {
+			document.getElementById(id).checked=false;
+		}
 
-    } else {
-	document.getElementById(div).style.display='block';
-    }
+	} else {
+		document.getElementById(div).style.display='block';
+	}
 }
 
 function passVal(pass1, pass2) {
-    x = document.getElementById(pass1).value;
-    y = document.getElementById(pass2).value;
-    if (x != y) {
-	alert("Passwords do not match");
-	return false;
-    }
-    return true;
+	x = document.getElementById(pass1).value;
+	y = document.getElementById(pass2).value;
+	if (x != y) {
+		alert("Passwords do not match");
+		return false;
+	}
+	return true;
 }
 
 function copyText(id) {
-    var data = document.getElementById(id);
-    data.select();
-    /*data.setSelectionRange(0,99999); /* For Mobile Devices */
-    navigator.clipboard.writeText(data.value);
-    alert(id+" was copied to clipboard ");
+	var data = document.getElementById(id);
+	data.select();
+	/*data.setSelectionRange(0,99999); /* For Mobile Devices */
+	navigator.clipboard.writeText(data.value);
+	alert(id+" was copied to clipboard ");
 }
 
 function getNodeStatus() {
-    xHttp = new XMLHttpRequest();
-    xHttp.open("GET", "node_health", true);
-    xHttp.onload = function() {
-	if (xHttp.status == 401) {
-	    clearInterval(nodeStatus);
-	    xHttp.abort();
-	    location.reload();
-	    return;
-	}
+	xHttp = new XMLHttpRequest();
+	xHttp.open("GET", "/node_health", true);
+	xHttp.onload = function() {
+		if (xHttp.status == 401) {
+			clearInterval(nodeStatus);
+			xHttp.abort();
+			location.reload();
+			return;
+		}
 
-	if (xHttp.status != 200) {
-	    xHttp.abort();
-	    return;
+		if (xHttp.status != 200) {
+			xHttp.abort();
+			return;
+		}
+		const nodes = JSON.parse(this.responseText);
+		nodes.forEach((element, index, array) => {
+			document.getElementById("node_status"+element.Mac).innerHTML=element.Status;
+			document.getElementById("button"+element.Mac).classList.remove("w3-lightgrey")
+			document.getElementById("button"+element.Mac).classList.remove("w3-deep-orange")
+			document.getElementById("button"+element.Mac).classList.remove("w3-khaki")
+			document.getElementById("button"+element.Mac).classList.remove("w3-teal")
+			document.getElementById("button"+element.Mac).classList.add(element.Color)
+		});
 	}
-	const nodes = JSON.parse(this.responseText);
-	nodes.forEach((element, index, array) => {
-	    document.getElementById("node_status"+element.Mac).innerHTML=element.Status;
-	    document.getElementById("button"+element.Mac).classList.remove("w3-lightgrey")
-	    document.getElementById("button"+element.Mac).classList.remove("w3-deep-orange")
-	    document.getElementById("button"+element.Mac).classList.remove("w3-khaki")
-	    document.getElementById("button"+element.Mac).classList.remove("w3-teal")
-	    document.getElementById("button"+element.Mac).classList.add(element.Color)
-	});
-    }
-    xHttp.send();
+	xHttp.send();
 }
 
 function refresh() {
-    location.reload()
+	location.reload()
 }
 
 function removeEgress(mac, network) {
-    xHttp = new XMLHttpRequest();
-    xHttp.open("POST", "/delete_egress/"+network+"/"+mac,  true);
-    xHttp.onload = function() {
-	if (xHttp.status != 200) {
-	    xHttp.abort()
-	    return
+	xHttp = new XMLHttpRequest();
+	xHttp.open("POST", "/delete_egress/"+network+"/"+mac,  true);
+	xHttp.onload = function() {
+		if (xHttp.status != 200) {
+			xHttp.abort()
+			return
+		}
+		var message = JSON.parse(this.responseText);
+		alert (message);
+		refresh();
 	}
-	var message = JSON.parse(this.responseText);
-	alert (message);
-    }
-    xHttp.send();
+	xHttp.send();
 }
 
 function addIngress(mac, network) {
-    xHttp = new XMLHttpRequest();
-    alert (network, mac)
-    xHttp.open("POST", "/create_ingress/"+network+"/"+mac,  true);
-    xHttp.onload = function() {
-	if (xHttp.status != 200) {
-	    xHttp.abort()
-	    return
+	xHttp = new XMLHttpRequest();
+	alert (network+ mac)
+	xHttp.open("POST", "/create_ingress/"+network+"/"+mac,  true);
+	xHttp.onload = function() {
+		if (xHttp.status != 200) {
+			xHttp.abort()
+			return
+		}
+		var message = JSON.parse(this.responseText);
+		alert (message);
+		refresh();
 	}
-	var message = JSON.parse(this.responseText);
-	alert (message);
-    }
-    xHttp.send();
+	xHttp.send();
 }
 
 function removeIngress(mac, network) {
-    xHttp = new XMLHttpRequest();
-    xHttp.open("POST", "/delete_ingress/"+network+"/"+mac,  true);
-    xHttp.onload = function() {
-	{{/*if (xHttp.status != 200) {
-	    xHttp.abort()
-	    return
-	} */}}
-	var message = JSON.parse(this.responseText);
-	alert (message);
-    }
-    xHttp.send();
+	xHttp = new XMLHttpRequest();
+	xHttp.open("POST", "/delete_ingress/"+network+"/"+mac,  true);
+	xHttp.onload = function() {
+		{{/*if (xHttp.status != 200) {
+			xHttp.abort()
+			return
+		} */}}
+		var message = JSON.parse(this.responseText);
+		alert (message);
+	}
+	xHttp.send();
 }
 
+function deleteRelay(mac, network) {
+	xHttp = new XMLHttpRequest();
+	alert (network+ mac)
+	xHttp.open("POST", "/delete_relay/"+network+"/"+mac,  true);
+	xHttp.onload = function() {
+		var message = JSON.parse(this.responseText);
+		if (xHttp.status != 200) {
+			xHttp.abort()
+			alert("unable to complete request"+message)
+			return
+		}
+		alert (message);
+		refresh();
+	}
+	xHttp.send();
+}
+
+
+
 function expand(div) {
-    var x = document.getElementById(div);
-    if (x.className.indexOf("w3-show") == -1) {
-	x.className = x.className.replace(" w3-hide", " w3-show");
-} else {
-    x.className = x.className.replace(" w3-show", " w3-hide");
-}
-if (x.style.display==='none') {
-    x.style.display='block';
-} else {
-    x.style.display='none';
-}
+	var x = document.getElementById(div);
+	if (x.className.indexOf("w3-show") == -1) {
+		x.className = x.className.replace(" w3-hide", " w3-show");
+	} else {
+		x.className = x.className.replace(" w3-show", " w3-hide");
+	}
+	if (x.style.display==='none') {
+		x.style.display='block';
+	} else {
+		x.style.display='none';
+	}
 }
 
 function fillEgressForm(address, interface) {
-    var x = document.getElementById('egressnetwork').value;
-    if (x === 'none') {
-	document.getElementById('egressform').reset();
-    } else if (x === 'vpn') {
-	document.getElementById('egressrange').value = "0.0.0.0/0";
-	document.getElementById('egressnet').value = "eth0";
-    } else {
-	alert(x+address+interface);
-	document.getElementById('egressrange').value = address+"/24";
-	document.getElementById('egressnet').value = interface;
-    }
+	var x = document.getElementById('egressnetwork').value;
+	if (x === 'none') {
+		document.getElementById('egressform').reset();
+	} else if (x === 'vpn') {
+		document.getElementById('egressrange').value = "0.0.0.0/0";
+		document.getElementById('egressnet').value = "eth0";
+	} else {
+		alert(x+address+interface);
+		document.getElementById('egressrange').value = address+"/24";
+		document.getElementById('egressnet').value = interface;
+	}
 }
 
 
+
 </script>
-    {{end}}
+	{{end}}

@@ -16,6 +16,11 @@ type NodeStatus struct {
 	Color  string
 }
 
+type Relay struct {
+	Node  models.Node
+	Nodes []models.Node
+}
+
 //PageData -contains data for html template
 type PageData struct {
 	Page       string
