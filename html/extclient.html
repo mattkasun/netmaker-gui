@@ -2,21 +2,14 @@
 <div id="ExtClient" class="w3-row tab" style="display=none">
 	<div class="w3-third">
 		<p> Available Ingress Gateways
-		<div class="net All">
-			{{range .Nodes}}
+		{{range .Nodes}}
+		<div class="net All {{.Network}}">
+			{{if eq .IsIngressGateway "yes"}}
 			<form action="/create_ingress_client/{{.Network}}/{{.MacAddress}}" method="POST" style="display:inline">
 				<p><label>{{.Name}}</label>@<label>{{.Network}}</label>
 				<button title="Create Client" onclick="return confirm('Are you sure you want to add an extenal client to the {{.Network}} network?');" class="w3-circle"><span class="material-icons">add_circle_outline</span></button></p>
 			</form>
 			{{end}}
-		</div>
-		{{range .Nodes}}
-		<div class="net {{.Network}}">
-			<form action="/create_ingress_client/{{.Network}}/{{.MacAddress}}" method="POST" style="display:inline">
-				<label>{{.Name}}</label>
-				<label>{{.Network}}</label>
-				<button title="Create Client" onclick="return confirm('Are you sure you want to add an extenal client to the {{.Network}} network?');" class="w3-circle"><span class="material-icons">add_circle_outline</span></button>
-			</form>
 		</div>
 		{{end}}
 	</div>

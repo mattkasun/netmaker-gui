@@ -33,7 +33,7 @@ func ProcessLogin(c *gin.Context) {
 		session.Set("loggedIn", true)
 		//init message
 		session.Set("message", "")
-		session.Options(sessions.Options{MaxAge: 1800})
+		session.Options(sessions.Options{MaxAge: 28800})
 		user, err := controller.GetUser(AuthRequest.UserName)
 		if err != nil {
 			fmt.Println("err retrieving user: ", err)
