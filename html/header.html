@@ -1,33 +1,25 @@
-{{define "Header"}}
-<div class="w3-cell-row w3-blue">
-    <div class="w3-cell ">&nbsp&nbsp&nbsp&nbsp</div>
-    <div class="w3-cell w3-cell-middle w3-blue w3-hide-small w3-hide-medium">
-	<img src="/images/netmaker2.png" alt="Netmaker Makes Networks">
-    </div>
-    <div class="w3-cell w3-cell-middle w3-blue w3-hide-large">
-	<center><img src="/images/netmaker-small.png" alt="Netmaker Makes Networks"></center>
-    </div>
-    <div class="w3-cell w3-blue" >
-	<div class="w3-dropdown-hover w3-right">
-	    <button class="w3-button w3-blue w3-xlarge ">&#9776 &nbsp&nbsp&nbsp&nbsp &nbsp&nbsp </button>
-	    <div class="w3-dropdown-content w3-bar-block w3-border">
-		{{ if .Admin }}
-		<button class="w3-bar-item w3-button" onclick="document.getElementById('AddUser').style.display='block';">Add User</button>
-		<button class="w3-bar-item w3-button" onclick="document.getElementById('DeleteUser').style.display='block';">Delete User</button>
-		{{end}}
-		<button class="w3-bar-item w3-button" onclick="document.location='edit_user';">Update User</button>
-
-		<button class="w3-bar-item w3-button" onclick="document.location='https://docs.netmaker.org';">Docs</a>
-		<button class="w3-bar-item w3-button" onclick="document.location='/logout';">LogOut</a>
-
-		<button class="w3-bar-item w3-button" onclick="document.getElementById('About').style.display='block'">About</button>
-	    </div>
+{{define "HeaderIcons"}}
+<div class="w3-blue">
+	<button class="w3-hide-large w3-button w3-blue w3-small w3-left" onclick="document.getElementById('sidebar').style.display='block';">&#9776; Filter By Network</button>
+	<button class="w3-button w3-blue w3-small w3-right" onclick="document.getElementById('rightsidebar').style.display='block';">Menu &#9776;</button>
+	<div class="w3-hide-small w3-hide-medium">
+		<center><img src="/images/netmaker2.png" alt="Netmaker Makes Networks"></center>
 	</div>
-    </div>
+	<div class="w3-hide-large">
+	<center><img src="/images/netmaker-small.png" alt="Netmaker Makes Networks"></center>
+	</div>
 </div>
 
+{{end}}
 
-</div>
+
+{{define "Header"}}
+{{template "Sidebar" .}}
+{{template "Rightsidebar" .}}
+{{template "HeaderIcons"}}
+
+
+
 
 <div id="About" class=w3-modal>
     <div class="w3-modal-content w3-card-4 w3-animate-zoom w3-padding" style="width:50%">
@@ -38,6 +30,8 @@
 	    <a href='mailto://mkasun@nusak.ca?subject=netmaker-gui'>mkasun@nusak.ca</a><br>
 	    <a href='https://github.com/mattkasun/netmaker-gui' target='_blank'>github.com/mattkasun/netmaker-gui</a>
 	    <br><br>
+			<h4>Version</h4> 
+			<h5>Netmaker Backend: {{ .Version.Backend }} Netmaker-Gui: {{ .Version.Mine }}
 	    <button class="w3-button w3-teal w3-block w3-padding" onclick="document.getElementById('About').style.display='none'">Close</button>
 	</div>
     </div>

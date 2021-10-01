@@ -10,19 +10,20 @@ package main
 
 import (
 	"fmt"
+	"html/template"
 	"log"
 	"net/http"
 	_ "net/http/pprof"
+	"time"
 
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-contrib/sessions/memstore"
 	"github.com/gin-gonic/gin"
 	controller "github.com/gravitl/netmaker/controllers"
 	"github.com/gravitl/netmaker/database"
+	"github.com/gravitl/netmaker/models"
 	"github.com/gravitl/netmaker/servercfg"
 )
-
-var Data PageData
 
 func main() {
 	go func() {
@@ -33,6 +34,10 @@ func main() {
 }
 
 func SetupRouter() *gin.Engine {
+	funcMap := template.FuncMap{
+		"printTimestamp":   PrintTimestamp,
+		"wrapRelayNetwork": WrapRelayNetwork,
+	}
 	fmt.Println("using database: ", servercfg.GetDB())
 	if err := database.InitializeDatabase(); err != nil {
 		log.Fatal("Error connecting to Database:\n", err)
@@ -41,7 +46,9 @@ func SetupRouter() *gin.Engine {
 	store := memstore.NewStore([]byte("secret"))
 
 	router.Use(sessions.Sessions("netmaker", store))
-	router.LoadHTMLGlob("html/*")
+	//router.LoadHTMLGlob("html/*")
+	templates := template.Must(template.New("").Funcs(funcMap).ParseGlob("html/*"))
+	router.SetHTMLTemplate(templates)
 	router.Static("images", "./images")
 	router.StaticFile("favicon.ico", "./images/favicon.png")
 	router.POST("/newuser", NewUser)
@@ -52,8 +59,8 @@ func SetupRouter() *gin.Engine {
 		//router.Use(AuthRequired)
 		private.GET("/", DisplayLanding)
 		private.POST("/create_network", CreateNetwork)
-		private.POST("/edit_network", EditNetwork)
 		private.POST("/delete_network", DeleteNetwork)
+		private.POST("/edit_network", EditNetwork)
 		private.POST("/update_network", UpdateNetwork)
 		private.GET("/refreshkeys/:net", RefreshKeys)
 		private.POST("/create_key", NewKey)
@@ -74,6 +81,9 @@ func SetupRouter() *gin.Engine {
 		private.POST("/create_ingress_client/:net/:mac", CreateIngressClient)
 		private.POST("/delete_ingress_client/:net/:id", DeleteIngressClient)
 		private.POST("/edit_ingress_client/:net/:id", EditIngressClient)
+		private.POST("/create_relay/:net/:mac", CreateRelay)
+		private.POST("/delete_relay/:net/:mac", DeleteRelay)
+		private.POST("/process_relay/:net/:mac", ProcessRelayCreation)
 		private.POST("/get_qr/:net/:id", GetQR)
 		private.POST("/get_client_config/:net/:id", GetClientConfig)
 		private.POST("/update_client/:net/:id", UpdateClient)
@@ -81,6 +91,18 @@ func SetupRouter() *gin.Engine {
 		private.GET("/logout", LogOut)
 	}
 	return router
+}
+
+func PrintTimestamp(t int64) string {
+	time := time.Unix(t, 0)
+	return time.String()
+}
+
+func WrapRelayNetwork(network string, data models.Node) map[string]interface{} {
+	return map[string]interface{}{
+		"NetworkToUse": network,
+		"Data":         data,
+	}
 }
 
 func AuthRequired(c *gin.Context) {

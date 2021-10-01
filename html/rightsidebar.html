@@ -1,0 +1,16 @@
+{{define "Rightsidebar"}}
+<div class="w3-sidebar w3-bar-block w3-card w3-animate-right" style="display:none;right:0;" id=rightsidebar>
+	<button onclick="document.getElementById('rightsidebar').style.display='none';" class="w3-bar-item w3-button w3-large">Close &times;</button>
+
+	<button class="w3-bar-item w3-button" onclick="document.getElementById('NewNetwork').style.display='block'">Create Network</button>
+	{{ if .Admin }}
+	<button class="w3-bar-item w3-button" onclick="document.getElementById('AddUser').style.display='block';">Add User</button>
+	<button class="w3-bar-item w3-button" onclick="document.getElementById('DeleteUser').style.display='block';">Delete User</button>
+	{{end}}
+	<button class="w3-bar-item w3-button" onclick="document.location='edit_user';">Update User</button>
+
+	<button class="w3-bar-item w3-button" onclick="document.location='https://docs.netmaker.org';">Docs</button>
+	<button class="w3-bar-item w3-button" onclick="document.location='/logout';">LogOut</button>
+	<button class="w3-bar-item w3-button" onclick="document.getElementById('About').style.display='block';">About</button>
+</div>
+{{end}}
