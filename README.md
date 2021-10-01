@@ -4,7 +4,7 @@ A responsive alternative UI for netmaker (https://github.com/gravitl/netmaker)
 Built with go and html/templates.
 Missing following features compared to netmaker-ui (https://github.com/gravitl/netmaker-ui)
 - DNS
-- Netmaker v0.8.0 changes: in particular Relay Gateways 
+- 
 
 You can use netmaker-gui at the same time as netmaker-ui. For example, one one running as dashboard.netmaker.example.com and the other at control.netmaker.example.com
 
@@ -17,7 +17,7 @@ To use along side of your existing netmaker installation insert the following to
 ```
 netmaker-gui
   container-name: netmaker-gui
-  image: nusak/netmaker-gui:v0.1.0
+  image: nusak/netmaker-gui:v0.2
   restart: unless-stopped
   ports:
     - "8080:8080"
