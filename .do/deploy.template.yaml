@@ -1,13 +1,15 @@
-services:
-- http_port: 8080
-  image:
-    registry: nusak
-    registry_type: DOCKER_HUB
-    repository: netmaker-gui
-    tag: v0.2
-  instance_count: 1
-  instance_size_slug: basic-xxs
+spec:
   name: netmaker-gui
-  routes:
-  - path: /
+  services:
+  - http_port: 8080
+    image:
+      registry: nusak
+      registry_type: DOCKER_HUB
+      repository: netmaker-gui
+      tag: v0.2
+    instance_count: 1
+    instance_size_slug: basic-xxs
+    name: netmaker-gui
+    routes:
+    - path: /
     source_dir: /
