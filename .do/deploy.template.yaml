@@ -2,13 +2,29 @@ spec:
   name: netmaker
   services:
     - name: netmaker
-      git:
-        branch: develop
-        repo_clone_url: https://github.com/gravitl/netmaker.git
-    - name: gui
-      git:
-        branch: develop
-        repo_clone_url: https://github.com/mattkasun/netmaker-gui.git
+      image:
+       registry_type: "DOCKER_HUB"
+       registry: "gravitl"
+       respository: "netmaker"
+       tag: "v0.8.2"
+    - name: netmaker-gui
+      image:
+       registry_type: "DOCKER_HUB"
+       registry: "nusak"
+       respository: "netmaker-gui"
+       tag: "v0.2"
+    - name: netmaker-ui
+      image:
+       registry_type: "DOCKER_HUB"
+       registry: "gravitl"
+       respository: "netmaker-ui"
+       tag: "v0.8"
+    - name: coredns
+      image:
+       registry_type: "DOCKER_HUB"
+       registry: "coredns"
+       respository: "coredns"
+       tag: "latest"
 
 
 
