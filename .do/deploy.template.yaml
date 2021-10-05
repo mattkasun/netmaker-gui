@@ -5,25 +5,25 @@ spec:
       image:
        registry_type: "DOCKER_HUB"
        registry: "gravitl"
-       respository: "netmaker"
+       repository: "netmaker"
        tag: "v0.8.2"
     - name: netmaker-gui
       image:
        registry_type: "DOCKER_HUB"
        registry: "nusak"
-       respository: "netmaker-gui"
+       repository: "netmaker-gui"
        tag: "v0.2"
     - name: netmaker-ui
       image:
        registry_type: "DOCKER_HUB"
        registry: "gravitl"
-       respository: "netmaker-ui"
+       repository: "netmaker-ui"
        tag: "v0.8"
     - name: coredns
       image:
        registry_type: "DOCKER_HUB"
        registry: "coredns"
-       respository: "coredns"
+       repository: "coredns"
        tag: "latest"
 
 
