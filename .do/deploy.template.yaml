@@ -1,4 +1,3 @@
-region: tor
 services:
 - http_port: 8080
   image:
