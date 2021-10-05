@@ -1,6 +1,3 @@
-alerts:
-- rule: DEPLOYMENT_FAILED
-- rule: DOMAIN_FAILED
 name: netmaker-gui
 region: tor
 services:
