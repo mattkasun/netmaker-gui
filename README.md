@@ -12,6 +12,8 @@ You can use netmaker-gui at the same time as netmaker-ui. For example, one one r
 
 
 ## Installation:
+[![Deploy to DO](https://www.deploytodo.com/do-btn-blue.svg)](https://cloud.digitalocean.com/apps/new?repo=https://github.com/mattkasun/netmaker-gue/tree/develop)
+
 To use along side of your existing netmaker installation insert the following to your docker-compose.yml file
 
 ```

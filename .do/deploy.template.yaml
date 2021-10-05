@@ -1,0 +1,15 @@
+spec:
+  name: netmaker
+  services:
+    - name: netmaker
+      git:
+        branch: develop
+        repo_clone_url: https://github.com/gravitl/netmaker.git
+    - name: gui
+      git:
+        branch: develop
+        repo_clone_url: https://github.com/mattkasun/netmaker-gui.git
+
+
+
+
