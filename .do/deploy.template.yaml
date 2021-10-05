@@ -9,7 +9,7 @@ services:
     tag: v0.2
   instance_count: 1
   instance_size_slug: basic-xxs
-  name: netmaker-gui
+  name: web
   routes:
   - path: /
     source_dir: /
