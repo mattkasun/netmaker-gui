@@ -15,4 +15,4 @@ services:
   name: netmaker-gui
   routes:
   - path: /
-  source_dir: /
+    source_dir: /
