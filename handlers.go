@@ -12,6 +12,7 @@ import (
 	"github.com/gin-gonic/gin"
 	controller "github.com/gravitl/netmaker/controllers"
 	"github.com/gravitl/netmaker/functions"
+	"github.com/gravitl/netmaker/logic"
 	"github.com/gravitl/netmaker/models"
 	"github.com/skip2/go-qrcode"
 )
@@ -382,7 +383,7 @@ func UpdateNode(c *gin.Context) {
 	net := c.Param("net")
 	mac := c.Param("mac")
 	fmt.Printf("=============%T %T %T %v %v %v", net, mac, node, net, mac, node)
-	oldnode, err := models.GetNode(mac, net)
+	oldnode, err := functions.GetNodeByMacAddress(net, mac)
 	if err != nil {
 		fmt.Println("Get node with mac ", mac, " and Network ", net)
 		//c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -505,7 +506,7 @@ func CreateRelay(c *gin.Context) {
 		ReturnError(c, err, "Nodes")
 		return
 	}
-	nodes, err := controller.GetNetworkNodes(node.Network)
+	nodes, err := logic.GetNetworkNodes(node.Network)
 	if err != nil {
 		ReturnError(c, err, "Nodes")
 		return
