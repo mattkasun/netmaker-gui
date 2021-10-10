@@ -1,32 +1,15 @@
 spec:
-  name: netmaker
+  name: netmaker-gui
   services:
-    - name: netmaker
-      image:
-       registry_type: "DOCKER_HUB"
-       registry: "gravitl"
-       repository: "netmaker"
-       tag: "v0.8.2"
-  workers:
-    - name: netmaker-gui
-      image:
-       registry_type: "DOCKER_HUB"
-       registry: "nusak"
-       repository: "netmaker-gui"
-       tag: "v0.2"
-    - name: netmaker-ui
-      image:
-       registry_type: "DOCKER_HUB"
-       registry: "gravitl"
-       repository: "netmaker-ui"
-       tag: "v0.8"
-    - name: coredns
-      image:
-       registry_type: "DOCKER_HUB"
-       registry: "coredns"
-       repository: "coredns"
-       tag: "latest"
-
-
-
-
+  - http_port: 8080
+    image:
+      registry: nusak
+      registry_type: DOCKER_HUB
+      repository: netmaker-gui
+      tag: v0.2
+    instance_count: 1
+    instance_size_slug: basic-xxs
+    name: netmaker-gui
+    routes:
+    - path: /
+    source_dir: /
