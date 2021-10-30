@@ -60,7 +60,9 @@ input[type=text] {
 						<br>	<button class="w3-button w3-block w3-padding w3-teal" type=submit>Update Network</button>
 						<button class="w3-button w3-block w3-padding w3-yellow" type=reset>Reset</button>
 		</form>
-			   <form action="/" method=get>
+			   <form action="/" method=POST>
+					   <input type=hidden name=page value=Networks>
+						 <input type=hidden name=network value={{.NetID}}>
 			       <button class="w3-button w3-block w3-padding w3-red" type=cancel>Cancel</button>
 			   </form>
 	    </div>

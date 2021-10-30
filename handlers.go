@@ -55,18 +55,22 @@ func NewUser(c *gin.Context) {
 	user.IsAdmin = true
 	hasAdmin, err := controller.HasAdmin()
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		ReturnError(c, http.StatusInternalServerError, err, "")
 		c.Abort()
 	}
 	if hasAdmin {
-		c.JSON(http.StatusUnauthorized, "Admin Exists")
+		ReturnError(c, http.StatusUnauthorized, err, "")
 		c.Abort()
 	}
 	_, err = controller.CreateUser(user)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		ReturnError(c, http.StatusInternalServerError, err, "")
 		c.Abort()
 	}
+	session := sessions.Default(c)
+	session.Set("page", "")
+	session.Set("message", "New User "+user.UserName+" has been created")
+	session.Save()
 	location := url.URL{Path: "/"}
 	c.Redirect(http.StatusFound, location.RequestURI())
 }
@@ -86,6 +90,17 @@ func DisplayLanding(c *gin.Context) {
 	c.HTML(http.StatusOK, "layout", data)
 }
 
+func Cancel(c *gin.Context) {
+	page := c.PostForm("page")
+	network := c.PostForm("network")
+	session := sessions.Default(c)
+	session.Set("page", page)
+	session.Set("message", "")
+	session.Set("network", network)
+	session.Save()
+	DisplayLanding(c)
+}
+
 func CreateNetwork(c *gin.Context) {
 	var net models.Network
 
@@ -98,9 +113,13 @@ func CreateNetwork(c *gin.Context) {
 	err := controller.CreateNetwork(net)
 
 	if err != nil {
-		c.JSON(http.StatusBadRequest, err)
+		ReturnError(c, http.StatusBadRequest, err, "Networks")
 		c.Abort()
 	}
+	session := sessions.Default(c)
+	session.Set("page", "Networks")
+	session.Set("message", "Network "+net.NetID+" has been created")
+	session.Save()
 	location := url.URL{Path: "/"}
 	c.Redirect(http.StatusFound, location.RequestURI())
 }
@@ -111,9 +130,13 @@ func EditNetwork(c *gin.Context) {
 	var Data models.Network
 	Data, err := controller.GetNetwork(network)
 	if err != nil {
-		fmt.Println("error getting net details \n", err)
-		c.JSON(http.StatusBadRequest, err)
+		ReturnError(c, http.StatusBadRequest, err, "Networks")
+		c.Abort()
 	}
+	session := sessions.Default(c)
+	session.Set("page", "Networks")
+	session.Set("message", "Network "+network+" has been updated")
+	session.Save()
 	c.HTML(http.StatusOK, "EditNet", Data)
 }
 
@@ -121,9 +144,13 @@ func DeleteNetwork(c *gin.Context) {
 	network := c.PostForm("network")
 	err := controller.DeleteNetwork(network)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, err)
+		ReturnError(c, http.StatusBadRequest, err, "Networks")
 		c.Abort()
 	}
+	session := sessions.Default(c)
+	session.Set("page", "Networks")
+	session.Set("message", "Network "+network+" has been deleted")
+	session.Save()
 	location := url.URL{Path: "/"}
 	c.Redirect(http.StatusFound, location.RequestURI())
 }
@@ -189,21 +216,21 @@ func UpdateNetwork(c *gin.Context) {
 
 	oldnetwork, err := controller.GetNetwork(net)
 	if err != nil {
+		ReturnError(c, http.StatusInternalServerError, err, "Networks")
 		fmt.Println("error getting network ", err)
-		c.JSON(http.StatusBadRequest, err)
 		c.Abort()
 	}
 	updaterange, updatelocal, err := oldnetwork.Update(&network)
 	if err != nil {
 		fmt.Println("error updating network ", err)
-		c.JSON(http.StatusBadRequest, err)
+		ReturnError(c, http.StatusInternalServerError, err, "Networks")
 		c.Abort()
 	}
 	if updaterange {
 		err = functions.UpdateNetworkNodeAddresses(network.NetID)
 		if err != nil {
 			fmt.Println("error updating network Node Addresses", err)
-			c.JSON(http.StatusInternalServerError, err)
+			ReturnError(c, http.StatusInternalServerError, err, "Networks")
 			c.Abort()
 		}
 	}
@@ -211,11 +238,14 @@ func UpdateNetwork(c *gin.Context) {
 		err = functions.UpdateNetworkLocalAddresses(network.NetID)
 		if err != nil {
 			fmt.Println("error updating network Local Addresses", err)
-			c.JSON(http.StatusInternalServerError, err)
+			ReturnError(c, http.StatusInternalServerError, err, "Networks")
 			c.Abort()
 		}
 	}
-
+	session := sessions.Default(c)
+	session.Set("page", "Networks")
+	session.Set("message", "Network "+network.NetID+" has been updated")
+	session.Save()
 	location := url.URL{Path: "/"}
 	c.Redirect(http.StatusFound, location.RequestURI())
 }
@@ -224,9 +254,13 @@ func RefreshKeys(c *gin.Context) {
 	net := c.Param("net")
 	_, err := controller.KeyUpdate(net)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
+		ReturnError(c, http.StatusBadRequest, err, "Keys")
+		c.Abort()
 	}
+	session := sessions.Default(c)
+	session.Set("page", "Networks")
+	session.Set("message", "Network Keys have been updated")
+	session.Save()
 	location := url.URL{Path: "/"}
 	c.Redirect(http.StatusFound, location.RequestURI())
 }
@@ -243,15 +277,19 @@ func NewKey(c *gin.Context) {
 	network, err := controller.GetNetwork(net)
 	if err != nil {
 		fmt.Println("error retrieving network ", err)
-		c.JSON(http.StatusBadRequest, err)
+		ReturnError(c, http.StatusBadRequest, err, "Keys")
 		c.Abort()
 	}
 	_, err = controller.CreateAccessKey(key, network)
 	if err != nil {
 		fmt.Println("error creating key", err)
-		c.JSON(http.StatusBadRequest, err)
+		ReturnError(c, http.StatusBadRequest, err, "Keys")
 		c.Abort()
 	}
+	session := sessions.Default(c)
+	session.Set("page", "Keys")
+	session.Set("message", "Network Key Created")
+	session.Save()
 	location := url.URL{Path: "/"}
 	c.Redirect(http.StatusFound, location.RequestURI())
 }
@@ -262,10 +300,13 @@ func DeleteKey(c *gin.Context) {
 	fmt.Println("Delete Key params: ", net, name)
 	if err := controller.DeleteKey(name, net); err != nil {
 		fmt.Println("error deleting key", err)
-		//c.AbortWithError(http.StatusBadRequest, err)
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		ReturnError(c, http.StatusBadRequest, err, "Keys")
 		c.Abort()
 	}
+	session := sessions.Default(c)
+	session.Set("page", "Keys")
+	session.Set("message", "Network Key Deleted")
+	session.Save()
 	location := url.URL{Path: "/"}
 	c.Redirect(http.StatusFound, location.RequestURI())
 }
@@ -273,6 +314,7 @@ func DeleteKey(c *gin.Context) {
 func LogOut(c *gin.Context) {
 	session := sessions.Default(c)
 	session.Set("loggedIn", false)
+	session.Set("message", "")
 	session.Save()
 	fmt.Println("User Logged Out", session.Get("loggedIn"))
 	location := url.URL{Path: "/"}
@@ -293,10 +335,12 @@ func CreateUser(c *gin.Context) {
 	fmt.Println("networks: ", user.Networks)
 	_, err := controller.CreateUser(user)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		ReturnError(c, http.StatusBadRequest, err, "")
 		c.Abort()
 	}
-
+	session := sessions.Default(c)
+	session.Set("message", "User "+user.UserName+" created")
+	session.Save()
 	location := url.URL{Path: "/"}
 	c.Redirect(http.StatusFound, location.RequestURI())
 }
@@ -305,9 +349,12 @@ func DeleteUser(c *gin.Context) {
 	user := c.PostForm("user")
 	success, err := controller.DeleteUser(user)
 	if !success {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		c.Abort()
+		ReturnError(c, http.StatusBadRequest, err, "")
+		return
 	}
+	session := sessions.Default(c)
+	session.Set("message", "User "+user+" deleted")
+	session.Save()
 	location := url.URL{Path: "/"}
 	c.Redirect(http.StatusFound, location.RequestURI())
 }
@@ -317,9 +364,11 @@ func EditUser(c *gin.Context) {
 	username := session.Get("username").(string)
 	user, err := controller.GetUser(username)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		c.Abort()
+		ReturnError(c, http.StatusBadRequest, err, "")
+		return
 	}
+	session.Set("message", "")
+	session.Save()
 	c.HTML(http.StatusOK, "EditUser", user)
 }
 
@@ -328,16 +377,14 @@ func UpdateUser(c *gin.Context) {
 	username := c.Param("user")
 	user, err := controller.GetUserInternal(username)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		c.Abort()
+		ReturnError(c, http.StatusBadRequest, err, "")
 		return
 	}
 	new.UserName = c.PostForm("username")
 	new.Password = c.PostForm("password")
 	_, err = controller.UpdateUser(new, user)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		c.Abort()
+		ReturnError(c, http.StatusBadRequest, err, "")
 		return
 	}
 	session := sessions.Default(c)
@@ -354,8 +401,12 @@ func EditNode(c *gin.Context) {
 	node, err := controller.GetNode(mac, network)
 	if err != nil {
 		fmt.Println("error getting node details \n", err)
-		c.JSON(http.StatusBadRequest, err)
+		ReturnError(c, http.StatusBadRequest, err, "Nodes")
+		return
 	}
+	session := sessions.Default(c)
+	session.Set("message", "")
+	session.Save()
 	c.HTML(http.StatusOK, "EditNode", node)
 }
 
@@ -365,9 +416,13 @@ func DeleteNode(c *gin.Context) {
 	fmt.Println("deleting node ", mac, net)
 	err := controller.DeleteNode(mac+"###"+net, false)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		c.Abort()
+		ReturnError(c, http.StatusBadRequest, err, "Nodes")
+		return
 	}
+	session := sessions.Default(c)
+	session.Set("message", "Node has been deleted")
+	session.Set("page", "Nodes")
+	session.Save()
 	location := url.URL{Path: "/"}
 	c.Redirect(http.StatusFound, location.RequestURI())
 }
@@ -377,7 +432,7 @@ func UpdateNode(c *gin.Context) {
 	var node *models.Node
 	if err := c.ShouldBind(&node); err != nil {
 		fmt.Println("should bind")
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		ReturnError(c, http.StatusBadRequest, err, "Nodes")
 		return
 	}
 	net := c.Param("net")
@@ -386,15 +441,18 @@ func UpdateNode(c *gin.Context) {
 	oldnode, err := functions.GetNodeByMacAddress(net, mac)
 	if err != nil {
 		fmt.Println("Get node with mac ", mac, " and Network ", net)
-		//c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		c.JSON(http.StatusBadRequest, node)
+		ReturnError(c, http.StatusBadRequest, err, "Nodes")
 		return
 	}
 	if err = oldnode.Update(node); err != nil {
 		fmt.Println("update network")
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		ReturnError(c, http.StatusBadRequest, err, "Nodes")
 		return
 	}
+	session := sessions.Default(c)
+	session.Set("message", "Node has been updated")
+	session.Set("page", "Nodes")
+	session.Save()
 	location := url.URL{Path: "/"}
 	c.Redirect(http.StatusFound, location.RequestURI())
 
@@ -434,19 +492,20 @@ func ProcessEgress(c *gin.Context) {
 	egress.NetID = c.Param("net")
 	node, err := controller.GetNode(egress.NodeID, egress.NetID)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		ReturnError(c, http.StatusBadRequest, err, "Nodes")
+		return
 	}
 	egress.Ranges = strings.Split(c.PostForm("ranges"), ",")
 	egress.Interface = c.PostForm("interface")
 
 	_, err = controller.CreateEgressGateway(egress)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		ReturnError(c, http.StatusBadRequest, err, "Nodes")
 		return
 	}
-
 	session := sessions.Default(c)
 	session.Set("message", node.Name+" is now a gateway")
+	session.Set("page", "Nodes")
 	session.Save()
 	location := url.URL{Path: "/"}
 	c.Redirect(http.StatusFound, location.RequestURI())
@@ -457,9 +516,12 @@ func CreateEgress(c *gin.Context) {
 	mac := c.Param("mac")
 	node, err := controller.GetNode(mac, net)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		ReturnError(c, http.StatusBadRequest, err, "Nodes")
 		return
 	}
+	session := sessions.Default(c)
+	session.Set("message", "")
+	session.Save()
 	c.HTML(http.StatusOK, "Egress", node)
 }
 
@@ -472,7 +534,7 @@ func DeleteEgress(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	c.JSON(http.StatusOK, gin.H{"message": "Ingress Gateway Created"})
+	c.JSON(http.StatusOK, gin.H{"message": "Ingress Gateway Deleted"})
 }
 
 func CreateIngress(c *gin.Context) {
@@ -480,10 +542,15 @@ func CreateIngress(c *gin.Context) {
 	mac := c.Param("mac")
 	_, err := controller.CreateIngressGateway(net, mac)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		ReturnError(c, http.StatusBadRequest, err, "Nodes")
 		return
 	}
-	c.JSON(http.StatusOK, gin.H{"message": "Ingress Gateway Created"})
+	session := sessions.Default(c)
+	session.Set("message", "gateway created")
+	session.Set("page", "Nodes")
+	session.Save()
+	location := url.URL{Path: "/"}
+	c.Redirect(http.StatusFound, location.RequestURI())
 }
 
 func DeleteIngress(c *gin.Context) {
@@ -495,7 +562,12 @@ func DeleteIngress(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	c.JSON(http.StatusOK, gin.H{"message": "Ingress Gateway Deleted"})
+	session := sessions.Default(c)
+	session.Set("message", "gateway deleted")
+	session.Set("page", "Nodes")
+	session.Save()
+	location := url.URL{Path: "/"}
+	c.Redirect(http.StatusFound, location.RequestURI())
 }
 
 func CreateRelay(c *gin.Context) {
@@ -504,12 +576,12 @@ func CreateRelay(c *gin.Context) {
 	net := c.Param("net")
 	node, err := controller.GetNode(mac, net)
 	if err != nil {
-		ReturnError(c, err, "Nodes")
+		ReturnError(c, http.StatusBadRequest, err, "Nodes")
 		return
 	}
 	nodes, err := logic.GetNetworkNodes(node.Network)
 	if err != nil {
-		ReturnError(c, err, "Nodes")
+		ReturnError(c, http.StatusBadRequest, err, "Nodes")
 		return
 	}
 	relayData.Node = node
@@ -524,7 +596,8 @@ func ProcessRelayCreation(c *gin.Context) {
 	request.RelayAddrs = c.PostFormArray("address")
 	_, err := controller.CreateRelay(request)
 	if err != nil {
-		ReturnError(c, err, "Nodes")
+		ReturnError(c, http.StatusBadRequest, err, "Nodes")
+		return
 	}
 	session := sessions.Default(c)
 	session.Set("message", "Relay Gateway Created")
@@ -540,10 +613,15 @@ func DeleteRelay(c *gin.Context) {
 	_, err := controller.DeleteRelay(net, mac)
 	if err != nil {
 		fmt.Println(err)
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		ReturnError(c, http.StatusBadRequest, err, "Nodes")
 		return
 	}
-	c.JSON(http.StatusOK, gin.H{"message": "Relay Gateway Deleted"})
+	session := sessions.Default(c)
+	session.Set("message", "Relay Gateway Deleted")
+	session.Set("page", "Nodes")
+	session.Save()
+	location := url.URL{Path: "/"}
+	c.Redirect(http.StatusFound, location.RequestURI())
 }
 
 func CreateIngressClient(c *gin.Context) {
@@ -554,7 +632,7 @@ func CreateIngressClient(c *gin.Context) {
 	node, err := functions.GetNodeByMacAddress(client.Network, client.IngressGatewayID)
 	if err != nil {
 		fmt.Println(err)
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		ReturnError(c, http.StatusBadRequest, err, "Nodes")
 		return
 	}
 
@@ -563,11 +641,12 @@ func CreateIngressClient(c *gin.Context) {
 	err = controller.CreateExtClient(client)
 	if err != nil {
 		fmt.Println(err)
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		ReturnError(c, http.StatusBadRequest, err, "Nodes")
 		return
 	}
 	session := sessions.Default(c)
 	session.Set("message", "external client has been created")
+	session.Set("page", "ExtClient")
 	session.Save()
 	location := url.URL{Path: "/"}
 	c.Redirect(http.StatusFound, location.RequestURI())
@@ -579,12 +658,13 @@ func DeleteIngressClient(c *gin.Context) {
 	err := controller.DeleteExtClient(net, id)
 	if err != nil {
 		fmt.Println(err)
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		ReturnError(c, http.StatusBadRequest, err, "ExtClient")
 		return
 	}
 
 	session := sessions.Default(c)
 	session.Set("message", "external client "+id+" @ "+net+" has been deleted")
+	session.Set("page", "ExtClient")
 	session.Save()
 	location := url.URL{Path: "/"}
 	c.Redirect(http.StatusFound, location.RequestURI())
@@ -596,7 +676,7 @@ func EditIngressClient(c *gin.Context) {
 	client, err := controller.GetExtClient(id, net)
 	if err != nil {
 		fmt.Println(err)
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		ReturnError(c, http.StatusBadRequest, err, "ExtClient")
 		return
 	}
 	c.HTML(http.StatusOK, "EditExtClient", client)
@@ -608,13 +688,13 @@ func GetQR(c *gin.Context) {
 	config, err := GetConf(net, id)
 	if err != nil {
 		fmt.Println(err)
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		ReturnError(c, http.StatusBadRequest, err, "ExtClient")
 		return
 	}
 	b, err := qrcode.Encode(config, qrcode.Medium, 220)
 	if err != nil {
 		fmt.Println(err)
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		ReturnError(c, http.StatusBadRequest, err, "ExtClient")
 		return
 	}
 	c.Header("Content-Type", "image/png")
@@ -679,7 +759,7 @@ func GetClientConfig(c *gin.Context) {
 	b := []byte(config)
 	if err != nil {
 		fmt.Println(err)
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		ReturnError(c, http.StatusBadRequest, err, "ExtClient")
 		return
 	}
 	filename := id + ".conf"
@@ -697,27 +777,28 @@ func UpdateClient(c *gin.Context) {
 	client, err := controller.GetExtClient(id, net)
 	if err != nil {
 		fmt.Println(err)
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		ReturnError(c, http.StatusBadRequest, err, "ExtClient")
 		return
 	}
 	_, err = controller.UpdateExtClient(newid, net, client)
 	if err != nil {
 		fmt.Println(err)
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		ReturnError(c, http.StatusBadRequest, err, "ExtClient")
 		return
 	}
 	session := sessions.Default(c)
 	session.Set("message", "External client has been updated")
+	session.Set("page", "ExtClient")
 	session.Save()
 	location := url.URL{Path: "/"}
 	c.Redirect(http.StatusFound, location.RequestURI())
 }
 
-func ReturnError(c *gin.Context, err error, page string) {
+func ReturnError(c *gin.Context, status int, err error, page string) {
 	session := sessions.Default(c)
 	session.Set("message", err.Error())
 	session.Set("page", page)
 	session.Save()
 	location := url.URL{Path: "/"}
-	c.Redirect(http.StatusFound, location.RequestURI())
+	c.Redirect(status, location.RequestURI())
 }
