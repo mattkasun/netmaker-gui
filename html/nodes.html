@@ -27,20 +27,28 @@
 			<button type=submit class="w3-button" onclick="alert('Are you sure you want to delete node {{.Name}} from Network {{.Network}}?')" >Delete</button>
 		</form>
 		{{if eq .IsEgressGateway "yes" }}
+		<form action="/delete_egress/{{.Network}}/{{.MacAddress}}" method=POST style=display:inline>
 		<button class="w3-bar-item w3-circle w3-white" title="Remove Egress Gateway" onclick="removeEgress('{{.MacAddress}}', '{{.Network}}');"><span class="material-icons">highlight_off</span></button> 
+		</form>
 		{{ else }}
 		<form action="/create_egress/{{.Network}}/{{.MacAddress}}" Method="POST" style="display:inline">
 			<button class="w3-bar-item w3-circle w3-white" title="Create Egress Gateway"><span class="material-icons">router</span></button>
 		</form>
 		{{end}}
 		{{if eq .IsIngressGateway "yes"}}
+		<form action="/delete_ingress/{{.Network}}/{{.MacAddress}}" method=POST style=display:inline>
 		<button class="w3-bar-item w3-circle w3-white" title="Remove Ingress Gateway" onclick="removeIngress('{{.MacAddress}}', '{{.Network}}');"><span class="material-icons">wifi_off</span></button> 
+		</form>
 		{{ else }}
+		<form action="/create_egress/{{.Network}}/{{.MacAddress}}" Method="POST" style="display:inline">
 		<button class="w3-bar-item w3-circle w3-white" title="Create Ingress Gateway" onclick="addIngress('{{.MacAddress}}', '{{.Network}}');"><span class="material-icons">settings_input_antenna</span></button> 
+		</form>
 		{{end}}
 
 		{{if eq .IsRelay "yes"}}
-		<button class="w3-bar-item w3-circle w3-white" title="Remove Relay Gateway" onclick="deleteRelay('{{.MacAddress}}', '{{.Network}}');"><span class="material-icons">sensors_off</span></button> 
+		<form action="/delete_relay/{{.Network}}/{{.MacAddress}}" method=post style="display:inline">
+		<button class="w3-bar-item w3-circle w3-white" title="Remove Relay Gateway"><span class="material-icons">sensors_off</span></button> 
+		</form>
 		{{ else }}
 		<form action="/create_relay/{{.Network}}/{{.MacAddress}}" method=post style="display:inline">
 		<button class="w3-bar-item w3-circle w3-white" title="Create Relay Gateway" type=submit><span class="material-icons">local_phone</span></button> 
@@ -72,10 +80,10 @@
 				{{ $Net := .Node.Network}}
 				{{range .Nodes }}
 				{{ if eq .Network $Net}}
-				<input type="checkbox" id=address>{{.Name}}</label>
+				<input type="checkbox" name=address>{{.Name}}</label>
 				{{end}} {{end}}
 			</div>
-			<button class="w3-block w3-blue"  type="submit" >Create User</button>
+			<button class="w3-block w3-blue"  type="submit" >Create Relay</button>
 		</form>
 		<button class="w3-block w3-red" onclick="window.history.back();">Cancel</button>
 	</div>

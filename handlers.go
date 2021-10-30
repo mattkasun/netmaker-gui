@@ -531,10 +531,15 @@ func DeleteEgress(c *gin.Context) {
 	_, err := controller.DeleteEgressGateway(net, mac)
 	if err != nil {
 		fmt.Println(err)
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		ReturnError(c, http.StatusBadRequest, err, "Nodes")
 		return
 	}
-	c.JSON(http.StatusOK, gin.H{"message": "Ingress Gateway Deleted"})
+	session := sessions.Default(c)
+	session.Set("message", "")
+	session.Set("page", "Nodes")
+	session.Save()
+	location := url.URL{Path: "/"}
+	c.Redirect(http.StatusFound, location.RequestURI())
 }
 
 func CreateIngress(c *gin.Context) {
@@ -558,8 +563,8 @@ func DeleteIngress(c *gin.Context) {
 	mac := c.Param("mac")
 	_, err := controller.DeleteIngressGateway(net, mac)
 	if err != nil {
+		ReturnError(c, http.StatusBadRequest, err, "Nodes")
 		fmt.Println(err)
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 	session := sessions.Default(c)
@@ -795,10 +800,11 @@ func UpdateClient(c *gin.Context) {
 }
 
 func ReturnError(c *gin.Context, status int, err error, page string) {
+	var data PageData
 	session := sessions.Default(c)
 	session.Set("message", err.Error())
 	session.Set("page", page)
 	session.Save()
-	location := url.URL{Path: "/"}
-	c.Redirect(status, location.RequestURI())
+	data.Init(page, c)
+	c.HTML(status, "layout", data)
 }
