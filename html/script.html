@@ -6,6 +6,7 @@ var nodeStatus;
 
 function setUp(tabName, message) {
 	setVisibility(tabName);
+	getNodeStatus();
 	nodeStatus = window.setInterval(getNodeStatus, 30000);
 	if (message != "") {
 		alert(message)

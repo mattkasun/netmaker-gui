@@ -16,10 +16,10 @@
 	    <input class="net-key" type=hidden name="net" value="">
 	    <button class="w3-ripple" type=submit> <span class="material-icons-outlined">delete</span> Delete Key</button>
 	</form>
-	<button class="w3-ripple" onclick="copyText('accesskey');"><span class="material-icons">content_copy</span> Copy Access Key </button>
-	    <input id="accesskey" type="text" value={{.Value}} ><br>
-	    <button class="w3-ripple" onclick="copyText('token');"><span class="material-icons">content_copy</span> Copy Access Token </button><br>
-	    <textarea id="token" rows="8" cols="40" >{{.AccessString}}</textarea ><br>
+	<button class="w3-ripple" onclick="copyText('accesskey{{.Name}}');"><span class="material-icons">content_copy</span> Copy Access Key </button>
+	<input id="accesskey{{.Name}}" type="text" value={{.Value}} ><br>
+	<button class="w3-ripple" onclick="copyText('token{{.Name}}');"><span class="material-icons">content_copy</span> Copy Access Token </button><br>
+	<textarea id="token{{.Name}}" rows="8" cols="40" >{{.AccessString}}</textarea ><br>
 	    <label>Uses</label>
 	    <input type="text" placeholder={{.Uses}} disabled><br>
 	</fieldset>
