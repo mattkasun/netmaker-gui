@@ -129,12 +129,12 @@ function getNodeStatus() {
 		}
 		const nodes = JSON.parse(this.responseText);
 		nodes.forEach((element, index, array) => {
-			document.getElementById("node_status"+element.Mac).innerHTML=element.Status;
-			document.getElementById("button"+element.Mac).classList.remove("w3-lightgrey")
-			document.getElementById("button"+element.Mac).classList.remove("w3-deep-orange")
-			document.getElementById("button"+element.Mac).classList.remove("w3-khaki")
-			document.getElementById("button"+element.Mac).classList.remove("w3-teal")
-			document.getElementById("button"+element.Mac).classList.add(element.Color)
+			document.getElementById("node_status"+element.Mac+element.Network).innerHTML=element.Status;
+			document.getElementById("button"+element.Mac+element.Network).classList.remove("w3-lightgrey")
+			document.getElementById("button"+element.Mac+element.Network).classList.remove("w3-deep-orange")
+			document.getElementById("button"+element.Mac+element.Network).classList.remove("w3-khaki")
+			document.getElementById("button"+element.Mac+element.Network).classList.remove("w3-teal")
+			document.getElementById("button"+element.Mac+element.Network).classList.add(element.Color)
 		});
 	}
 	xHttp.send();

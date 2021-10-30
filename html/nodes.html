@@ -1,27 +1,27 @@
 {{ define "Nodes" }}
 <div id="Nodes" class="w3-content w3-white tab" style="display=none">
 	{{range .Nodes}}
-	<p><button id="button{{.MacAddress}}" class="net {{.Network}} All w3-lightgrey"  onclick="expand('node{{.MacAddress}}');">{{.Name}}@{{.Network}} {{.Endpoint}} {{.Address}}</button></p>
+	<p><button id="button{{.MacAddress}}{{.Network}}" class="net {{.Network}} All w3-lightgrey"  onclick="expand('node{{.MacAddress}}{{.Network}}');">{{.Name}}@{{.Network}} {{.Endpoint}} {{.Address}}</button></p>
 	{{template "NodeDetails" .}}
 	{{end}}
 </div>
 {{end}}
 
 {{define "NodeDetails"}}
-<div class="w3-content net {{.Network}} w3-hide" id='node{{.MacAddress}}'>
+<div class="w3-content net {{.Network}} w3-hide" id='node{{.MacAddress}}{{.Network}}'>
 	<fieldset> 
 		<legend>{{.Name }}</legend>
-		<form action="/edit_node" method=POST>
+		<form action="/edit_node" method=POST style=display:inline>
 			<input type=hidden name="network" value='{{.Network}}'>
 			<input type=hidden name="mac" value='{{.MacAddress}}'>
 			<label>Public IP</label>
 			<input type="text" placeholder={{.Endpoint}} disabled><br>
 			<label>Subnet</label>
 			<input type="text" placeholder={{.Address}} disabled><br>
-			<label>Status: </label><label id="node_status{{.MacAddress}}">...Checking...</label><br>
+			<label>Status: </label><label id="node_status{{.MacAddress}}{{.Network}}">...Checking...</label><label> {{printTimestamp .LastCheckIn}} </label><br>
 			<button type=submit class="w3-button">Edit</button><br>
 		</form>
-		<form action="delete_node" method=POST>
+		<form action="delete_node" method=POST style=display:inline>
 			<input type=hidden name="net" value='{{.Network}}'>
 			<input type=hidden name="mac" value='{{.MacAddress}}'>
 			<button type=submit class="w3-button" onclick="alert('Are you sure you want to delete node {{.Name}} from Network {{.Network}}?')" >Delete</button>

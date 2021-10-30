@@ -410,15 +410,16 @@ func NodeHealth(c *gin.Context) {
 	var nodeHealth NodeStatus
 	for _, node := range nodes {
 		nodeHealth.Mac = node.MacAddress
+		nodeHealth.Network = node.Network
 		lastupdate := time.Now().Sub(time.Unix(node.LastCheckIn, 0))
 		if lastupdate.Minutes() > 15.0 {
-			nodeHealth.Status = "Dead: Node last checked in more than 15 minutes ago"
+			nodeHealth.Status = "Error: Node last checked in more than 15 minutes ago: "
 			nodeHealth.Color = "w3-deep-orange"
 		} else if lastupdate.Minutes() > 5.0 {
-			nodeHealth.Status = "Warning: Node last checked in more than 5 minutes ago"
+			nodeHealth.Status = "Warning: Node last checked in more than 5 minutes ago: "
 			nodeHealth.Color = "w3-khaki"
 		} else {
-			nodeHealth.Status = "Healthy: Node checked in within the last 5 minutes"
+			nodeHealth.Status = "Healthy: Node checked in within the last 5 minutes: "
 			nodeHealth.Color = "w3-teal"
 		}
 		response = append(response, nodeHealth)
