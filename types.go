@@ -12,9 +12,10 @@ import (
 )
 
 type NodeStatus struct {
-	Mac    string
-	Status string
-	Color  string
+	Mac     string
+	Network string
+	Status  string
+	Color   string
 }
 
 type Relay struct {
