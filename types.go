@@ -6,6 +6,7 @@ import (
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
 	controller "github.com/gravitl/netmaker/controllers"
+	"github.com/gravitl/netmaker/dnslogic"
 	"github.com/gravitl/netmaker/functions"
 	"github.com/gravitl/netmaker/models"
 	"github.com/gravitl/netmaker/servercfg"
@@ -68,9 +69,19 @@ func (data *PageData) Init(page string, c *gin.Context) {
 	if err != nil {
 		fmt.Println("error getting user data", err)
 	}
-	dnsEntries, err := controller.GetAllDNS()
-	if err != nil {
-		fmt.Println("error getting dns data", err)
+	var dnsEntries []models.DNSEntry
+	var customDnsEntries []models.DNSEntry
+	for _, net := range networks {
+		entries, err := controller.GetNodeDNS(net.NetID)
+		if err != nil {
+			fmt.Println("error getting dns data", err)
+		}
+		dnsEntries = append(dnsEntries, entries...)
+		entries, err = dnslogic.GetCustomDNS(net.NetID)
+		if err != nil {
+			fmt.Println("error getting custom dns data", err)
+		}
+		customDnsEntries = append(customDnsEntries, entries...)
 	}
 	if isAdmin {
 		data.Networks = networks
@@ -78,6 +89,7 @@ func (data *PageData) Init(page string, c *gin.Context) {
 		data.Users = users
 		data.ExtClients = extclients
 		data.DNS = dnsEntries
+		data.CustomDNS = customDnsEntries
 	} else {
 		var nets []models.Network
 		for _, network := range networks {
@@ -110,6 +122,14 @@ func (data *PageData) Init(page string, c *gin.Context) {
 			}
 			data.DNS = userdns
 		}
+		var customdns []models.DNSEntry
+		for _, dns := range customDnsEntries {
+			if SliceContains(allowedNets, dns.Network) {
+				customdns = append(customdns, dns)
+			}
+			data.CustomDNS = customdns
+		}
+
 	}
 	data.Version.Backend = servercfg.GetVersion()
 	data.Version.Mine = "v0.2.0"

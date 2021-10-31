@@ -87,6 +87,8 @@ func SetupRouter() *gin.Engine {
 		private.POST("/get_qr/:net/:id", GetQR)
 		private.POST("/get_client_config/:net/:id", GetClientConfig)
 		private.POST("/update_client/:net/:id", UpdateClient)
+		private.POST("/create_dns", CreateDNS)
+		private.POST("/delete_dns/:net/:name/:address", DeleteDNS)
 
 		private.GET("/logout", LogOut)
 	}

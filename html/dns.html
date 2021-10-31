@@ -19,7 +19,9 @@
 	<div>
 		<ul>
 			{{range .CustomDNS}}
-			<li class="net {{.Network}}">{{ .Name .Address }}</li>
+			<li class="net {{.Network}}">{{ .Name}} {{.Address }}
+				<form action="/delete_dns/{{.Network}}/{{.Name}}/{{.Address}}" method=Post><button type=submit>&#9746;</button></form>
+			</li>
 			{{end}}
 		</ul>
 	</div>
