@@ -37,6 +37,8 @@ type PageData struct {
 	Nodes      []models.Node
 	Users      []models.ReturnUser
 	ExtClients []models.ExtClient
+	DNS        []models.DNSEntry
+	CustomDNS  []models.DNSEntry
 	Version    Version
 }
 
@@ -66,11 +68,16 @@ func (data *PageData) Init(page string, c *gin.Context) {
 	if err != nil {
 		fmt.Println("error getting user data", err)
 	}
+	dnsEntries, err := controller.GetAllDNS()
+	if err != nil {
+		fmt.Println("error getting dns data", err)
+	}
 	if isAdmin {
 		data.Networks = networks
 		data.Nodes = nodes
 		data.Users = users
 		data.ExtClients = extclients
+		data.DNS = dnsEntries
 	} else {
 		var nets []models.Network
 		for _, network := range networks {
@@ -95,6 +102,13 @@ func (data *PageData) Init(page string, c *gin.Context) {
 				clients = append(clients, client)
 			}
 			data.ExtClients = clients
+		}
+		var userdns []models.DNSEntry
+		for _, dns := range dnsEntries {
+			if SliceContains(allowedNets, dns.Network) {
+				userdns = append(userdns, dns)
+			}
+			data.DNS = userdns
 		}
 	}
 	data.Version.Backend = servercfg.GetVersion()

@@ -1,0 +1,33 @@
+{{ define "DNS" }}
+<div id=DNS class="w3-row tab" style=display:none>
+	<div class="net All">
+		<p>Select a specific network to view it's DNS</p>
+	</div>
+	<div class="net {{range .Networks}} {{.NetID}} {{end}}">
+		DNS Entries<br>
+	</div>
+	<div>
+		<ul>
+			{{ range .DNS}}
+			<li class="net {{.Network}}">{{ .Name}} {{ .Address}}</li>
+			{{end}}
+		</ul>
+	</div>
+	<div class="net {{range .Networks}} {{.NetID}} {{end}}">
+		Custom DNS
+	</div>
+	<div>
+		<ul>
+			{{range .CustomDNS}}
+			<li class="net {{.Network}}">{{ .Name .Address }}</li>
+			{{end}}
+		</ul>
+	</div>
+
+	<div class="net {{range .Networks}} {{.NetID}} {{end}}">
+		<br><button class=w3-button>ADD ENTRY +</button>
+	</div>
+</div>
+{{end}}
+
+
