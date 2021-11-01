@@ -144,12 +144,14 @@ func (data *PageData) Init(page string, c *gin.Context) {
 func GetBackendVersion() string {
 	request, err := http.NewRequest(http.MethodGet, backend+"api/server/getconfig", nil)
 	if err != nil {
+		fmt.Println("error creating http request ", err)
 		return ""
 	}
 	request.Header.Set("Authorization", "Bearer "+authorization)
 	client := http.Client{}
 	response, err := client.Do(request)
 	if err != nil {
+		fmt.Println("error from backend ", err)
 		return ""
 	}
 	var config config.ServerConfig

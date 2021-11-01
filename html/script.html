@@ -144,70 +144,6 @@ function refresh() {
 	location.reload()
 }
 
-function removeEgress(mac, network) {
-	xHttp = new XMLHttpRequest();
-	xHttp.open("POST", "/delete_egress/"+network+"/"+mac,  true);
-	xHttp.onload = function() {
-		if (xHttp.status != 200) {
-			xHttp.abort()
-			return
-		}
-		var message = JSON.parse(this.responseText);
-		alert (message);
-		refresh();
-	}
-	xHttp.send();
-}
-
-function addIngress(mac, network) {
-	xHttp = new XMLHttpRequest();
-	alert (network+ mac)
-	xHttp.open("POST", "/create_ingress/"+network+"/"+mac,  true);
-	xHttp.onload = function() {
-		if (xHttp.status != 200) {
-			xHttp.abort()
-			return
-		}
-		var message = JSON.parse(this.responseText);
-		alert (message);
-		refresh();
-	}
-	xHttp.send();
-}
-
-function removeIngress(mac, network) {
-	xHttp = new XMLHttpRequest();
-	xHttp.open("POST", "/delete_ingress/"+network+"/"+mac,  true);
-	xHttp.onload = function() {
-		{{/*if (xHttp.status != 200) {
-			xHttp.abort()
-			return
-		} */}}
-		var message = JSON.parse(this.responseText);
-		alert (message);
-	}
-	xHttp.send();
-}
-
-function deleteRelay(mac, network) {
-	xHttp = new XMLHttpRequest();
-	alert (network+ mac)
-	xHttp.open("POST", "/delete_relay/"+network+"/"+mac,  true);
-	xHttp.onload = function() {
-		var message = JSON.parse(this.responseText);
-		if (xHttp.status != 200) {
-			xHttp.abort()
-			alert("unable to complete request"+message)
-			return
-		}
-		alert (message);
-		refresh();
-	}
-	xHttp.send();
-}
-
-
-
 function expand(div) {
 	var x = document.getElementById(div);
 	if (x.className.indexOf("w3-show") == -1) {
@@ -230,7 +166,6 @@ function fillEgressForm(address, interface) {
 		document.getElementById('egressrange').value = "0.0.0.0/0";
 		document.getElementById('egressnet').value = "eth0";
 	} else {
-		alert(x+address+interface);
 		document.getElementById('egressrange').value = address+"/24";
 		document.getElementById('egressnet').value = interface;
 	}

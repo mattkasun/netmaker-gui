@@ -29,12 +29,13 @@ import (
 func init() {
 	backend = os.Getenv("BACKEND")
 	if len(backend) == 0 {
-		backend = "https://api.nusak.ca"
+		backend = "https://api.nusak.ca/"
 	}
 	authorization = os.Getenv("MASTERKEY")
 	if len(authorization) == 0 {
 		authorization = "secretkey"
 	}
+	fmt.Println("Env Updated Set")
 }
 
 func main() {
