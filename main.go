@@ -14,6 +14,7 @@ import (
 	"log"
 	"net/http"
 	_ "net/http/pprof"
+	"os"
 	"time"
 
 	"github.com/gin-contrib/sessions"
@@ -24,6 +25,17 @@ import (
 	"github.com/gravitl/netmaker/models"
 	"github.com/gravitl/netmaker/servercfg"
 )
+
+func init() {
+	backend = os.Getenv("BACKEND")
+	if len(backend) == 0 {
+		backend = "https://api.nusak.ca"
+	}
+	authorization = os.Getenv("MASTERKEY")
+	if len(authorization) == 0 {
+		authorization = "secretkey"
+	}
+}
 
 func main() {
 	go func() {

@@ -1,16 +1,22 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
+	"net/http"
 
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
+	"github.com/gravitl/netmaker/config"
 	controller "github.com/gravitl/netmaker/controllers"
 	"github.com/gravitl/netmaker/dnslogic"
 	"github.com/gravitl/netmaker/functions"
 	"github.com/gravitl/netmaker/models"
-	"github.com/gravitl/netmaker/servercfg"
 )
+
+var version = "v0.3"
+var backend = "https://api.nusak.ca/"
+var authorization = "secretkey"
 
 type NodeStatus struct {
 	Mac     string
@@ -131,9 +137,24 @@ func (data *PageData) Init(page string, c *gin.Context) {
 		}
 
 	}
-	data.Version.Backend = servercfg.GetVersion()
-	data.Version.Mine = "v0.2.0"
+	data.Version.Backend = GetBackendVersion()
+	data.Version.Mine = version
+}
 
+func GetBackendVersion() string {
+	request, err := http.NewRequest(http.MethodGet, backend+"api/server/getconfig", nil)
+	if err != nil {
+		return ""
+	}
+	request.Header.Set("Authorization", "Bearer "+authorization)
+	client := http.Client{}
+	response, err := client.Do(request)
+	if err != nil {
+		return ""
+	}
+	var config config.ServerConfig
+	json.NewDecoder(response.Body).Decode(&config)
+	return config.Version
 }
 
 func GetAllExtClients() []models.ExtClient {
