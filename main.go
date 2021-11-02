@@ -14,6 +14,7 @@ import (
 	"log"
 	"net/http"
 	_ "net/http/pprof"
+	"os"
 	"time"
 
 	"github.com/gin-contrib/sessions"
@@ -24,6 +25,18 @@ import (
 	"github.com/gravitl/netmaker/models"
 	"github.com/gravitl/netmaker/servercfg"
 )
+
+func init() {
+	backend = os.Getenv("BACKEND")
+	if len(backend) == 0 {
+		backend = "https://api.nusak.ca/"
+	}
+	authorization = os.Getenv("MASTERKEY")
+	if len(authorization) == 0 {
+		authorization = "secretkey"
+	}
+	fmt.Println("Env Updated Set")
+}
 
 func main() {
 	go func() {
@@ -88,6 +101,8 @@ func SetupRouter() *gin.Engine {
 		private.POST("/get_qr/:net/:id", GetQR)
 		private.POST("/get_client_config/:net/:id", GetClientConfig)
 		private.POST("/update_client/:net/:id", UpdateClient)
+		private.POST("/create_dns", CreateDNS)
+		private.POST("/delete_dns/:net/:name/:address", DeleteDNS)
 
 		private.GET("/logout", LogOut)
 	}

@@ -1,0 +1,57 @@
+{{ define "DNS" }}
+<div id=DNS class="w3-row tab" style=display:none>
+	<div class="net All">
+		<p>Select a specific network to view it's DNS</p>
+	</div>
+	<div class="net {{range .Networks}} {{.NetID}} {{end}}">
+		DNS Entries<br>
+	</div>
+	<div>
+		<ul>
+			{{ range .DNS}}
+			<li class="net {{.Network}}">{{ .Name}} {{ .Address}}</li>
+			{{end}}
+		</ul>
+	</div>
+	<div class="net {{range .Networks}} {{.NetID}} {{end}}">
+		Custom DNS
+	</div>
+	<div>
+		<ul>
+			{{range .CustomDNS}}
+			<li class="net {{.Network}}">{{ .Name}} {{.Address }}
+				<form action="/delete_dns/{{.Network}}/{{.Name}}/{{.Address}}" method=Post><button type=submit>&#9746;</button></form>
+			</li>
+			{{end}}
+		</ul>
+	</div>
+
+	<div class="net {{range .Networks}} {{.NetID}} {{end}}">
+		<br><button class=w3-button onclick="document.getElementById('NewDNS').style.display='block';">ADD ENTRY +</button>
+	</div>
+</div>
+
+<div id="NewDNS" class=w3-modal>
+	<div class="w3-modal-content w3-card w3-animate-zoom w3-padding" style=width:50%>
+		<div class="w3-container w3-center">
+			<h2>Create New DNS Entry</h2>
+			<form action=/create_dns method=POST>
+				<label>Address</label>
+				<input type=text name=address required>
+				<label>Entry Name</label>
+				<input type=test name=name placeholder="DNS Entry Name" required>
+				<select name=network>
+					{{ range .Networks}}
+					<option value={{.NetID}}>{{.NetID}}</option>
+					{{end}}
+				</select>
+				<button class="w3-block w3-blue"  type="submit" >Create Entry</button>
+			</form>
+			<button class="w3-block w3-red" onclick="document.getElementById('NewDNS').style.display='none';">Cancel</button>
+		</div>
+	</div>
+</div>
+{{end}}
+
+
+
