@@ -27,6 +27,7 @@
 			<button type=submit class="w3-button" onclick="alert('Are you sure you want to delete node {{.Name}} from Network {{.Network}}?')" >Delete</button>
 		</form>
 		{{if eq .IsEgressGateway "yes" }}
+
 		<form action="/delete_egress/{{.Network}}/{{.MacAddress}}" Method="POST" style="display:inline">
 		<button class="w3-bar-item w3-circle w3-white" title="Remove Egress Gateway"><span class="material-icons">highlight_off</span></button> 
 		</form>
@@ -36,6 +37,7 @@
 		</form>
 		{{end}}
 		{{if eq .IsIngressGateway "yes"}}
+
 		<form action="/delete_ingress/{{.Network}}/{{.MacAddress}}" Method="POST" style="display:inline">
 		<button class="w3-bar-item w3-circle w3-white" title="Remove Ingress Gateway"><span class="material-icons">wifi_off</span></button> 
 		{{ else }}
@@ -79,10 +81,10 @@
 				{{ $Net := .Node.Network}}
 				{{range .Nodes }}
 				{{ if eq .Network $Net}}
-				<input type="checkbox" id=address>{{.Name}}</label>
+				<input type="checkbox" name=address>{{.Name}}</label>
 				{{end}} {{end}}
 			</div>
-			<button class="w3-block w3-blue"  type="submit" >Create User</button>
+			<button class="w3-block w3-blue"  type="submit" >Create Relay</button>
 		</form>
 		<button class="w3-block w3-red" onclick="window.history.back();">Cancel</button>
 	</div>
@@ -125,7 +127,6 @@
 						<br><br><button class="w3-button w3-block w3-padding w3-teal" type=submit>Create GateWay</button>
 						<button class="w3-button w3-block w3-padding w3-yellow" type=reset>Reset</button>
 					</form>
-
 					<button class="w3-button w3-block w3-padding w3-red" onclick="window.history.back();">Cancel</button>
 				</div>
 			</div>

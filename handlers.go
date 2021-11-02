@@ -68,11 +68,13 @@ func DisplayLanding(c *gin.Context) {
 func LogOut(c *gin.Context) {
 	session := sessions.Default(c)
 	session.Set("loggedIn", false)
+	session.Set("message", "")
 	session.Save()
 	fmt.Println("User Logged Out", session.Get("loggedIn"))
 	location := url.URL{Path: "/"}
 	c.Redirect(http.StatusFound, location.RequestURI())
 }
+
 
 func ReturnSuccess(c *gin.Context, page, message string) {
 	session := sessions.Default(c)

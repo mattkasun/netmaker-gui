@@ -64,18 +64,14 @@
 		<div id="EditExtClient" class="w3-modal">
 			<div class="w3-modal-content w3-card-4 w3-animate-zoom w3-padding" style="width:50%">
 				<div class="w3-center">
-					<form action="/" method=get>
-						<button class="w3-button w3-xlarge w3-hover-red w3-display-topright" title="Close">&times;</button><br>
-					</form>
+					<button class="w3-button w3-xlarge w3-hover-red w3-display-topright" title="Close" onclick="window.history.back();">&times;</button><br>
 					<form class=w3-container method=POST action="/update_client/{{.Network}}/{{.ClientID}}">
 						<p>Editing client:{{.ClientID}}</p>
 						<p><input name="newid" type=text placeholder="New Client ID" required></p>
 						<br>	<button class="w3-button w3-block w3-padding w3-teal" type=submit>Update</button>
 						<button class="w3-button w3-block w3-padding w3-yellow" type=reset>Reset</button>
 					</form>
-					<form action="/" method=get>
-						<button class="w3-button w3-block w3-padding w3-red" type=Cancel>Cancel</button>
-					</form>
+						<button class="w3-button w3-block w3-padding w3-red" onclick="window.history.back();">Cancel</button>
 				</div>
 			</div>
 		</div>
