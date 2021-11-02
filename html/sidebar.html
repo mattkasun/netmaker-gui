@@ -9,9 +9,9 @@
 
 {{define "SideBarContent"}}
 <div class=w3-bar-block>
-<button id="sidebarbuttonAll" class="w3-bar-item w3-button netselection w3-teal" onclick="setNetwork('All');document.getElementById('sidebar').style.display='none';">All Networks</button>
+<button id="sidebarbuttonAll" class="w3-bar-item w3-button netselection w3-teal" onclick="setNetwork(event, 'All');document.getElementById('sidebar').style.display='none';">All Networks</button>
 {{ range .Networks }}
-<button id="sidebarbutton{{.NetID}}" class="w3-bar-item w3-button netselection" onclick="setNetwork('{{.NetID}}');document.getElementById('sidebar').style.display='none';">{{ .DisplayName }} </button>
+<button id="sidebarbutton{{.NetID}}" class="w3-bar-item w3-button netselection" onclick="setNetwork(event, '{{.NetID}}');document.getElementById('sidebar').style.display='none';">{{ .DisplayName }} </button>
 {{ end }}
 </div>
 {{end}}

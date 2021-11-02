@@ -48,14 +48,14 @@ function openTab(evt, tabName) {
 	evt.currentTarget.className += " w3-teal";
 }
 
-function setNetwork(network) {
+function setNetwork(evt, network) {
 	var i, x;
 	{{/* change colour of selected button */}}
 	x = document.getElementsByClassName("netselection");
 	for (i=0; i<x.length; i++) {
 		x[i].className=x[i].className.replace(" w3-teal", "");
 	}
-	document.getElementById("sidebarbutton"+network).className += " w3-teal";
+	evt.currentTarget.className += " w3-teal";
 
 	{{/* display subset of tabs based on network selected */}}    
 	x = document.getElementsByClassName("net");
