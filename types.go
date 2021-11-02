@@ -49,13 +49,13 @@ type PageData struct {
 	Version    Version
 }
 
-//Initializes (fetches) page data from backend
-func (data *PageData) Init(page string, c *gin.Context) {
+// Init fetches page data from backend
+func (data *PageData) Init(c *gin.Context, page, message string) {
 	data.Page = page
+	data.Message = message
 	session := sessions.Default(c)
 	user := session.Get("username").(string)
 	isAdmin := session.Get("isAdmin").(bool)
-	data.Message = session.Get("message").(string)
 	data.Admin = isAdmin
 	allowedNets := session.Get("networks").([]string)
 	networks, err := models.GetNetworks()

@@ -27,10 +27,10 @@ function setVisibility(tabName) {
 		if (x[i].className.includes("All")) {
 			x[i].style.display="block";
 		} else {
-			x[i].style.display="none"
+			x[i].style.display="none";
 		}
 	}
-
+	document.getElementById('buttonbar'+tabName).className += " w3-teal";
 }
 
 function openTab(evt, tabName) {

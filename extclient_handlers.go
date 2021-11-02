@@ -3,10 +3,8 @@ package main
 import (
 	"fmt"
 	"net/http"
-	"net/url"
 	"strconv"
 
-	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
 	controller "github.com/gravitl/netmaker/controllers"
 	"github.com/gravitl/netmaker/functions"
@@ -18,14 +16,12 @@ func CreateIngressClient(c *gin.Context) {
 	var client models.ExtClient
 	client.Network = c.Param("net")
 	client.IngressGatewayID = c.Param("mac")
-
 	node, err := functions.GetNodeByMacAddress(client.Network, client.IngressGatewayID)
 	if err != nil {
 		fmt.Println(err)
 		ReturnError(c, http.StatusBadRequest, err, "Nodes")
 		return
 	}
-
 	client.IngressGatewayEndpoint = node.Endpoint + ":" + strconv.FormatInt(int64(node.ListenPort), 10)
 
 	err = controller.CreateExtClient(client)
@@ -34,11 +30,7 @@ func CreateIngressClient(c *gin.Context) {
 		ReturnError(c, http.StatusBadRequest, err, "Nodes")
 		return
 	}
-	session := sessions.Default(c)
-	session.Set("message", "external client has been created")
-	session.Save()
-	location := url.URL{Path: "/"}
-	c.Redirect(http.StatusFound, location.RequestURI())
+	ReturnSuccess(c, "ExtClients", "external client has been created")
 }
 
 func DeleteIngressClient(c *gin.Context) {
@@ -50,14 +42,10 @@ func DeleteIngressClient(c *gin.Context) {
 		ReturnError(c, http.StatusBadRequest, err, "Nodes")
 		return
 	}
-
-	session := sessions.Default(c)
-	session.Set("message", "external client "+id+" @ "+net+" has been deleted")
-	session.Save()
-	location := url.URL{Path: "/"}
-	c.Redirect(http.StatusFound, location.RequestURI())
+	ReturnSuccess(c, "ExtClients", "external client "+id+" @ "+net+" has been deleted")
 }
 
+//EditIngressClient displays a form to update name of external client
 func EditIngressClient(c *gin.Context) {
 	net := c.Param("net")
 	id := c.Param("id")
@@ -157,11 +145,11 @@ func GetClientConfig(c *gin.Context) {
 	c.Data(http.StatusOK, "application/octet-stream", b)
 }
 
+//UpdateClient updates name of external Client
 func UpdateClient(c *gin.Context) {
 	net := c.Param("net")
 	id := c.Param("id")
 	newid := c.PostForm("newid")
-
 	client, err := controller.GetExtClient(id, net)
 	if err != nil {
 		fmt.Println(err)
@@ -174,9 +162,5 @@ func UpdateClient(c *gin.Context) {
 		ReturnError(c, http.StatusBadRequest, err, "ExtClient")
 		return
 	}
-	session := sessions.Default(c)
-	session.Set("message", "External client has been updated")
-	session.Save()
-	location := url.URL{Path: "/"}
-	c.Redirect(http.StatusFound, location.RequestURI())
+	ReturnSuccess(c, "ExtClients", "external client has been updated")
 }
