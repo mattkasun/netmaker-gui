@@ -71,7 +71,6 @@ func SetupRouter() *gin.Engine {
 	{
 		//router.Use(AuthRequired)
 		private.GET("/", DisplayLanding)
-		private.POST("/", Cancel)
 		private.POST("/create_network", CreateNetwork)
 		private.POST("/delete_network", DeleteNetwork)
 		private.POST("/edit_network", EditNetwork)
