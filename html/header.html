@@ -101,9 +101,7 @@
 		    <p><input id=confirm type=password placeholder="Password Confirmation" required  onchange="passVal(pass, confirm);">
 		    <button class="w3-block w3-blue"  type="submit" >Update User</button>
 		</form>
-		<form action="/" method=get>
-		    <button class="w3-button w3-block w3-padding w3-red" type=cancel>Cancel</button>
-		</form>
+		    <button class="w3-button w3-block w3-padding w3-red" onclick="window.history.back();">Cancel</button>
 	    </div>
 	</div>
 	{{ template "script" }}
