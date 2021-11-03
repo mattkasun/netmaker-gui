@@ -5,7 +5,7 @@ A responsive alternative UI for netmaker (https://github.com/gravitl/netmaker)
 
 Built with go and html/templates.
 Missing following features compared to netmaker-ui (https://github.com/gravitl/netmaker-ui)
-- DNS
+- Oauth Suppport
 
 
 You can use netmaker-gui at the same time as netmaker-ui. For example, one one running as dashboard.netmaker.example.com and the other at control.netmaker.example.com
