@@ -1,7 +1,8 @@
 FROM golang:latest as builder
+ARG version
 WORKDIR /build
 COPY *.go go.* ./
-RUN GOOS=linux go build -v .
+RUN GOOS=linux go build -v -ldflags="-X 'main.version=$version'" .
 
 
 FROM gcr.io/distroless/base
