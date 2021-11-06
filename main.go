@@ -71,39 +71,51 @@ func SetupRouter() *gin.Engine {
 	{
 		//router.Use(AuthRequired)
 		private.GET("/", DisplayLanding)
+		//network handlers
 		private.POST("/create_network", CreateNetwork)
 		private.POST("/delete_network", DeleteNetwork)
 		private.POST("/edit_network", EditNetwork)
 		private.POST("/update_network", UpdateNetwork)
 		private.GET("/refreshkeys/:net", RefreshKeys)
+		//key handlers
 		private.POST("/create_key", NewKey)
 		private.POST("/delete_key", DeleteKey)
+		//user handlers
 		private.POST("/create_user", CreateUser)
 		private.POST("/delete_user", DeleteUser)
 		private.GET("/edit_user", EditUser)
 		private.POST("/update_user/:user", UpdateUser)
+		//node handlers
 		private.POST("/edit_node", EditNode)
 		private.POST("/delete_node", DeleteNode)
 		private.POST("/update_node/:net/:mac", UpdateNode)
 		private.GET("/node_health", NodeHealth)
+		//gateway handlers
 		private.POST("/create_egress/:net/:mac", CreateEgress)
 		private.POST("/process_egress/:net/:mac", ProcessEgress)
 		private.POST("/delete_egress/:net/:mac", DeleteEgress)
 		private.POST("/create_ingress/:net/:mac", CreateIngress)
 		private.POST("/delete_ingress/:net/:mac", DeleteIngress)
-		private.POST("/create_ingress_client/:net/:mac", CreateIngressClient)
-		private.POST("/delete_ingress_client/:net/:id", DeleteIngressClient)
-		private.POST("/edit_ingress_client/:net/:id", EditIngressClient)
 		private.POST("/create_relay/:net/:mac", CreateRelay)
 		private.POST("/delete_relay/:net/:mac", DeleteRelay)
 		private.POST("/process_relay/:net/:mac", ProcessRelayCreation)
+		//ext client handlers
+		private.POST("/create_ingress_client/:net/:mac", CreateIngressClient)
+		private.POST("/delete_ingress_client/:net/:id", DeleteIngressClient)
+		private.POST("/edit_ingress_client/:net/:id", EditIngressClient)
 		private.POST("/get_qr/:net/:id", GetQR)
 		private.POST("/get_client_config/:net/:id", GetClientConfig)
 		private.POST("/update_client/:net/:id", UpdateClient)
+		//dns handlers
 		private.POST("/create_dns", CreateDNS)
 		private.POST("/delete_dns/:net/:name/:address", DeleteDNS)
-
+		//logout
 		private.GET("/logout", LogOut)
+	}
+	files := router.Group("/file", FileAuth)
+	{
+		files.StaticFS("", http.Dir("file"))
+		files.POST(":file", FileUpload)
 	}
 	return router
 }
