@@ -14,7 +14,7 @@ import (
 	"github.com/gravitl/netmaker/models"
 )
 
-var VERSION = "v0.3"
+var version = "v0.3"
 var backend = "https://api.nusak.ca/"
 var authorization = "secretkey"
 
@@ -138,7 +138,7 @@ func (data *PageData) Init(c *gin.Context, page, message string) {
 
 	}
 	data.Version.Backend = GetBackendVersion()
-	data.Version.Mine = VERSION
+	data.Version.Mine = version
 }
 
 func GetBackendVersion() string {
