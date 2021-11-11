@@ -19,7 +19,7 @@ jobs:
             if [[ -n "${{ github.event.inputs.tag }}" ]]; then
               TAG=${{ github.event.inputs.tag }}
             elif [[ "${{ github.event.name }}" == 'release' ]]; then
-              TAG="${{ github.ref.name }}
+              TAG="${{ github.ref.name }}"
             else
               TAG="${{ github.base_ref }}"
             fi
