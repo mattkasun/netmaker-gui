@@ -18,8 +18,8 @@ jobs:
         run: |
             if [[ -n "${{ github.event.inputs.tag }}" ]]; then
               TAG=${{ github.event.inputs.tag }}
-            elif [[ "${{ github.base_ref }}" == 'master' ]]; then
-              TAG="latest"
+            elif [[ "${{ github.event.name }}" == 'release' ]]; then
+              TAG="${{ github.ref.name }}
             else
               TAG="${{ github.base_ref }}"
             fi
@@ -44,4 +44,4 @@ jobs:
           push: true
           tags: nusak/netmaker-gui:${{ env.TAG }}
           build-args: |
-              ${{ env.TAG }}
+              VERSION=${{ env.TAG }}
