@@ -18,8 +18,8 @@ jobs:
         run: |
             if [[ -n "${{ github.event.inputs.tag }}" ]]; then
               TAG=${{ github.event.inputs.tag }}
-            elif [[ "${{ github.event.name }}" == 'release' ]]; then
-              TAG="${{ github.ref.name }}"
+            elif [[ "$GITHUB_EVENT_NAME" == 'release' ]]; then
+              TAG="$GITHUB_REF_NAME"
             else
               TAG="${{ github.base_ref }}"
             fi
