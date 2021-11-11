@@ -6,24 +6,25 @@ on:
       tag:
         description: 'docker tag'
         required: true
-  pull_request:
-    branches:
-      - 'test'
+  release:
+    types: [published]
 
 jobs:
   docker:
     runs-on: ubuntu-latest
     steps:
       - name: Set tag
+        id: set_tag
         run: |
             if [[ -n "${{ github.event.inputs.tag }}" ]]; then
               TAG=${{ github.event.inputs.tag }}
-            elif [[ "${{ github.base_ref }}" == 'master' ]]; then
-              TAG="latest"
+            elif [[ "${{ github.event.name }}" == 'release' ]]; then
+              TAG="${{ github.ref.name }}"
             else
               TAG="${{ github.base_ref }}"
             fi
             echo "TAG=${TAG}" >> $GITHUB_ENV
+            echo ${TAG}
       - name: Checkout
         uses: actions/checkout@v2
       - name: Set up QEMU
@@ -42,3 +43,5 @@ jobs:
           platforms: linux/amd64, linux/arm64
           push: true
           tags: nusak/netmaker-gui:${{ env.TAG }}
+          build-args: |
+              VERSION=${{ env.TAG }}

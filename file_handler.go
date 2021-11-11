@@ -16,18 +16,12 @@ func FileAuth(c *gin.Context) {
 		c.JSON(http.StatusUnauthorized, gin.H{"message": "You are not authorized to view this endpoing"})
 		return
 	}
-	fmt.Println(auth)
 	c.Next()
 }
 
-func Files(c *gin.Context) {
-	fmt.Println("display file upload form")
-	c.HTML(http.StatusOK, "Files", nil)
-}
-
 func FileUpload(c *gin.Context) {
-	fmt.Println("fileupload")
 	filename := c.Param("file")
+	//although this is using user provided input, it is not a security issue as routing will result in 404 error if path elements are included in filename
 	file, err := os.Create("./files/" + filename)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"err": err.Error()})
