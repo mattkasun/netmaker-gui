@@ -6,10 +6,6 @@ Built with go and html/templates.
 Missing following features compared to netmaker-ui (https://github.com/gravitl/netmaker-ui)
 - Oauth Suppport
 
-- Only Supports CLIENT_MODE=off
-  - creating new networks will fail if CLIENT_MODE is "on" or "contained"
-
-
 You can use netmaker-gui at the same time as netmaker-ui. For example, one one running as dashboard.netmaker.example.com and the other at control.netmaker.example.com
 
 ![both](https://github.com/mattkasun/netmaker-gui/raw/develop/screenshots/netmaker-gui-ui.png "GUI and UI")
@@ -18,6 +14,8 @@ You can use netmaker-gui at the same time as netmaker-ui. For example, one one r
 ## Installation:
 
 To use along side of your existing netmaker installation insert the following to your docker-compose.yml file
+
+CLIENT_MODE must be set to off for netmaker-gui to create networks properly;  netmaker functionality is not dictated by this setting, it is controlled by the CLIENT_MODE setting for the netmaker container.
 
 ```
 netmaker-gui
