@@ -1,11 +1,13 @@
 # netmaker-gui
 A responsive alternative UI for netmaker (https://github.com/gravitl/netmaker)
 
-[![Deploy to DO](https://www.deploytodo.com/do-btn-blue.svg)](https://cloud.digitalocean.com/apps/new?repo=https://github.com/mattkasun/netmaker-gui/tree/master)
 
 Built with go and html/templates.
 Missing following features compared to netmaker-ui (https://github.com/gravitl/netmaker-ui)
 - Oauth Suppport
+
+- Only Supports CLIENT_MODE=off
+  - creating new networks will fail if CLIENT_MODE is "on" or "contained"
 
 
 You can use netmaker-gui at the same time as netmaker-ui. For example, one one running as dashboard.netmaker.example.com and the other at control.netmaker.example.com
@@ -14,20 +16,21 @@ You can use netmaker-gui at the same time as netmaker-ui. For example, one one r
 
 
 ## Installation:
-[![Deploy to DO](https://www.deploytodo.com/do-btn-blue.svg)](https://cloud.digitalocean.com/apps/new?repo=https://github.com/mattkasun/netmaker-gui/tree/develop)
 
 To use along side of your existing netmaker installation insert the following to your docker-compose.yml file
 
 ```
 netmaker-gui
   container-name: netmaker-gui
-  image: nusak/netmaker-gui:v0.2
+  image: nusak/netmaker-gui:v0.6.3
   restart: unless-stopped
   ports:
     - "8080:8080"
   environment:
     DATABASE: sqlite
+    CLIENT_MODE: "off"
   volumes:
+    - dnsconfig:/config/dnsconfig
     - sqldata:/data
 ```
 
