@@ -7,7 +7,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	controller "github.com/gravitl/netmaker/controllers"
-	"github.com/gravitl/netmaker/functions"
+	"github.com/gravitl/netmaker/logic"
 	"github.com/gravitl/netmaker/models"
 )
 
@@ -111,14 +111,14 @@ func UpdateNetwork(c *gin.Context) {
 	if err != nil {
 		fmt.Println("error getting network ", err)
 	}
-	updaterange, updatelocal, err := oldnetwork.Update(&network)
+	updaterange, updatelocal, err := logic.UpdateNetwork(&oldnetwork, &network)
 	if err != nil {
 		fmt.Println("error updating network ", err)
 		ReturnError(c, http.StatusBadRequest, err, "Networks")
 		return
 	}
 	if updaterange {
-		err = functions.UpdateNetworkNodeAddresses(network.NetID)
+		err = logic.UpdateNetworkNodeAddresses(network.NetID)
 		if err != nil {
 			fmt.Println("error updating network Node Addresses", err)
 			ReturnError(c, http.StatusBadRequest, err, "Networks")
@@ -126,7 +126,7 @@ func UpdateNetwork(c *gin.Context) {
 		}
 	}
 	if updatelocal {
-		err = functions.UpdateNetworkLocalAddresses(network.NetID)
+		err = logic.UpdateNetworkLocalAddresses(network.NetID)
 		if err != nil {
 			fmt.Println("error updating network Local Addresses", err)
 			ReturnError(c, http.StatusBadRequest, err, "Networks")

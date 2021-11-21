@@ -7,7 +7,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	controller "github.com/gravitl/netmaker/controllers"
-	"github.com/gravitl/netmaker/functions"
+	"github.com/gravitl/netmaker/logic"
 	"github.com/gravitl/netmaker/models"
 	"github.com/skip2/go-qrcode"
 )
@@ -16,7 +16,7 @@ func CreateIngressClient(c *gin.Context) {
 	var client models.ExtClient
 	client.Network = c.Param("net")
 	client.IngressGatewayID = c.Param("mac")
-	node, err := functions.GetNodeByMacAddress(client.Network, client.IngressGatewayID)
+	node, err := logic.GetNodeByMacAddress(client.Network, client.IngressGatewayID)
 	if err != nil {
 		fmt.Println(err)
 		ReturnError(c, http.StatusBadRequest, err, "Nodes")
@@ -82,11 +82,11 @@ func GetConf(net, id string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	gwnode, err := functions.GetNodeByMacAddress(client.Network, client.IngressGatewayID)
+	gwnode, err := logic.GetNodeByMacAddress(client.Network, client.IngressGatewayID)
 	if err != nil {
 		return "", err
 	}
-	network, err := functions.GetParentNetwork(client.Network)
+	network, err := logic.GetParentNetwork(client.Network)
 	if err != nil {
 		return "", err
 	}
@@ -96,7 +96,7 @@ func GetConf(net, id string) (string, error) {
 	}
 	gwendpoint := gwnode.Endpoint + ":" + strconv.Itoa(int(gwnode.ListenPort))
 	newAllowedIPs := network.AddressRange
-	if egressGatewayRanges, err := client.GetEgressRangesOnNetwork(); err == nil {
+	if egressGatewayRanges, err := logic.GetEgressRangesOnNetwork(&client); err == nil {
 		for _, egressGatewayRange := range egressGatewayRanges {
 			newAllowedIPs += "," + egressGatewayRange
 		}

@@ -6,7 +6,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	controller "github.com/gravitl/netmaker/controllers"
-	"github.com/gravitl/netmaker/dnslogic"
+	"github.com/gravitl/netmaker/logic"
 	"github.com/gravitl/netmaker/models"
 )
 
@@ -39,7 +39,7 @@ func DeleteDNS(c *gin.Context) {
 		ReturnError(c, http.StatusBadRequest, err, "DNS")
 		return
 	}
-	if err := dnslogic.SetDNS(); err != nil {
+	if err := logic.SetDNS(); err != nil {
 		fmt.Println("err set dns", err)
 		ReturnError(c, http.StatusBadRequest, err, "DNS")
 		return

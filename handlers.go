@@ -7,7 +7,7 @@ import (
 
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
-	controller "github.com/gravitl/netmaker/controllers"
+	"github.com/gravitl/netmaker/logic"
 	"github.com/gravitl/netmaker/models"
 )
 
@@ -18,7 +18,7 @@ func ProcessLogin(c *gin.Context) {
 	AuthRequest.Password = c.PostForm("pass")
 	session := sessions.Default(c)
 	//don't need the jwt
-	_, err := controller.VerifyAuthRequest(AuthRequest)
+	_, err := logic.VerifyAuthRequest(AuthRequest)
 	if err != nil {
 		fmt.Println("error verifying AuthRequest: ", err)
 		session.Set("message", err.Error())
@@ -29,7 +29,7 @@ func ProcessLogin(c *gin.Context) {
 		//init message
 		session.Set("message", "")
 		session.Options(sessions.Options{MaxAge: 28800})
-		user, err := controller.GetUser(AuthRequest.UserName)
+		user, err := logic.GetUser(AuthRequest.UserName)
 		if err != nil {
 			fmt.Println("err retrieving user: ", err)
 		}
@@ -74,7 +74,6 @@ func LogOut(c *gin.Context) {
 	location := url.URL{Path: "/"}
 	c.Redirect(http.StatusFound, location.RequestURI())
 }
-
 
 func ReturnSuccess(c *gin.Context, page, message string) {
 	session := sessions.Default(c)

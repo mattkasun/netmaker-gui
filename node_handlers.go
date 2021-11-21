@@ -7,7 +7,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	controller "github.com/gravitl/netmaker/controllers"
-	"github.com/gravitl/netmaker/functions"
+	"github.com/gravitl/netmaker/logic"
 	"github.com/gravitl/netmaker/models"
 )
 
@@ -49,13 +49,13 @@ func UpdateNode(c *gin.Context) {
 	net := c.Param("net")
 	mac := c.Param("mac")
 	fmt.Printf("=============%T %T %T %v %v %v", net, mac, node, net, mac, node)
-	oldnode, err := functions.GetNodeByMacAddress(net, mac)
+	oldnode, err := logic.GetNodeByMacAddress(net, mac)
 	if err != nil {
 		fmt.Println("Get node with mac ", mac, " and Network ", net)
 		ReturnError(c, http.StatusBadRequest, err, "Nodes")
 		return
 	}
-	if err = oldnode.Update(node); err != nil {
+	if err = logic.UpdateNode(&oldnode, node); err != nil {
 		fmt.Println("update network")
 		ReturnError(c, http.StatusBadRequest, err, "Nodes")
 		return
@@ -66,7 +66,7 @@ func UpdateNode(c *gin.Context) {
 //NodeHealth return the last checkin time including health status
 //and color code for all nodes
 func NodeHealth(c *gin.Context) {
-	nodes, err := models.GetAllNodes()
+	nodes, err := logic.GetAllNodes()
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return

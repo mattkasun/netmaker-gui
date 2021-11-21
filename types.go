@@ -9,8 +9,8 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/gravitl/netmaker/config"
 	controller "github.com/gravitl/netmaker/controllers"
-	"github.com/gravitl/netmaker/dnslogic"
 	"github.com/gravitl/netmaker/functions"
+	"github.com/gravitl/netmaker/logic"
 	"github.com/gravitl/netmaker/models"
 )
 
@@ -58,7 +58,7 @@ func (data *PageData) Init(c *gin.Context, page, message string) {
 	isAdmin := session.Get("isAdmin").(bool)
 	data.Admin = isAdmin
 	allowedNets := session.Get("networks").([]string)
-	networks, err := models.GetNetworks()
+	networks, err := logic.GetNetworks()
 	if err != nil {
 		//panic(err)
 		fmt.Println("error geting network data", err)
@@ -67,11 +67,11 @@ func (data *PageData) Init(c *gin.Context, page, message string) {
 	if err != nil {
 		fmt.Println("error getting external client data", err)
 	}
-	nodes, err := models.GetAllNodes()
+	nodes, err := logic.GetAllNodes()
 	if err != nil {
 		fmt.Println("error getting node data", err)
 	}
-	users, err := controller.GetUsers()
+	users, err := logic.GetUsers()
 	if err != nil {
 		fmt.Println("error getting user data", err)
 	}
@@ -83,7 +83,7 @@ func (data *PageData) Init(c *gin.Context, page, message string) {
 			fmt.Println("error getting dns data", err)
 		}
 		dnsEntries = append(dnsEntries, entries...)
-		entries, err = dnslogic.GetCustomDNS(net.NetID)
+		entries, err = logic.GetCustomDNS(net.NetID)
 		if err != nil {
 			fmt.Println("error getting custom dns data", err)
 		}

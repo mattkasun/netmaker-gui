@@ -19,6 +19,7 @@
 			<label>Subnet</label>
 			<input type="text" placeholder={{.Address}} disabled><br>
 			<label>Status: </label><label id="node_status{{.MacAddress}}{{.Network}}">...Checking...</label><label> {{printTimestamp .LastCheckIn}} </label><br>
+			<label>Status: </label><label>{{ .Version }} </label><br>
 			<button type=submit class="w3-button">Edit</button><br>
 		</form>
 		<form action="delete_node" method=POST style=display:inline>

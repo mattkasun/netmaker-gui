@@ -20,8 +20,8 @@ import (
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-contrib/sessions/memstore"
 	"github.com/gin-gonic/gin"
-	controller "github.com/gravitl/netmaker/controllers"
 	"github.com/gravitl/netmaker/database"
+	"github.com/gravitl/netmaker/logic"
 	"github.com/gravitl/netmaker/models"
 	"github.com/gravitl/netmaker/servercfg"
 )
@@ -138,7 +138,7 @@ func AuthRequired(c *gin.Context) {
 	loggedIn := session.Get("loggedIn")
 	fmt.Println("loggedIn status: ", loggedIn)
 	if loggedIn != true {
-		adminExists, err := controller.HasAdmin()
+		adminExists, err := logic.HasAdmin()
 		fmt.Println("response from HasAdmin(): ", adminExists, err)
 		if err != nil {
 			fmt.Println("error checking for admin")

@@ -9,6 +9,7 @@ import (
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
 	controller "github.com/gravitl/netmaker/controllers"
+	"github.com/gravitl/netmaker/logic"
 	"github.com/gravitl/netmaker/models"
 )
 
@@ -25,7 +26,7 @@ func CreateUser(c *gin.Context) {
 	}
 	user.Networks, _ = c.GetPostFormArray("network[]")
 	fmt.Println("networks: ", user.Networks)
-	_, err := controller.CreateUser(user)
+	_, err := logic.CreateUser(user)
 	if err != nil {
 		ReturnError(c, http.StatusBadRequest, err, "Networks")
 		return
@@ -36,7 +37,7 @@ func CreateUser(c *gin.Context) {
 //DeleteUser delete a user
 func DeleteUser(c *gin.Context) {
 	user := c.PostForm("user")
-	success, err := controller.DeleteUser(user)
+	success, err := logic.DeleteUser(user)
 	if !success {
 		ReturnError(c, http.StatusBadRequest, err, "Networks")
 		return
@@ -48,7 +49,7 @@ func DeleteUser(c *gin.Context) {
 func EditUser(c *gin.Context) {
 	session := sessions.Default(c)
 	username := session.Get("username").(string)
-	user, err := controller.GetUser(username)
+	user, err := logic.GetUser(username)
 	if err != nil {
 		ReturnError(c, http.StatusBadRequest, err, "Networks")
 		return
@@ -67,7 +68,7 @@ func UpdateUser(c *gin.Context) {
 	}
 	new.UserName = c.PostForm("username")
 	new.Password = c.PostForm("password")
-	_, err = controller.UpdateUser(new, user)
+	_, err = logic.UpdateUser(new, user)
 	if err != nil {
 		ReturnError(c, http.StatusBadRequest, err, "Networks")
 		return
@@ -82,7 +83,7 @@ func NewUser(c *gin.Context) {
 	user.UserName = c.PostForm("user")
 	user.Password = c.PostForm("pass")
 	user.IsAdmin = true
-	hasAdmin, err := controller.HasAdmin()
+	hasAdmin, err := logic.HasAdmin()
 	if err != nil {
 		ReturnError(c, http.StatusInternalServerError, err, "")
 		return
@@ -91,7 +92,7 @@ func NewUser(c *gin.Context) {
 		ReturnError(c, http.StatusUnauthorized, errors.New("Admin Exists"), "")
 		return
 	}
-	_, err = controller.CreateUser(user)
+	_, err = logic.CreateUser(user)
 	if err != nil {
 		ReturnError(c, http.StatusUnauthorized, err, "")
 		return
